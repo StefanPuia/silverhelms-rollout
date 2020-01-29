@@ -1,0 +1,6 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file="services/data.lua"/>
+    <Script file="services/options.lua"/>
+    <Script file="services/utils.lua"/>
+    <Script file="controllers/slash.lua"/>
+</Ui>
