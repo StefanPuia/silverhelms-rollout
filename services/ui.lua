@@ -70,3 +70,77 @@ Rollouts.ui.closeHistoryRollView = function()
     end
     updateWindow()
 end
+
+local queue = {
+    enabled = false,
+    originalSize = 0,
+    rolls = {}
+}
+
+Rollouts.ui.isEnqueued = function(rollObject)
+    for i,roll in ipairs(queue.rolls) do
+        if roll.original == rollObject then
+            return true
+        end
+    end
+    return false
+end
+
+Rollouts.ui.getQueueButtonText = function()
+    local text = queue.enabled and ("Queuing Jobs (" .. #queue.rolls .. "/" .. queue.originalSize .. ")") or "Queue Pending Jobs"
+    return Rollouts.utils.colour(text, queue.enabled and "gray" or nil)
+end
+
+Rollouts.ui.prepareQueue = function()
+    if not queue.enabled then
+        local pending = Rollouts.utils.getEitherDBOption("data", "rolls", "pending")
+        queue.rolls = {}
+        for i,v in ipairs(pending) do
+            queue.rolls[i] = {
+                original = v,
+                parameter = Rollouts.utils.sanitizeRollEntryObject(v)
+            }
+        end
+        queue.originalSize = #queue.rolls
+        queue.enabled = true
+        Rollouts.ui.enqueue()
+    end
+    updateWindow()
+end
+
+local function clearQueue()
+    queue.enabled = false
+    queue.originalSize = 0
+    queue.rolls = {}
+    updateWindow()
+end
+
+Rollouts.ui.enqueue = function()
+    if queue.enabled then
+        local pending = Rollouts.utils.getEitherDBOption("data", "rolls", "pending")
+
+        if #queue.rolls == 0 then
+            clearQueue()
+        end
+
+        if not Rollouts.isRolling() then
+            local currentQueueItem = queue.rolls[1]
+            if currentQueueItem then
+                for i,pendingRoll in ipairs(pending) do
+                    if currentQueueItem.original == pendingRoll then
+                        table.remove(pending, i)
+                        updateWindow()
+                    end
+                end
+                Rollouts.beginRoll(currentQueueItem.parameter, function()
+                    table.remove(queue.rolls, 1)
+                    Rollouts.ui.showPendingTab()
+                    Rollouts.ui.enqueue()
+                end, function()
+                    clearQueue()
+                    Rollouts.ui.showPendingTab()
+                end)
+            end
+        end
+    end
+end

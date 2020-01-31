@@ -276,7 +276,8 @@ local function createPendingRollsFrame()
             local timestamp = createLabel(statusColour(Rollouts.utils.formatStamp(row.time), row.status), 15)
             group:AddChild(timestamp)
 
-            local beginRollBtnDisabled = Rollouts.isRolling()
+            local enqueued = Rollouts.ui.isEnqueued(row)
+            local beginRollBtnDisabled = Rollouts.isRolling() or enqueued
             local beginRollBtnText = Rollouts.utils.colour("Start Roll", beginRollBtnDisabled and "gray" or nil)
             local beginRollBtn = createButton(beginRollBtnText, function()
                 Rollouts.beginRoll(row)
@@ -285,10 +286,10 @@ local function createPendingRollsFrame()
             end, nil, beginRollBtnDisabled)
             group:AddChild(beginRollBtn)
 
-            local removeRoll = createButton("X", function()
+            local removeRoll = createButton(Rollouts.utils.colour("X", enqueued and "gray" or nil), function()
                 table.remove(pending, i)
                 Rollouts.ui.updateWindow()
-            end)
+            end, enqueued)
             group:AddChild(removeRoll)
 
             scroll:AddChild(group)
@@ -364,6 +365,11 @@ local function createHistoryViewFrame()
 
      if Rollouts.env.historyTab == "pending" then
         container:AddChild(createPendingRollsFrame())
+        if #rollDB.pending > 1 then
+            container:AddChild(createButton(Rollouts.ui.getQueueButtonText(), function()
+                Rollouts.ui.prepareQueue()
+            end))
+        end
     elseif Rollouts.env.historyTab == "history" then
         container:AddChild(createRollHistoryFrame())
     end

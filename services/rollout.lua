@@ -4,6 +4,10 @@ local Rollouts = LibStub("AceAddon-3.0"):GetAddon("Rollouts")
 local currentRoll = nil
 local timeLeft = 0
 local lastTick = 0
+local callbacks = {
+    finish = nil,
+    cancel = nil
+}
 
 Rollouts.appendToHistory = function(roll)
     dbRolls = Rollouts.utils.getDBOption("data", "rolls")
@@ -30,6 +34,7 @@ Rollouts.cancelRoll = function()
         currentRoll = nil
         Rollouts.env.live = nil
         Rollouts.ui.showHistoryTab()
+        if callbacks.cancel then callbacks.cancel() end
     end
 end
 
@@ -47,11 +52,14 @@ Rollouts.finishRoll = function(whisperBack)
         currentRoll = nil
         Rollouts.env.live = nil
         Rollouts.ui.showHistoryTab()
+        if callbacks.finish then callbacks.finish() end
     end
 end
 
-Rollouts.beginRoll = function(rollEntry)
+Rollouts.beginRoll = function(rollEntry, callbackFinish, callbackCancel)
     if currentRoll == nil then
+        callbacks.finish = callbackFinish
+        callbacks.cancel = callbackCancel
         currentRoll = Rollouts.utils.sanitizeRollEntryObject(rollEntry)
         Rollouts.env.live = currentRoll
         Rollouts.env.showing = "live"

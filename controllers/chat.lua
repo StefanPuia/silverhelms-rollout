@@ -24,7 +24,7 @@ function Rollouts:HandleWhisper(e, ...)
     local message = select(1, ...)
     local source = select(2, ...)
 
-    if Rollouts.utils.stringContainsItem(message) and Rollouts.utils.getEitherDBOption("enableWhisperAppend") then
+    if Rollouts.utils.unitInGroup(source) and Rollouts.utils.stringContainsItem(message) and Rollouts.utils.getEitherDBOption("enableWhisperAppend") then
         local itemString = select(3, strfind(message, "|H(.-)|h"))
         if itemString ~= nil then
             local itemInfo = {GetItemInfo(itemString)}

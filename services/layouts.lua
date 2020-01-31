@@ -246,6 +246,12 @@ AceGUI:RegisterLayout("HistoryViewFrame",
             pendingRolls.frame:SetPoint("TOPLEFT", content, "TOPLEFT", 0, -15)
             pendingRolls.frame:SetSize(width + 1, height - 12)
         end
+
+        if children[4] then
+            local queuePendingJobs = children[4]
+            queuePendingJobs.frame:SetPoint("TOPRIGHT", content, "TOPRIGHT", -1, 1)
+            queuePendingJobs.frame:SetSize(200, 35)
+        end
     end
 )
 
@@ -262,7 +268,7 @@ AceGUI:RegisterLayout("PendingRollRow",
         if children[2] and children[1] then
             local owner = children[2]
             owner.frame:SetPoint("LEFT", children[1].frame, "RIGHT", 5, 0)
-            owner.frame:SetSize(100, 20)
+            owner.frame:SetSize(300, 20)
         end
 
         if children[3] and children[2] then
