@@ -175,3 +175,8 @@ Rollouts.utils.qualifyUnitName = function(unitName)
     if string.find(simple, "-") ~= nil then return simple end
     return simple .. "-" .. GetRealmName()
 end
+
+Rollouts.utils.unitInGroup = function(unitName)
+    unitName = Rollouts.utils.simplifyName(unitName)
+    return UnitInParty(unitName) or UnitInRaid(unitName)
+end
