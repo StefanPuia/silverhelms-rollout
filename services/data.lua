@@ -124,10 +124,10 @@ Rollouts.data.specStats = {
     ["266"] = Rollouts.data.stats[3], -- Demonology
     ["267"] = Rollouts.data.stats[3], -- Destruction
 }
-Rollouts.data.failMesages = {
-    [1] = "armor type",
-    [2] = "not MS stat",
-    [3] = "not OS stat"
+Rollouts.data.failMessages = {
+    ["ARMOR_TYPE"] = "armor type",
+    ["NOT_MS_STAT"] = "not MS stat",
+    ["NOT_OS_STAT"] = "not OS stat"
 }
 Rollouts.data.colours = {
     red = "FF0000",

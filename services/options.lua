@@ -11,7 +11,7 @@ Rollouts.defaultOptions = {
         -- if no one rolls, restart the countdown with a lower roll type
         restartIfNoRolls = true,
         -- lowest roll type to restart for
-        lowestRestart = 1, -- 3 = MS, 2 = OS, 1 = GREED
+        lowestRestart = 2, -- 3 = MS, 2 = OS, 1 = GREED
         -- default roll for whispers (0 to disable whsiper checks)
         enableWhisperAppend = true,
         -- default roll type

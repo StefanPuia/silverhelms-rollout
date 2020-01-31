@@ -6,10 +6,12 @@ examples = {
     }},
     history = {{
         itemLink = 158362,
+        itemInfo = { ... }, -- GetItemInfo()
         owner = "|cffFF7D0AOwner1|r",
         time = 1118722038,
         rollType = "MS",
         status = "FINISHED",
+        equippable = false,
         rolls = {{
             name = "|cffFF7D0AOwner1|r",
             guild = 1,

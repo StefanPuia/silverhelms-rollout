@@ -317,10 +317,13 @@ local function createRollHistoryFrame()
             local timestamp = createLabel(statusColour(Rollouts.utils.formatStamp(row.time), row.status), 15)
             group:AddChild(timestamp)
 
-            local viewRollButton = createButton("View", function()
+
+            local viewRollBtnDisabled = Rollouts.env.virtual == row
+            local viewRollBtnText = Rollouts.utils.colour("View", viewRollBtnDisabled and "gray" or nil)
+            local viewRollBtn = createButton(viewRollBtnText, function()
                 Rollouts.ui.openHistoryRollView(row)
-            end)
-            group:AddChild(viewRollButton)
+            end, nil, viewRollBtnDisabled)
+            group:AddChild(viewRollBtn)
 
             local restartRollBtnDisabled = Rollouts.isRolling()
             local restartRollBtnText = Rollouts.utils.colour("Restart", restartRollBtnDisabled and "gray" or nil)
@@ -346,14 +349,15 @@ end
 local function createHistoryViewFrame()
     local container = createSimpleGroup()
     container:SetLayout("HistoryViewFrame")
+    local rollDB = Rollouts.utils.getEitherDBOption("data", "rolls")
 
     local pendingBtnDisabled = Rollouts.env.historyTab == "pending"
-    local pendingBtnText = Rollouts.utils.colour("Pending", pendingBtnDisabled and "gray" or nil)
+    local pendingBtnText = Rollouts.utils.colour("Pending (" .. #rollDB.pending .. ")", pendingBtnDisabled and "gray" or nil)
     local pendingBtn = createButton(pendingBtnText, Rollouts.ui.showPendingTab, nil, pendingBtnDisabled)
     container:AddChild(pendingBtn)
 
     local historyBtnDisabled = Rollouts.env.historyTab == "history"
-    local historyBtnText = Rollouts.utils.colour("History", historyBtnDisabled and "gray" or nil)
+    local historyBtnText = Rollouts.utils.colour("History (" .. #rollDB.history .. ")", historyBtnDisabled and "gray" or nil)
     local historyButton = createButton(historyBtnText, Rollouts.ui.showHistoryTab, nil, historyBtnDisabled)
     container:AddChild(historyButton)
 
@@ -389,7 +393,7 @@ local function createMainWindow()
     local window = AceGUI:Create("Window")
     Frames.mainWindow = window
     window.frame:SetMinResize(1200, 500)
-    -- window.frame:SetMaxResize(1200, 800)
+    window.frame:SetMaxResize(1300, 1000)
     window:SetTitle("Rollouts")
     window:EnableResize(not Rollouts.isRolling())
     window:SetCallback("OnClose", function() Rollouts.frames.mainWindow.hide() end)
@@ -398,7 +402,7 @@ local function createMainWindow()
     -- window:SetCallback("OnLeave", Rollouts.ui.resumeTick)
     local windowData = Rollouts.env.mainWindowData
     if windowData.size then window.frame:SetSize(unpack(windowData.size)) else window.frame:SetSize(1200, 500) end
-    if not Rollouts.isRolling() and windowData.point then
+    if windowData.point then
         local region1, parent, region2, x, y = unpack(windowData.point)
         window.frame:SetPoint(region1, window.frame:GetParent(), region2, x, y)
     end
@@ -443,7 +447,9 @@ local function hideMainWindow()
 end
 
 local function showMainWindow()
-    hideMainWindow()
+    if Frames.mainWindow then
+        hideMainWindow()
+    end
     createMainWindow()
     Frames.mainWindow:Show()
     Frames.mainWindow.frame:StopMovingOrSizing()

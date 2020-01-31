@@ -59,9 +59,13 @@ Rollouts.beginRoll = function(rollEntry)
         timeLeft = Rollouts.utils.getEitherDBOption("rollTimeLimit")
         lastTick = GetServerTime()
 
-        Rollouts.chat.sendWarning("Roll for " .. currentRoll.itemLink .. " " .. Rollouts.data.rollTypes[currentRoll.rollType])
+        currentRoll.itemInfo = {GetItemInfo(currentRoll.itemLink)}
+        local itemSlot = currentRoll.itemInfo[9]
+        currentRoll.equippable = Rollouts.data.slots[itemSlot] ~= nil and #Rollouts.data.slots[itemSlot] > 0
+        if not currentRoll.equippable then currentRoll.rollType = 1 end -- if not equippable, change roll type to greed
 
         Rollouts.ui.updateWindow()
+        Rollouts.chat.sendWarning("Roll for " .. currentRoll.itemLink .. " " .. Rollouts.data.rollTypes[currentRoll.rollType])
     end
 end
 
@@ -72,11 +76,14 @@ end
 local function sortRolls()
     if currentRoll ~= nil then
         table.sort(currentRoll.rolls, function(a, b)
-            if a.failMesage and not b.failMesage then return false end
-            if not a.failMesage and b.failMesage then return true end
+            if a.failMessage ~= nil ~= b.failMessage ~= nil then
+                return (a.failMessage or "") > (b.failMessage or "")
+            end
 
-            if a.guild ~= b.guild then return a.guild > b.guild end
-            if a.rank ~= b.rank then return a.rank > b.rank end
+            if currentRoll.equippable == true then
+                if a.guild ~= b.guild then return a.guild > b.guild end
+                if a.rank ~= b.rank then return a.rank > b.rank end
+            end
 
             return tonumber(a.roll) > tonumber(b.roll)
         end)
@@ -112,13 +119,24 @@ local function getWinningRolls()
     end
 end
 
-Rollouts.appendRoll = function(name, roll, guild, rank, class, failMesage, spec, equipped)
-    if currentRoll ~= nil and not Rollouts.getRoll(name) then
-        if Rollouts.utils.simplifyName(name) ~= Rollouts.utils.simplifyName(currentRoll.owner) then
-            table.insert(currentRoll.rolls, Rollouts.utils.makeRollObject(name, roll, guild, rank, class, failMesage, spec, equipped))
-            sortRolls()
-            Rollouts.ui.updateWindow()
+Rollouts.appendRoll = function(name, roll, guild, rank, classId, spec, equipped)
+    if currentRoll ~= nil and not Rollouts.getRoll(name)
+            and Rollouts.utils.simplifyName(name) ~= Rollouts.utils.simplifyName(currentRoll.owner)
+            and Rollouts.utils.unitInGroup(name) then
+
+        local failMessage = nil
+        local itemMaterial = currentRoll.itemInfo[7]
+        local itemSlot = currentRoll.itemInfo[9]
+
+        local isClassMaterial = (itemSlot ~= "INVTYPE_CLOAK" and itemMaterial == "Cloth") or itemMaterial == "Leather" or itemMaterial == "Mail" or itemMaterial == "Plate"
+        
+        if currentRoll.rollType > 1 and isClassMaterial and Rollouts.data.classArmorType[classId] ~= itemMaterial then
+            failMessage = Rollouts.data.failMessages["ARMOR_TYPE"]
         end
+
+        table.insert(currentRoll.rolls, 1, Rollouts.utils.makeRollObject(name, roll, guild, rank, class, failMessage, spec, equipped))
+        sortRolls()
+        Rollouts.ui.updateWindow()
     end
 end
 
