@@ -226,7 +226,7 @@ local function createRollsContainer()
         group:AddChild(createLabel(rollEntry.roll, 15))
         group:AddChild(createLabel(rollEntry.name, 15))
         group:AddChild(createLabel(rollEntry.rankName, 15))
-        group:AddChild(createLabel(Rollouts.utils.colour(rollEntry.failMesage, "red"), 15, 250, 15, "RIGHT"))
+        group:AddChild(createLabel(Rollouts.utils.colour(rollEntry.failMesage, "red"), 15))
 
         scroll:AddChild(group)
     end
@@ -243,8 +243,8 @@ local function createRollInfoFrame()
     local rollInfoLayout = Rollouts.env.showing == "virtual" and "RollInfoVirtual" or "RollInfoLive"
     container:SetLayout(rollInfoLayout)
     
-    container:AddChild(createLabel(Rollouts.data.rollTypes[displayRoll.rollType], 20, 100))
     container:AddChild(createItemIcon(displayRoll.itemLink, true, 32))
+    container:AddChild(createLabel(Rollouts.data.rollTypes[displayRoll.rollType], 20, 100))
     container:AddChild(createLabel("Owner: " .. displayRoll.owner, 20, 500))
 
     if Rollouts.env.showing == "virtual" then
@@ -275,12 +275,14 @@ local function createPendingRollsFrame()
             local timestamp = createLabel(statusColour(Rollouts.utils.formatStamp(row.time), row.status), 15)
             group:AddChild(timestamp)
 
-            local beginRoll = createButton("Begin", function()
+            local beginRollBtnDisabled = Rollouts.isRolling()
+            local beginRollBtnText = Rollouts.utils.colour("Start Roll", beginRollBtnDisabled and "gray" or nil)
+            local beginRollBtn = createButton(beginRollBtnText, function()
                 Rollouts.beginRoll(row)
                 table.remove(pending, i)
                 Rollouts.ui.updateWindow()
-            end)
-            group:AddChild(beginRoll)
+            end, nil, beginRollBtnDisabled)
+            group:AddChild(beginRollBtn)
 
             local removeRoll = createButton("X", function()
                 table.remove(pending, i)
@@ -320,10 +322,12 @@ local function createRollHistoryFrame()
             end)
             group:AddChild(viewRollButton)
 
-            local restartRollButton = createButton("Restart", function()
+            local restartRollBtnDisabled = Rollouts.isRolling()
+            local restartRollBtnText = Rollouts.utils.colour("Restart", restartRollBtnDisabled and "gray" or nil)
+            local restartRollBtn = createButton(restartRollBtnText, function()
                 Rollouts.restartRoll(row)
-            end)
-            group:AddChild(restartRollButton)
+            end, nil, restartRollBtnDisabled)
+            group:AddChild(restartRollBtn)
 
             local removeRollButton = createButton("X", function()
                 table.remove(history, i)
@@ -343,17 +347,19 @@ local function createHistoryViewFrame()
     local container = createSimpleGroup()
     container:SetLayout("HistoryViewFrame")
 
-    local pendingButton = createButton("Pending", Rollouts.ui.showPendingTab)
-    container:AddChild(pendingButton)
+    local pendingBtnDisabled = Rollouts.env.historyTab == "pending"
+    local pendingBtnText = Rollouts.utils.colour("Pending", pendingBtnDisabled and "gray" or nil)
+    local pendingBtn = createButton(pendingBtnText, Rollouts.ui.showPendingTab, nil, pendingBtnDisabled)
+    container:AddChild(pendingBtn)
 
-    local historyButton = createButton("History", Rollouts.ui.showHistoryTab)
+    local historyBtnDisabled = Rollouts.env.historyTab == "history"
+    local historyBtnText = Rollouts.utils.colour("History", historyBtnDisabled and "gray" or nil)
+    local historyButton = createButton(historyBtnText, Rollouts.ui.showHistoryTab, nil, historyBtnDisabled)
     container:AddChild(historyButton)
 
      if Rollouts.env.historyTab == "pending" then
-        pendingButton:SetDisabled(true)
         container:AddChild(createPendingRollsFrame())
     elseif Rollouts.env.historyTab == "history" then
-        historyButton:SetDisabled(true)
         container:AddChild(createRollHistoryFrame())
     end
 
@@ -361,13 +367,15 @@ local function createHistoryViewFrame()
 end
 
 local function createFinishEarlyButton()
-    local enabled = not Rollouts.env.live
-    return createButton("Finish Now", Rollouts.finishRoll, nil, enabled)
+    local disabled = not Rollouts.env.live
+    local buttonText = Rollouts.utils.colour("Finish Now", disabled and "gray" or nil)
+    return createButton(buttonText, Rollouts.finishRoll, nil, disabled)
 end
 
 local function createCancelRollButton()
-    local enabled = not Rollouts.env.live
-    return createButton("Cancel", Rollouts.cancelRoll, nil, enabled)
+    local disabled = not Rollouts.env.live
+    local buttonText = Rollouts.utils.colour("Cancel", disabled and "gray" or nil)
+    return createButton(buttonText, Rollouts.cancelRoll, nil, disabled)
 end
 
 local function createCloseDetailViewButton()
@@ -381,7 +389,7 @@ local function createMainWindow()
     local window = AceGUI:Create("Window")
     Frames.mainWindow = window
     window.frame:SetMinResize(1200, 500)
-    window.frame:SetMaxResize(1200, 800)
+    -- window.frame:SetMaxResize(1200, 800)
     window:SetTitle("Rollouts")
     window:EnableResize(not Rollouts.isRolling())
     window:SetCallback("OnClose", function() Rollouts.frames.mainWindow.hide() end)

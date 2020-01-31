@@ -65,5 +65,8 @@ end
 Rollouts.ui.closeHistoryRollView = function()
     Rollouts.env.virtual = false
     Rollouts.env.showing = "none"
+    if Rollouts.isRolling() then
+        Rollouts.env.showing = "live"
+    end
     updateWindow()
 end
