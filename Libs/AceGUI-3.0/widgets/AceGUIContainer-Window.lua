@@ -31,6 +31,14 @@ do
         this.obj:Fire("OnClose")
     end
 
+    local function frameOnEnter(this)
+        this.obj:Fire("OnEnter")
+    end
+
+    local function frameOnLeave(this)
+        this.obj:Fire("OnLeave")
+    end
+
     local function closeOnClick(this)
         PlaySound(PlaySoundKitID and "gsTitleOptionExit" or 799) -- SOUNDKIT.GS_TITLE_OPTION_EXIT
         this.obj:Hide()
@@ -186,6 +194,8 @@ do
 
         frame:SetScript("OnShow", frameOnShow)
         frame:SetScript("OnHide", frameOnClose)
+        frame:SetScript("OnEnter", frameOnEnter)
+        frame:SetScript("OnLeave", frameOnLeave)
         frame:SetMinResize(240, 240)
         frame:SetToplevel(true)
 
