@@ -43,9 +43,9 @@ Rollouts.defaultOptions = {
             min = 1,
             max = 100
         },
+        showMinimapIcon = true,
 
 
-        
         -- internal
         data = {
             rolls = {
@@ -55,6 +55,7 @@ Rollouts.defaultOptions = {
         },
         font = "Fonts\\FRIZQT__.TTF",
         lastTab = "pending",
+        minimapIconPos = {0, 0}
     }
 }
 
@@ -175,6 +176,21 @@ local settingsTable = {
                     set = function(info, val) setDBOption(val, "roll", "max") end,
                     get = function(info) return getEitherDBOption("roll", "max") end
                 },
+                break1 = {
+                    order = 4,
+                    type = "description",
+                    name = ""
+                },
+                showMinimapIcon = {
+                    order = 5,
+                    name = "Enable the minimap icon",
+                    type = "toggle",
+                    set = function(info, val)
+                        setDBOption(val, "showMinimapIcon")
+                        Rollouts.frames.displayMinimapButton()
+                    end,
+                    get = function(info) return getEitherDBOption("showMinimapIcon") end
+                }
             }
         },
         guildRanking = {
