@@ -111,24 +111,14 @@ local function createInlineGroup(layout, width, height)
     return group
 end
 
-local function createScrollContainer(layout, width, height, ...)
+local function createScrollContainer()
     local scrollContainer = AceGUI:Create("SimpleGroup")
     scrollContainer:SetAutoAdjustHeight(false)
     scrollContainer:SetLayout("Fill")
 
     local scroll = AceGUI:Create("ScrollFrame")
-    scroll:SetLayout(layout or "Flow")
+    scroll:SetLayout("Flow")
     scrollContainer:AddChild(scroll)
-
-    if width then
-        scrollContainer:SetWidth(width)
-    end
-    if height then
-        scrollContainer:SetHeight(height)
-    end
-    if ... then
-        scrollContainer:SetPoint(...)
-    end
 
     return scrollContainer, scroll
 end
@@ -231,7 +221,7 @@ local function createRollsContainer()
 
         scroll:AddChild(group)
     end
-    local container = createInlineGroup("Fill")
+    local container = createInlineGroup("Stretch")
     container:AddChild(scrollContainer)
     return container
 end
@@ -267,7 +257,7 @@ local function createPendingRollsFrame()
         for i, row in ipairs(pending) do
             local group = createSimpleGroup("PendingRollRow", 1000, 40)
 
-            local itemLink =  createItemIcon(row.itemLink, false, 32)
+            local itemLink = createItemIcon(row.itemLink, false, 32)
             group:AddChild(itemLink)
 
             local owner = createLabel(row.owner, 15)
@@ -295,7 +285,7 @@ local function createPendingRollsFrame()
             scroll:AddChild(group)
         end
     end
-    local container = createInlineGroup("Fill")
+    local container = createInlineGroup("Stretch")
     container:AddChild(scrollContainer)
     return container
 end
@@ -307,7 +297,7 @@ local function createRollHistoryFrame()
         for i, row in ipairs(history) do
             local group = createSimpleGroup("HistoryRollRow", 1000, 40)
 
-            local itemLink =  createItemIcon(row.itemLink, false, 32)
+            local itemLink = createItemIcon(row.itemLink, false, 32)
             group:AddChild(itemLink)
 
             local owner = createLabel(row.owner, 15, 100, 15)
@@ -343,7 +333,7 @@ local function createRollHistoryFrame()
             scroll:AddChild(group)
         end
     end
-    local container = createInlineGroup("Fill")
+    local container = createInlineGroup("Stretch")
     container:AddChild(scrollContainer)
     return container
 end

@@ -128,9 +128,10 @@ local function getWinningRolls()
 end
 
 Rollouts.appendRoll = function(name, roll, guild, rank, classId, spec, equipped)
-    if currentRoll ~= nil and not Rollouts.getRoll(name)
-            and Rollouts.utils.simplifyName(name) ~= Rollouts.utils.simplifyName(currentRoll.owner)
-            and Rollouts.utils.unitInGroup(name) then
+    if currentRoll ~= nil
+            and not Rollouts.getRoll(name)
+            and Rollouts.utils.unitInGroup(name)
+        then
 
         local failMessage = nil
         local itemMaterial = currentRoll.itemInfo[7]
@@ -140,6 +141,10 @@ Rollouts.appendRoll = function(name, roll, guild, rank, classId, spec, equipped)
         
         if currentRoll.rollType > 1 and isClassMaterial and Rollouts.data.classArmorType[classId] ~= itemMaterial then
             failMessage = Rollouts.data.failMessages["ARMOR_TYPE"]
+        end
+
+        if Rollouts.utils.simplifyName(name) == Rollouts.utils.simplifyName(currentRoll.owner) then
+            failMessage = Rollouts.data.failMessages["ROLL_OWNER"]
         end
 
         table.insert(currentRoll.rolls, 1, Rollouts.utils.makeRollObject(name, roll, guild, rank, class, failMessage, spec, equipped))

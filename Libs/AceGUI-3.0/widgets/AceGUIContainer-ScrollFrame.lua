@@ -54,6 +54,10 @@ local methods = {
         self.scrollBarShown = nil
         self.content.height, self.content.width = nil, nil
     end,
+    ["GetScroll"] = function(self)
+        local status = self.status or self.localstatus
+        return status.scrollvalue
+    end,
     ["SetScroll"] = function(self, value)
         local status = self.status or self.localstatus
         local viewheight = self.scrollframe:GetHeight()

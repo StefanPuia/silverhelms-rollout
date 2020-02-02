@@ -127,7 +127,8 @@ Rollouts.data.specStats = {
 Rollouts.data.failMessages = {
     ["ARMOR_TYPE"] = "armor type",
     ["NOT_MS_STAT"] = "not MS stat",
-    ["NOT_OS_STAT"] = "not OS stat"
+    ["NOT_OS_STAT"] = "not OS stat",
+    ["ROLL_OWNER"] = "roll owner"
 }
 Rollouts.data.colours = {
     red = "FF0000",
