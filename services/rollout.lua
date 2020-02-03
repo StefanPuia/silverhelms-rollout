@@ -25,6 +25,11 @@ Rollouts.isRolling = function()
     return currentRoll ~= nil
 end
 
+local function resetCallbacks()
+    callbacks.finish = nil
+    callbacks.cancel = nil
+end
+
 Rollouts.cancelRoll = function()
     if currentRoll ~= nil then
         timeLeft = 0
@@ -35,6 +40,7 @@ Rollouts.cancelRoll = function()
         Rollouts.env.live = nil
         Rollouts.ui.showHistoryTab()
         if callbacks.cancel then callbacks.cancel() end
+        resetCallbacks()
     end
 end
 
@@ -52,13 +58,20 @@ Rollouts.finishRoll = function(whisperBack)
         Rollouts.env.live = nil
         Rollouts.ui.showHistoryTab()
         if callbacks.finish then callbacks.finish() end
+        resetCallbacks()
     end
 end
 
-Rollouts.beginRoll = function(rollEntry, callbackFinish, callbackCancel)
+Rollouts.setFinishCallback = function(callbackFinish)
+    callbacks.finish = callbackFinish
+end
+
+Rollouts.setCancelCallback = function(callbackCancel)
+    callbacks.cancel = callbackCancel
+end
+
+Rollouts.beginRoll = function(rollEntry)
     if currentRoll == nil then
-        callbacks.finish = callbackFinish
-        callbacks.cancel = callbackCancel
         currentRoll = Rollouts.utils.sanitizeRollEntryObject(rollEntry)
         Rollouts.env.live = currentRoll
         Rollouts.env.showing = "live"
@@ -94,6 +107,10 @@ local function sortRolls()
     end
 end
 
+local function hasSubsequentRolls()
+    return Rollouts.utils.getEitherDBOption("restartIfNoRolls") and currentRoll.rollType > Rollouts.utils.getEitherDBOption("lowestRestart")
+end
+
 Rollouts.getWinningRolls = function()
     local winning = {}
     if #currentRoll.rolls then
@@ -119,8 +136,10 @@ Rollouts.getWinningRolls = function()
         Rollouts.chat.sendMessage(message)
         return true
     else
-        local message = "Roll ended on " .. currentRoll.itemLink .. ". No one rolled."
-        Rollouts.chat.sendMessage(message)
+        if not hasSubsequentRolls() then
+            local message = "Roll ended on " .. currentRoll.itemLink .. ". No one rolled."
+            Rollouts.chat.sendMessage(message)
+        end
         return false
     end
 end
@@ -199,17 +218,13 @@ Rollouts.rollTick = function()
             if timeLeft <= 0 then
                 timeLeft = 0
                 if Rollouts.getWinningRolls() then return Rollouts.finishRoll() end
-                if Rollouts.utils.getEitherDBOption("restartIfNoRolls") then
-                    if currentRoll.rollType == Rollouts.utils.getEitherDBOption("lowestRestart") then
-                        Rollouts.finishRoll(true)
-                    else
-                        timeLeft = Rollouts.utils.getEitherDBOption("rollTimeLimit")
-                        currentRoll.status = "CONTINUED"
-                        Rollouts.appendToHistory(currentRoll)
-                        local auxRollObject = Rollouts.utils.makeRollEntryObject(currentRoll.itemLink, currentRoll.owner, currentRoll.rollType - 1)
-                        currentRoll = nil
-                        Rollouts.beginRoll(auxRollObject)
-                    end
+                if hasSubsequentRolls() then
+                    timeLeft = Rollouts.utils.getEitherDBOption("rollTimeLimit")
+                    currentRoll.status = "CONTINUED"
+                    Rollouts.appendToHistory(currentRoll)
+                    local auxRollObject = Rollouts.utils.makeRollEntryObject(currentRoll.itemLink, currentRoll.owner, currentRoll.rollType - 1)
+                    currentRoll = nil
+                    Rollouts.beginRoll(auxRollObject)
                 else
                     Rollouts.finishRoll(true)
                 end

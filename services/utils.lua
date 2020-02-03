@@ -171,7 +171,7 @@ Rollouts.utils.indexOf = function(table, predicate)
 end
 
 Rollouts.utils.capitalise = function(text)
-    return string.upper(string.sub(text, 1, 2)) .. string.lower(string.sub(text, 2))
+    return string.upper(string.sub(text, 1, 1)) .. string.lower(string.sub(text, 2))
 end
 
 Rollouts.utils.qualifyUnitName = function(unitName, ignoreSameRealm)
