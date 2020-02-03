@@ -22,7 +22,7 @@ examples = {
             spec = 42,
             roll = 100,
             equipped = {},
-            failMesage = nil
+            failMessage = nil
         }}
     }},
     roll = {
@@ -35,6 +35,6 @@ examples = {
         spec = 42,
         roll = 100,
         equipped = {},
-        failMesage = nil
+        failMessage = nil
     }
 }

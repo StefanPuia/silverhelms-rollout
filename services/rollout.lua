@@ -99,8 +99,8 @@ local function sortRolls()
             local pointsA = a.guild * 10000 + a.rank * 1000 + tonumber(a.roll)
             local pointsB = b.guild * 10000 + b.rank * 1000 + tonumber(b.roll)
 
-            pointsA = a.failMessage and 0 or pointsA
-            pointsB = b.failMessage and 0 or pointsB
+            if a.failMessage ~= nil then pointsA = 0 end
+            if b.failMessage ~= nil then pointsB = 0 end
 
             return pointsA > pointsB
         end)
@@ -131,13 +131,13 @@ Rollouts.getWinningRolls = function()
         Rollouts.chat.sendMessage("Multiple players rolled the same. " .. table.concat(wins, ", ") .. " please roll again.")
         return true
     elseif #winning == 1 then
-        local message = "Roll ended on " .. currentRoll.itemLink .. ". " .. Rollouts.utils.qualifyUnitName(winning[1].name, true) .. " won."
+        local message = "Roll ended on " .. currentRoll.itemInfo[2] .. ". " .. Rollouts.utils.qualifyUnitName(winning[1].name, true) .. " won."
         message = message .. " Please trade " .. currentRoll.owner .. "."
         Rollouts.chat.sendMessage(message)
         return true
     else
         if not hasSubsequentRolls() then
-            local message = "Roll ended on " .. currentRoll.itemLink .. ". No one rolled."
+            local message = "Roll ended on " .. currentRoll.itemInfo[2] .. ". No one rolled."
             Rollouts.chat.sendMessage(message)
         end
         return false

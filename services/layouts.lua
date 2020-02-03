@@ -216,10 +216,10 @@ AceGUI:RegisterLayout("RollListRowLayout",
         end
 
         if children[4] and children[1] then
-            local failMesage = children[4]
-            failMesage.frame:SetPoint("TOPRIGHT", children[1].frame, "BOTTOMRIGHT", 0, -7)
-            failMesage.frame:SetSize(100, 30)
-            failMesage.label:SetSize(100, 30)
+            local failMessage = children[4]
+            failMessage.frame:SetPoint("TOPRIGHT", children[1].frame, "BOTTOMRIGHT", 0, -7)
+            failMessage.frame:SetSize(100, 30)
+            failMessage.label:SetSize(100, 30)
         end
     end
 )

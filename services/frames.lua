@@ -217,7 +217,7 @@ local function createRollsContainer()
         group:AddChild(createLabel(rollEntry.roll, 15))
         group:AddChild(createLabel(rollEntry.name, 15))
         group:AddChild(createLabel(rollEntry.rankName, 15))
-        group:AddChild(createLabel(Rollouts.utils.colour(rollEntry.failMesage, "red"), 15))
+        group:AddChild(createLabel(Rollouts.utils.colour(rollEntry.failMessage, "red"), 15))
 
         scroll:AddChild(group)
     end

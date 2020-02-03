@@ -99,7 +99,7 @@ Rollouts.utils.sanitizeRollEntryObject = function(entry)
     }
 end
 
-Rollouts.utils.makeRollObject = function(name, roll, guildName, rankName, class, failMesage, spec, equipped)
+Rollouts.utils.makeRollObject = function(name, roll, guildName, rankName, class, failMessage, spec, equipped)
     local guildRanks = Rollouts.utils.getEitherDBOption("guildRanking", "guilds")
     local guildIndex = Rollouts.utils.indexOf(guildRanks, function(g) return g.name == guildName end) or 1
     local rankIndex = guildRanks[guildIndex] and Rollouts.utils.indexOf(guildRanks[guildIndex].ranks, function(r)
@@ -115,7 +115,7 @@ Rollouts.utils.makeRollObject = function(name, roll, guildName, rankName, class,
         spec = spec,
         roll = roll,
         equipped = equipped,
-        failMesage = failMesage,
+        failMessage = failMessage,
     }
 end
 
