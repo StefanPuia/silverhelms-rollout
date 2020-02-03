@@ -192,7 +192,7 @@ local function createItemIcon(itemLink, showLabel, width, anchor, height, fontSi
     local itemIcon = createIcon(item[10], label, width, anchor, height, fontSize)
     if not item[10] then return itemIcon end
     itemIcon:SetCallback("OnEnter", function(widget)
-        GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
+        GameTooltip:SetOwner(widget.frame, "ANCHOR_BOTTOMRIGHT")
         GameTooltip:SetHyperlink(item[2])
         GameTooltip:Show()
     end)
