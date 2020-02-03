@@ -45,7 +45,7 @@ Rollouts.chat.sendWarning = function(message)
             or UnitIsGroupAssistant("player", "LE_PARTY_CATEGORY_HOME")
             or UnitIsGroupAssistant("player", "LE_PARTY_CATEGORY_INSTANCE")
         ) then
-        SendChatMessage(message, "RAID_WARNING", GetDefaultLanguage("player"), nil)
+        SendChatMessage(message, "RAID_WARNING")
     else
         Rollouts.chat.sendMessage(message)
     end
@@ -58,5 +58,5 @@ Rollouts.chat.sendMessage = function(message)
     elseif UnitInParty("player") then
         chatType = "PARTY"
     end
-    SendChatMessage(message, chatType, GetDefaultLanguage("player"), nil)
+    SendChatMessage(message, chatType)
 end

@@ -370,7 +370,10 @@ end
 local function createFinishEarlyButton()
     local disabled = not Rollouts.env.live
     local buttonText = Rollouts.utils.colour("Finish Now", disabled and "gray" or nil)
-    return createButton(buttonText, Rollouts.finishRoll, nil, disabled)
+    return createButton(buttonText, function()
+        Rollouts.getWinningRolls()
+        Rollouts.finishRoll()
+    end, nil, disabled)
 end
 
 local function createCancelRollButton()

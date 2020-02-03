@@ -46,7 +46,6 @@ Rollouts.finishRoll = function(whisperBack)
         end
         currentRoll.status = timeLeft == 0 and "FINISHED" or "FINISHED-EARLY"
         timeLeft = 0
-        print("announce winners")
         Rollouts.appendToHistory(currentRoll)
         Rollouts.ui.openHistoryRollView(currentRoll)
         currentRoll = nil
@@ -84,21 +83,18 @@ end
 local function sortRolls()
     if currentRoll ~= nil then
         table.sort(currentRoll.rolls, function(a, b)
-            if a.failMessage ~= nil ~= b.failMessage ~= nil then
-                return (a.failMessage or "") > (b.failMessage or "")
-            end
+            local pointsA = a.guild * 10000 + a.rank * 1000 + tonumber(a.roll)
+            local pointsB = b.guild * 10000 + b.rank * 1000 + tonumber(b.roll)
 
-            if currentRoll.equippable == true then
-                if a.guild ~= b.guild then return a.guild > b.guild end
-                if a.rank ~= b.rank then return a.rank > b.rank end
-            end
+            pointsA = a.failMessage and 0 or pointsA
+            pointsB = b.failMessage and 0 or pointsB
 
-            return tonumber(a.roll) > tonumber(b.roll)
+            return pointsA > pointsB
         end)
     end
 end
 
-local function getWinningRolls()
+Rollouts.getWinningRolls = function()
     local winning = {}
     if #currentRoll.rolls then
         table.insert(winning, currentRoll.rolls[1])
@@ -115,14 +111,16 @@ local function getWinningRolls()
     if #winning > 1 then
         local wins = {}
         for k,v in ipairs(winning) do table.insert(wins, v.name) end
-        Rollouts.chat.sendMessage("Multiple players rolled the same. " .. table.concat(wins, ", ") .. " please roll again")
+        Rollouts.chat.sendMessage("Multiple players rolled the same. " .. table.concat(wins, ", ") .. " please roll again.")
         return true
     elseif #winning == 1 then
-        local message = "Roll ended on " .. currentRoll.itemLink .. ". " .. winning[1].name .. " won."
-        message = message .. " Please trade " .. currentRoll.owner
+        local message = "Roll ended on " .. currentRoll.itemLink .. ". " .. Rollouts.utils.qualifyUnitName(winning[1].name, true) .. " won."
+        message = message .. " Please trade " .. currentRoll.owner .. "."
         Rollouts.chat.sendMessage(message)
-        return false
+        return true
     else
+        local message = "Roll ended on " .. currentRoll.itemLink .. ". No one rolled."
+        Rollouts.chat.sendMessage(message)
         return false
     end
 end
@@ -200,7 +198,7 @@ Rollouts.rollTick = function()
             timeLeft = timeLeft - tickSize
             if timeLeft <= 0 then
                 timeLeft = 0
-                if getWinningRolls() then return Rollouts.finishRoll() end
+                if Rollouts.getWinningRolls() then return Rollouts.finishRoll() end
                 if Rollouts.utils.getEitherDBOption("restartIfNoRolls") then
                     if currentRoll.rollType == Rollouts.utils.getEitherDBOption("lowestRestart") then
                         Rollouts.finishRoll(true)

@@ -151,31 +151,31 @@ local settingsTable = {
             name = "Advanced Options",
             type = "group",
             args = {
-                rollDesc = {
-                    order = 1,
-                    type = "description",
-                    name = "Only accept rolls between the following two numbers (default /roll is 1-100)"
-                },
-                minRoll = {
-                    order = 2,
-                    name = "Min Roll",
-                    type = "range",
-                    min = 0,
-                    max = 999999,
-                    step = 1,
-                    set = function(info, val) setDBOption(val, "roll", "min") end,
-                    get = function(info) return getEitherDBOption("roll", "min") end
-                },
-                maxRoll = {
-                    order = 3,
-                    name = "Max Roll",
-                    type = "range",
-                    min = 0,
-                    max = 999999,
-                    step = 1,
-                    set = function(info, val) setDBOption(val, "roll", "max") end,
-                    get = function(info) return getEitherDBOption("roll", "max") end
-                },
+                -- rollDesc = {
+                --     order = 1,
+                --     type = "description",
+                --     name = "Only accept rolls between the following two numbers (default /roll is 1-100)"
+                -- },
+                -- minRoll = {
+                --     order = 2,
+                --     name = "Min Roll",
+                --     type = "range",
+                --     min = 0,
+                --     max = 999999,
+                --     step = 1,
+                --     set = function(info, val) setDBOption(val, "roll", "min") end,
+                --     get = function(info) return getEitherDBOption("roll", "min") end
+                -- },
+                -- maxRoll = {
+                --     order = 3,
+                --     name = "Max Roll",
+                --     type = "range",
+                --     min = 0,
+                --     max = 999999,
+                --     step = 1,
+                --     set = function(info, val) setDBOption(val, "roll", "max") end,
+                --     get = function(info) return getEitherDBOption("roll", "max") end
+                -- },
                 break1 = {
                     order = 4,
                     type = "description",

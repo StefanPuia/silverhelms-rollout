@@ -170,9 +170,15 @@ Rollouts.utils.indexOf = function(table, predicate)
     return 0
 end
 
-Rollouts.utils.qualifyUnitName = function(unitName)
-    local simple = Rollouts.utils.simplifyName(unitName)
+Rollouts.utils.capitalise = function(text)
+    return string.upper(string.sub(text, 1, 2)) .. string.lower(string.sub(text, 2))
+end
+
+Rollouts.utils.qualifyUnitName = function(unitName, ignoreSameRealm)
+    ignoreSameRealm = ignoreSameRealm or false
+    local simple = Rollouts.utils.capitalise(Rollouts.utils.simplifyName(unitName))
     if string.find(simple, "-") ~= nil then return simple end
+    if ignoreSameRealm then return simple end
     return simple .. "-" .. GetRealmName()
 end
 
