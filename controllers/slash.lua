@@ -53,8 +53,7 @@ function Rollouts:RolloutController(input)
         elseif command == "END" then
             Rollouts.rollout.finish()
         elseif command == "OPTIONS" then
-            local ACD = LibStub("AceConfigDialog-3.0")
-            ACD:Open("Rollouts")
+            LibStub("AceConfigDialog-3.0"):Open("Rollouts")
         elseif command == "HELP" then
             printHelp()
         elseif command == "ADD" then

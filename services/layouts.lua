@@ -32,27 +32,33 @@ local function commonMainWindow(content, children)
         rollList.frame:SetPoint("BOTTOMLEFT", content, "BOTTOMLEFT", 0, 0)
         rollList.frame:SetWidth(280)
     end
+
+    if children[4] then
+        local settings = children[4]
+        settings.frame:SetPoint("TOPRIGHT", content, "TOPRIGHT", 0, 0)
+        settings.frame:SetSize(35, 35)
+    end
 end
 
 AceGUI:RegisterLayout("MainWindowNone",
     function(content, children)
         commonMainWindow(content, children)
 
-        if children[4] and children[3] then
-            local rollHistory = children[4]
+        if children[5] and children[3] then
+            local rollHistory = children[5]
             rollHistory.frame:SetPoint("TOPLEFT", children[3].frame, "BOTTOMLEFT", 1, -17)
             rollHistory.frame:SetPoint("BOTTOMRIGHT", content, "BOTTOMRIGHT", 0, 3)
         end
 
-        if children[5] and children[6] then
-            local buttonFinishRoll = children[5]
-            buttonFinishRoll.frame:SetPoint("RIGHT", children[6].frame, "LEFT", 0, 0)
+        if children[6] and children[7] then
+            local buttonFinishRoll = children[6]
+            buttonFinishRoll.frame:SetPoint("RIGHT", children[7].frame, "LEFT", 0, 0)
             buttonFinishRoll.frame:SetSize(100, 35)
         end
 
-        if children[6] then
-            local buttonCancelRoll = children[6]
-            buttonCancelRoll.frame:SetPoint("TOPRIGHT", content, "TOPRIGHT", 1, 0)
+        if children[7] then
+            local buttonCancelRoll = children[7]
+            buttonCancelRoll.frame:SetPoint("RIGHT", children[4].frame, "LEFT", 0, 0)
             buttonCancelRoll.frame:SetSize(100, 35)
         end
     end
@@ -62,29 +68,29 @@ AceGUI:RegisterLayout("MainWindowLive",
     function(content, children)
         commonMainWindow(content, children)
 
-        if children[7] then
-            local buttonCancelRoll = children[7]
-            buttonCancelRoll.frame:SetPoint("TOPRIGHT", content, "TOPRIGHT", 0, 0)
+        if children[8] then
+            local buttonCancelRoll = children[8]
+            buttonCancelRoll.frame:SetPoint("RIGHT", children[4].frame, "LEFT", 0, 0)
             buttonCancelRoll.frame:SetSize(100, 35)
         end
 
-        if children[6] and children[7] then
-            local buttonFinishRoll = children[6]
-            buttonFinishRoll.frame:SetPoint("RIGHT", children[7].frame, "LEFT", 0, 0)
+        if children[7] and children[8] then
+            local buttonFinishRoll = children[7]
+            buttonFinishRoll.frame:SetPoint("RIGHT", children[8].frame, "LEFT", 0, 0)
             buttonFinishRoll.frame:SetSize(100, 35)
         end
 
-        if children[4] and children[1] and children[7] then
-            local currentRoll = children[4]
+        if children[5] and children[1] and children[8] then
+            local currentRoll = children[5]
             currentRoll.frame:SetPoint("TOPLEFT", children[1].frame, "TOPRIGHT", 0, 0)
-            currentRoll.frame:SetPoint("TOPRIGHT", children[7].frame, "BOTTOMRIGHT", 0, 0)
+            currentRoll.frame:SetPoint("TOPRIGHT", children[8].frame, "BOTTOMRIGHT", 0, 0)
             currentRoll.frame:SetHeight(100)
         end
 
-        if children[5] then
-            local rollHistory = children[5]
-            rollHistory.frame:SetPoint("TOPLEFT", children[4].frame, "BOTTOMLEFT", 0, 0)
-            rollHistory.frame:SetPoint("TOPRIGHT", children[4].frame, "BOTTOMRIGHT", 0, 0)
+        if children[6] then
+            local rollHistory = children[6]
+            rollHistory.frame:SetPoint("TOPLEFT", children[5].frame, "BOTTOMLEFT", 0, 0)
+            rollHistory.frame:SetPoint("TOPRIGHT", children[5].frame, "BOTTOMRIGHT", 0, 0)
             rollHistory.frame:SetPoint("BOTTOMLEFT", content, "BOTTOMLEFT", 280, 3)
             rollHistory.frame:SetPoint("BOTTOMRIGHT", content, "BOTTOMRIGHT", 0, 3)
         end
@@ -95,23 +101,23 @@ AceGUI:RegisterLayout("MainWindowVirtual",
     function(content, children)
         commonMainWindow(content, children)
 
-        if children[6] then
-            local buttonCancelRoll = children[6]
-            buttonCancelRoll.frame:SetPoint("TOPRIGHT", content, "TOPRIGHT", 1, 0)
+        if children[7] then
+            local buttonCancelRoll = children[7]
+            buttonCancelRoll.frame:SetPoint("RIGHT", children[4].frame, "LEFT", 0, 0)
             buttonCancelRoll.frame:SetSize(150, 35)
         end
 
-        if children[4] and children[3] and children[6] then
-            local currentRoll = children[4]
+        if children[5] and children[3] and children[7] then
+            local currentRoll = children[5]
             currentRoll.frame:SetPoint("TOPLEFT", children[3].frame, "BOTTOMLEFT", 1, 0)
-            currentRoll.frame:SetPoint("TOPRIGHT", children[6].frame, "BOTTOMRIGHT", 0, 0)
+            currentRoll.frame:SetPoint("TOPRIGHT", children[7].frame, "BOTTOMRIGHT", 0, 0)
             currentRoll.frame:SetHeight(145)
         end
 
-        if children[5] then
-            local rollHistory = children[5]
-            rollHistory.frame:SetPoint("TOPLEFT", children[4].frame, "BOTTOMLEFT", 0, 0)
-            rollHistory.frame:SetPoint("TOPRIGHT", children[4].frame, "BOTTOMRIGHT", 0, 0)
+        if children[6] then
+            local rollHistory = children[6]
+            rollHistory.frame:SetPoint("TOPLEFT", children[5].frame, "BOTTOMLEFT", 0, 0)
+            rollHistory.frame:SetPoint("TOPRIGHT", children[5].frame, "BOTTOMRIGHT", 0, 0)
             rollHistory.frame:SetPoint("BOTTOMLEFT", content, "BOTTOMLEFT", 280, 3)
             rollHistory.frame:SetPoint("BOTTOMRIGHT", content, "BOTTOMRIGHT", 0, 3)
         end

@@ -487,6 +487,12 @@ local function createMainWindow()
     window:AddChild(createLabel("Status: " .. Rollouts.getHeaderStatus()))
     window:AddChild(createLabel("Time Left: " .. Rollouts.getTimeLeft()))
 
+    local settingsIcon = createIcon(136243, nil, 35)
+    settingsIcon:SetCallback("OnClick", function()
+        LibStub("AceConfigDialog-3.0"):Open("Rollouts")
+    end)
+    window:AddChild(settingsIcon)
+
     -- current roll info
     if Rollouts.env.showing == "live" or Rollouts.env.showing == "virtual" then
         window:AddChild(createRollInfoFrame())
