@@ -307,7 +307,7 @@ local function createRollHistoryFrame()
             local owner = createLabel(row.owner, 15, 100, 15)
             group:AddChild(owner)
 
-            local winner = createLabel(table.concat(Rollouts.getWinners(row, true), ", "), 15, 100, 15)
+            local winner = createLabel(table.concat(Rollouts.getWinners(row, true), ", "), 15)
             group:AddChild(winner)
             
             local timestamp = createLabel(statusColour(Rollouts.utils.formatStamp(row.time), row.status), 15)

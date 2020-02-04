@@ -294,22 +294,23 @@ AceGUI:RegisterLayout("HistoryRollRow",
             item.frame:SetSize(32, 32)
         end
 
-        if children[2] then
+        if children[2] and children[1] then
             local owner = children[2]
-            owner.frame:SetPoint("LEFT", content, "LEFT", 50, 0)
+            owner.frame:SetPoint("LEFT", children[1].frame, "RIGHT", 5, 0)
+            owner.frame:SetSize(200, 32)
             owner.label:SetSize(200, 32)
         end
 
-        if children[3] then
+        if children[3] and children[2] and children[4] then
             local winner = children[3]
-            winner.frame:SetPoint("LEFT", content, "LEFT", 250, 0)
-            winner.label:SetSize(200, 32)
+            winner.frame:SetPoint("LEFT", children[2].frame, "RIGHT", 5, 0)
+            winner.frame:SetPoint("RIGHT", children[4].frame, "LEFT", 5, 0)
         end
 
-        if children[4] then
+        if children[4] and children[5] then
             local timestamp = children[4]
-            timestamp.frame:SetPoint("LEFT", content, "LEFT", 455, 0)
-            timestamp.label:SetSize(255, 32)
+            timestamp.frame:SetPoint("RIGHT", children[5].frame, "LEFT", 5, 0)
+            timestamp.frame:SetSize(200, 32)
         end
 
         if children[5] then

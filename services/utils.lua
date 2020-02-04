@@ -108,7 +108,7 @@ Rollouts.utils.makeRollObject = function(name, roll, guildName, rankName, class,
     return {
         name = name,
         guild = guildIndex,
-        guildName = guildRanks[guildIndex].name,
+        guildName = guildRanks[guildIndex] and guildRanks[guildIndex].name or "*",
         rank = rankIndex,
         rankName = guildIndex ~= 1 and rankName or "*",
         class = class,

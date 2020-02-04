@@ -146,6 +146,7 @@ local function Constructor()
     frame:Hide()
 
     local label = frame:CreateFontString(nil, "BACKGROUND", "GameFontHighlightSmall")
+    label:SetPoint("TOPLEFT", frame, "BOTTOMRIGHT")
     local image = frame:CreateTexture(nil, "BACKGROUND")
 
     -- create widget

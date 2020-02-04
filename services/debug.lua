@@ -1,7 +1,7 @@
 local LibStub = _G.LibStub
 local Rollouts = LibStub("AceAddon-3.0"):GetAddon("Rollouts")
 Rollouts.debug = {}
-_G.Rollouts = Rollouts.debug
+_G.RolloutsDebug = Rollouts.debug
 
 local randomData = {
     ["names"] = {
