@@ -226,14 +226,12 @@ local function createRollsContainer()
 
         group:AddChild(createLabel(Rollouts.utils.colour(rollEntry.roll, rollEntry.failMessage and "red" or nil), 15))
         group:AddChild(createLabel(rollEntry.name, 15))
-        -- group:AddChild(createLabel(rollEntry.rankName, 15))
-        -- group:AddChild(createLabel(Rollouts.utils.colour(rollEntry.failMessage, "red"), 15))
 
         group.frame:SetScript("OnEnter", function()
             GameTooltip:SetOwner(group.frame, "ANCHOR_NONE")
             GameTooltip:SetPoint("TOPRIGHT", group.frame, "TOPLEFT")
             GameTooltip:SetText(rollEntry.name)
-            GameTooltip:AddLine(formatGuildRankName(rollEntry.guildName, rollEntry.rankName))
+            if rollEntry.guildName then GameTooltip:AddLine(formatGuildRankName(rollEntry.guildName, rollEntry.rankName)) end
             GameTooltip:AddLine(string.format("Rolled: %s", rollEntry.roll))
             if rollEntry.failMessage then
                 GameTooltip:AddLine("Fail Reason: " .. Rollouts.utils.colour(rollEntry.failMessage, "red"))
