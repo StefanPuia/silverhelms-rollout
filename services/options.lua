@@ -187,7 +187,7 @@ local settingsTable = {
                     type = "toggle",
                     set = function(info, val)
                         setDBOption(val, "showMinimapIcon")
-                        Rollouts.frames.displayMinimapButton()
+                        Rollouts.ui.displayMinimapButton()
                     end,
                     get = function(info) return getEitherDBOption("showMinimapIcon") end
                 }
@@ -220,6 +220,4 @@ local settingsTable = {
 
 local ACFG = LibStub("AceConfig-3.0")
 ACFG:RegisterOptionsTable("Rollouts", settingsTable)
-
-local ACD = LibStub("AceConfigDialog-3.0")
-Rollouts.interfaceOptionsRef = ACD:AddToBlizOptions("Rollouts", "Silverhelms Rollouts")
+Rollouts.interfaceOptionsRef = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("Rollouts", "Silverhelms Rollouts")

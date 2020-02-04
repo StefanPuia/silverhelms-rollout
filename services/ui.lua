@@ -1,6 +1,7 @@
 local LibStub = _G.LibStub
-local Rollouts = LibStub("AceAddon-3.0"):GetAddon("Rollouts")
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local LibDBIcon = LibStub("LibDBIcon-1.0")
+local Rollouts = LibStub("AceAddon-3.0"):GetAddon("Rollouts")
 Rollouts.ui = {}
 
 Rollouts.ui.displayMinimapButton = function()
@@ -10,8 +11,18 @@ Rollouts.ui.displayMinimapButton = function()
         Rollouts.ui.minimapLDB = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("Rollouts", {
             type = "launcher",
             icon = 1373910,
+            OnTooltipShow = function(tooltip)
+                tooltip:SetText("|cffffffffSilverhelms Rollouts|r")
+                tooltip:AddLine("Click to toggle roll window")
+                tooltip:AddLine("Shift-Click to toggle settings")
+                tooltip:Show()
+            end,
             OnClick = function(clickedframe, button)
-                Rollouts.ui.toggleMainWindow()
+                if IsShiftKeyDown() then
+                    Rollouts.ui.toggleSettings()
+                else
+                    Rollouts.ui.toggleMainWindow()
+                end
             end,
         })
         LibDBIcon:Register("RolloutsMinimapIcon", Rollouts.ui.minimapLDB)
@@ -21,6 +32,14 @@ Rollouts.ui.displayMinimapButton = function()
         LibDBIcon:Show("RolloutsMinimapIcon")
     else
         LibDBIcon:Hide("RolloutsMinimapIcon")
+    end
+end
+
+Rollouts.ui.toggleSettings = function()
+    if AceConfigDialog.OpenFrames["Rollouts"] then
+        AceConfigDialog:Close("Rollouts")
+    else
+        AceConfigDialog:Open("Rollouts")
     end
 end
 

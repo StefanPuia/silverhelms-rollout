@@ -425,7 +425,7 @@ local function createMainWindow()
 
     local settingsIcon = createIcon(136243, nil, 35)
     settingsIcon:SetCallback("OnClick", function()
-        LibStub("AceConfigDialog-3.0"):Open("Rollouts")
+        Rollouts.ui.toggleSettings()
     end)
     window:AddChild(settingsIcon)
 
