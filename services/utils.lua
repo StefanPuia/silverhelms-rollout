@@ -102,15 +102,17 @@ end
 Rollouts.utils.makeRollObject = function(name, roll, guildName, rankName, class, failMessage, spec, equipped)
     local guildRanks = Rollouts.utils.getEitherDBOption("guildRanking", "guilds")
     local guildIndex = Rollouts.utils.indexOf(guildRanks, function(g) return g.name == guildName end) or 1
+    guildIndex = guildIndex > 1 and guildIndex or 1
     local rankIndex = guildRanks[guildIndex] and Rollouts.utils.indexOf(guildRanks[guildIndex].ranks, function(r)
         return Rollouts.utils.indexOf(r, rankName) > 0
     end) or 1
+    rankIndex = rankIndex > 1 and rankIndex or 1
     return {
         name = name,
         guild = guildIndex,
-        guildName = guildRanks[guildIndex] and guildRanks[guildIndex].name or "*",
+        guildName = guildRanks[guildIndex].name,
         rank = rankIndex,
-        rankName = guildIndex ~= 1 and rankName or "*",
+        rankName = (guildIndex > 1 and rankIndex > 1) and rankName or "*",
         class = class,
         spec = spec,
         roll = roll,

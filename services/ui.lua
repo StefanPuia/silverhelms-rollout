@@ -1,6 +1,28 @@
 local LibStub = _G.LibStub
 local Rollouts = LibStub("AceAddon-3.0"):GetAddon("Rollouts")
+local LibDBIcon = LibStub("LibDBIcon-1.0")
 Rollouts.ui = {}
+
+Rollouts.ui.displayMinimapButton = function()
+    local pref = Rollouts.utils.getEitherDBOption("showMinimapIcon")
+
+    if not Rollouts.ui.minimapLDB then
+        Rollouts.ui.minimapLDB = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("Rollouts", {
+            type = "launcher",
+            icon = 1373910,
+            OnClick = function(clickedframe, button)
+                Rollouts.ui.toggleMainWindow()
+            end,
+        })
+        LibDBIcon:Register("RolloutsMinimapIcon", Rollouts.ui.minimapLDB)
+    end
+
+    if pref then
+        LibDBIcon:Show("RolloutsMinimapIcon")
+    else
+        LibDBIcon:Hide("RolloutsMinimapIcon")
+    end
+end
 
 local function updateWindow()
     Rollouts.frames.mainWindow.update()

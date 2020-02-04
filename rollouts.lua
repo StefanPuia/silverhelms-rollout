@@ -14,7 +14,7 @@ function Rollouts:OnInitialize()
         showing = "none"
     }
     self.uiTick = self:ScheduleRepeatingTimer(Rollouts.ui.uiTick, 0.1)
-    Rollouts.frames.displayMinimapButton()
+    Rollouts.ui.displayMinimapButton()
 end
 
 Rollouts.getDisplayRoll = function()

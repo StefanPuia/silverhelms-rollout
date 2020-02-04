@@ -161,7 +161,7 @@ end
 Rollouts.appendRoll = function(name, roll, guild, rank, classId, spec, equipped)
     if currentRoll ~= nil
             and not Rollouts.getRoll(name)
-            and Rollouts.utils.unitInGroup(name)
+            and (Rollouts.utils.unitInGroup(name) and Rollouts.utils.unitInGroup("player") or not Rollouts.utils.unitInGroup("player"))
         then
 
         local failMessage = nil
