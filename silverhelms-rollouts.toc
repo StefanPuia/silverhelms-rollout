@@ -31,6 +31,7 @@ services\options.lua
 services\rollout.lua
 services\ui.lua
 services\frames.lua
+services\debug.lua
 
 controllers\slash.lua
 controllers\chat.lua

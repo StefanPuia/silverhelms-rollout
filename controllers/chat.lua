@@ -52,11 +52,11 @@ Rollouts.chat.sendWarning = function(message)
 end
 
 Rollouts.chat.sendMessage = function(message)
-    local chatType = "SAY"
     if UnitInRaid("player") then
-        chatType = "RAID"
+        SendChatMessage(message, "RAID")
     elseif UnitInParty("player") then
-        chatType = "PARTY"
+        SendChatMessage(message, "PARTY")
+    else
+        Rollouts:Print(message)
     end
-    SendChatMessage(message, chatType)
 end

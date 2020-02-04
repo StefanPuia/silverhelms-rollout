@@ -241,9 +241,13 @@ local function createRollInfoFrame()
     if Rollouts.env.showing == "virtual" then
         container:AddChild(createLabel(statusColour(displayRoll.status, displayRoll.status)))
         local winnerText = ""
-        if #displayRoll.rolls and displayRoll.rolls[1] then
-            winnerText = "Winner: " .. (displayRoll.rolls[1].name or "")
-            winnerText = winnerText .. " (" .. displayRoll.rolls[1].roll .. ")"
+        local winners = Rollouts.getWinners(displayRoll)
+        if #winners >= 1 then
+            winnerText = "Winner:"
+            for i, win in ipairs(winners) do
+                winnerText = winnerText .. " " .. win.name
+            end
+            winnerText = winnerText .. " (" .. winners[1].roll .. ")"
         end
         container:AddChild(createLabel(winnerText, 20, 500))
     end
@@ -253,7 +257,7 @@ end
 local function createPendingRollsFrame()
     local scrollContainer, scroll = createScrollContainer()
     local pending = Rollouts.utils.getEitherDBOption("data", "rolls", "pending")
-    if pending and #pending then
+    if pending and #pending > 0 then
         for i, row in ipairs(pending) do
             local group = createSimpleGroup("PendingRollRow", 1000, 40)
 
@@ -293,7 +297,7 @@ end
 local function createRollHistoryFrame()
     local scrollContainer, scroll = createScrollContainer()
     local history = Rollouts.utils.getEitherDBOption("data", "rolls", "history")
-    if history and #history then
+    if history and #history > 0 then
         for i, row in ipairs(history) do
             local group = createSimpleGroup("HistoryRollRow", 1000, 40)
 
@@ -303,7 +307,7 @@ local function createRollHistoryFrame()
             local owner = createLabel(row.owner, 15, 100, 15)
             group:AddChild(owner)
 
-            local winner = createLabel(#row.rolls and row.rolls[1] and row.rolls[1].name or "", 15, 100, 15)
+            local winner = createLabel(table.concat(Rollouts.getWinners(row, true), ", "), 15, 100, 15)
             group:AddChild(winner)
             
             local timestamp = createLabel(statusColour(Rollouts.utils.formatStamp(row.time), row.status), 15)
@@ -371,7 +375,7 @@ local function createFinishEarlyButton()
     local disabled = not Rollouts.env.live
     local buttonText = Rollouts.utils.colour("Finish Now", disabled and "gray" or nil)
     return createButton(buttonText, function()
-        Rollouts.getWinningRolls()
+        Rollouts.handleWinningRolls()
         Rollouts.finishRoll()
     end, nil, disabled)
 end

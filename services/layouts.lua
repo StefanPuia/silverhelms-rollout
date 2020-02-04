@@ -83,7 +83,7 @@ AceGUI:RegisterLayout("MainWindowLive",
         if children[5] and children[1] and children[8] then
             local currentRoll = children[5]
             currentRoll.frame:SetPoint("TOPLEFT", children[1].frame, "TOPRIGHT", 0, 0)
-            currentRoll.frame:SetPoint("TOPRIGHT", children[8].frame, "BOTTOMRIGHT", 0, 0)
+            currentRoll.frame:SetPoint("TOPRIGHT", children[4].frame, "BOTTOMRIGHT", 0, 0)
             currentRoll.frame:SetHeight(100)
         end
 
@@ -110,7 +110,7 @@ AceGUI:RegisterLayout("MainWindowVirtual",
         if children[5] and children[3] and children[7] then
             local currentRoll = children[5]
             currentRoll.frame:SetPoint("TOPLEFT", children[3].frame, "BOTTOMLEFT", 1, 0)
-            currentRoll.frame:SetPoint("TOPRIGHT", children[7].frame, "BOTTOMRIGHT", 0, 0)
+            currentRoll.frame:SetPoint("TOPRIGHT", children[4].frame, "BOTTOMRIGHT", 0, 0)
             currentRoll.frame:SetHeight(145)
         end
 

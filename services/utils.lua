@@ -108,9 +108,9 @@ Rollouts.utils.makeRollObject = function(name, roll, guildName, rankName, class,
     return {
         name = name,
         guild = guildIndex,
-        guildName = guildName,
+        guildName = guildRanks[guildIndex].name,
         rank = rankIndex,
-        rankName = rankName,
+        rankName = guildIndex ~= 1 and rankName or "*",
         class = class,
         spec = spec,
         roll = roll,
@@ -185,4 +185,10 @@ end
 Rollouts.utils.unitInGroup = function(unitName)
     unitName = Rollouts.utils.simplifyName(unitName)
     return UnitInParty(unitName) or UnitInRaid(unitName)
+end
+
+Rollouts.utils.tableSize = function(T)
+  local count = 0
+  for _ in pairs(T) do count = count + 1 end
+  return count
 end

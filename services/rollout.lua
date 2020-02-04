@@ -90,7 +90,9 @@ Rollouts.beginRoll = function(rollEntry)
 end
 
 Rollouts.restartRoll = function(rollEntry)
-    Rollouts.beginRoll(rollEntry)
+    local newInstance = Rollouts.utils.sanitizeRollEntryObject(rollEntry)
+    newInstance.time = GetServerTime()
+    Rollouts.beginRoll(newInstance)
 end
 
 local function sortRolls()
@@ -111,20 +113,30 @@ local function hasSubsequentRolls()
     return Rollouts.utils.getEitherDBOption("restartIfNoRolls") and currentRoll.rollType > Rollouts.utils.getEitherDBOption("lowestRestart")
 end
 
-Rollouts.getWinningRolls = function()
+Rollouts.getWinners = function(rollObj, justNames)
+    if rollObj.status == "CANCELLED" then return {} end
+    justNames = justNames or false
     local winning = {}
-    if #currentRoll.rolls then
-        table.insert(winning, currentRoll.rolls[1])
-    end
-
-    for i = 2, #currentRoll.rolls do
-        if currentRoll.rolls[i].roll == winning[1].roll
-                and currentRoll.rolls[i].guild == winning[1].guild
-                and currentRoll.rolls[i].rank == winning[1].rank then
-            table.insert(currentRoll.rolls[i])
+    if #rollObj.rolls >= 1 then
+        if rollObj.rolls[1].failMessage == nil then
+            table.insert(winning, justNames and rollObj.rolls[1].name or rollObj.rolls[1])
         end
     end
+    if winning[1] then
+        for i = 2, #rollObj.rolls do
+            if rollObj.rolls[i].roll == winning[1].roll
+                    and rollObj.rolls[i].guild == winning[1].guild
+                    and rollObj.rolls[i].rank == winning[1].rank
+                    and rollObj.rolls[i].failMessage == nil then
+                table.insert(winning, justNames and rollObj.rolls[i].name or rollObj.rolls[i])
+            end
+        end
+    end
+    return winning
+end
 
+Rollouts.handleWinningRolls = function()
+    local winning = Rollouts.getWinners(currentRoll)
     if #winning > 1 then
         local wins = {}
         for k,v in ipairs(winning) do table.insert(wins, v.name) end
@@ -164,7 +176,7 @@ Rollouts.appendRoll = function(name, roll, guild, rank, classId, spec, equipped)
             failMessage = Rollouts.data.failMessages["ROLL_OWNER"]
         end
 
-        table.insert(currentRoll.rolls, 1, Rollouts.utils.makeRollObject(name, roll, guild, rank, class, failMessage, spec, equipped))
+        table.insert(currentRoll.rolls, 1, Rollouts.utils.makeRollObject(name, roll, guild, rank, classId, failMessage, spec, equipped))
         sortRolls()
         Rollouts.ui.updateWindow()
     end
@@ -217,7 +229,7 @@ Rollouts.rollTick = function()
             timeLeft = timeLeft - tickSize
             if timeLeft <= 0 then
                 timeLeft = 0
-                if Rollouts.getWinningRolls() then return Rollouts.finishRoll() end
+                if Rollouts.handleWinningRolls() then return Rollouts.finishRoll() end
                 if hasSubsequentRolls() then
                     timeLeft = Rollouts.utils.getEitherDBOption("rollTimeLimit")
                     currentRoll.status = "CONTINUED"
