@@ -56,8 +56,6 @@ function Rollouts:RolloutController(input)
             LibStub("AceConfigDialog-3.0"):Open("Rollouts")
         elseif command == "HELP" then
             printHelp()
-        elseif command == "DEBUG" then
-            Rollouts.debug.appendRandomRolls(messageParts[2])
         elseif command == "ADD" then
             local rollObject = handleFullCommand(input, messageParts, 1)
             if rollObject then

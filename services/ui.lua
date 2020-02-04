@@ -78,17 +78,21 @@ local queue = {
 }
 
 Rollouts.ui.isEnqueued = function(rollObject)
-    for i,roll in ipairs(queue.rolls) do
-        if roll.original == rollObject then
-            return true
+    if rollObject then
+        for i,roll in ipairs(queue.rolls) do
+            if roll.original == rollObject then
+                return true
+            end
         end
+        return false
+    else
+        return queue.enabled
     end
-    return false
 end
 
 Rollouts.ui.getQueueButtonText = function()
     local text = queue.enabled and ("Queuing Jobs (" .. #queue.rolls .. "/" .. queue.originalSize .. ")") or "Queue Pending Jobs"
-    return Rollouts.utils.colour(text, queue.enabled and "gray" or nil)
+    return Rollouts.utils.colour(text, queue.enabled == true and "gray" or nil)
 end
 
 Rollouts.ui.prepareQueue = function()
@@ -115,6 +119,12 @@ local function clearQueue()
     updateWindow()
 end
 
+local function enqueueCallback()
+    table.remove(queue.rolls, 1)
+    Rollouts.ui.showPendingTab()
+    Rollouts.ui.enqueue()
+end
+
 Rollouts.ui.enqueue = function()
     if queue.enabled then
         local pending = Rollouts.utils.getEitherDBOption("data", "rolls", "pending")
@@ -133,16 +143,15 @@ Rollouts.ui.enqueue = function()
                     end
                 end
                 Rollouts.beginRoll(currentQueueItem.parameter)
-                Rollouts.setFinishCallback(function()
-                    table.remove(queue.rolls, 1)
-                    Rollouts.ui.showPendingTab()
-                    Rollouts.ui.enqueue()
-                end)
-                Rollouts.setCancelCallback(function()
-                    clearQueue()
-                    Rollouts.ui.showPendingTab()
-                end)
+                Rollouts.setFinishCallback(function() enqueueCallback() end)
+                Rollouts.setCancelCallback(function() enqueueCallback() end)
+            else
+                clearQueue()
             end
+        else
+            clearQueue()
         end
+    else
+        clearQueue()
     end
 end

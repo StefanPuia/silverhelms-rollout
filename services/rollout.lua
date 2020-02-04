@@ -25,11 +25,6 @@ Rollouts.isRolling = function()
     return currentRoll ~= nil
 end
 
-local function resetCallbacks()
-    callbacks.finish = nil
-    callbacks.cancel = nil
-end
-
 Rollouts.cancelRoll = function()
     if currentRoll ~= nil then
         timeLeft = 0
@@ -39,8 +34,9 @@ Rollouts.cancelRoll = function()
         currentRoll = nil
         Rollouts.env.live = nil
         Rollouts.ui.showHistoryTab()
-        if callbacks.cancel then callbacks.cancel() end
-        resetCallbacks()
+        if callbacks.cancel then
+            callbacks.cancel()
+        end
     end
 end
 
@@ -57,8 +53,9 @@ Rollouts.finishRoll = function(whisperBack)
         currentRoll = nil
         Rollouts.env.live = nil
         Rollouts.ui.showHistoryTab()
-        if callbacks.finish then callbacks.finish() end
-        resetCallbacks()
+        if callbacks.finish then
+            callbacks.finish()
+        end
     end
 end
 
@@ -70,8 +67,13 @@ Rollouts.setCancelCallback = function(callbackCancel)
     callbacks.cancel = callbackCancel
 end
 
-Rollouts.beginRoll = function(rollEntry)
+Rollouts.beginRoll = function(rollEntry, isRestart)
     if currentRoll == nil then
+        if not isRestart then
+            callbacks.finish = nil
+            callbacks.cancel = nil
+        end
+
         currentRoll = Rollouts.utils.sanitizeRollEntryObject(rollEntry)
         Rollouts.env.live = currentRoll
         Rollouts.env.showing = "live"
@@ -236,7 +238,7 @@ Rollouts.rollTick = function()
                     Rollouts.appendToHistory(currentRoll)
                     local auxRollObject = Rollouts.utils.makeRollEntryObject(currentRoll.itemLink, currentRoll.owner, currentRoll.rollType - 1)
                     currentRoll = nil
-                    Rollouts.beginRoll(auxRollObject)
+                    Rollouts.beginRoll(auxRollObject, true)
                 else
                     Rollouts.finishRoll(true)
                 end

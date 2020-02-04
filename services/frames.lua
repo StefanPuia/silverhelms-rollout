@@ -362,7 +362,7 @@ local function createHistoryViewFrame()
         if #rollDB.pending > 1 then
             container:AddChild(createButton(Rollouts.ui.getQueueButtonText(), function()
                 Rollouts.ui.prepareQueue()
-            end))
+            end, nil, Rollouts.ui.isEnqueued()))
         end
     elseif Rollouts.env.historyTab == "history" then
         container:AddChild(createRollHistoryFrame())
