@@ -194,3 +194,9 @@ Rollouts.utils.tableSize = function(T)
   for _ in pairs(T) do count = count + 1 end
   return count
 end
+
+Rollouts.utils.printDebug = function(text)
+    if Rollouts.utils.getEitherDBOption("debugMode") then
+        Rollouts:Print(text)
+    end
+end
