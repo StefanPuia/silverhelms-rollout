@@ -44,6 +44,7 @@ Rollouts.defaultOptions = {
             max = 100
         },
         showMinimapIcon = true,
+        debugMode = false,
 
 
         -- internal
@@ -190,6 +191,18 @@ local settingsTable = {
                         Rollouts.ui.displayMinimapButton()
                     end,
                     get = function(info) return getEitherDBOption("showMinimapIcon") end
+                },
+                break2 = {
+                    order = 6,
+                    type = "description",
+                    name = ""
+                },
+                debugMode = {
+                    order = 7,
+                    name = "Enable Debug mode",
+                    type = "toggle",
+                    set = function(info, val) setDBOption(val, "debugMode") end,
+                    get = function(info) return getEitherDBOption("debugMode") end
                 }
             }
         },

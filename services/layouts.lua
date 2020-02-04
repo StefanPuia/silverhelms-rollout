@@ -199,7 +199,7 @@ AceGUI:RegisterLayout("RollListRowLayout",
             player.frame:SetPoint("RIGHT", content, "RIGHT", -40, 0)
         end
 
-        if roll then
+        if roll and player then
             roll.frame:SetPoint("LEFT", player.frame, "RIGHT", 0, 0)
             roll.frame:SetPoint("RIGHT", content, "RIGHT", 0, 0)
         end

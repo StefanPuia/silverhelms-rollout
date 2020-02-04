@@ -56,7 +56,6 @@ Rollouts.chat.sendMessage = function(message)
         SendChatMessage(message, "RAID")
     elseif UnitInParty("player") then
         SendChatMessage(message, "PARTY")
-    else
-        Rollouts:Print(message)
     end
+    if Rollouts.utils.getEitherDBOption("debugMode") then Rollouts:Print(message) end
 end
