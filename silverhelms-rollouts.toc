@@ -4,6 +4,7 @@
 ## Notes: A loot distributing helper addon for <The Silverhelms> guild.
 ## Version: 1.0.0a
 ## SavedVariables: RolloutsDB
+## Dependencies: AddOnSkins
 
 #@no-lib-strip@
 Libs\LibStub\LibStub.lua
