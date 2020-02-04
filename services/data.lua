@@ -138,6 +138,8 @@ Rollouts.data.colours = {
     violet = "FF00FF",
     cyan = "00FFFF",
     gray = "484848",
+    white = "FFFFFF",
+    black = "000000",
 
     dk = "C41F3B",
     dh = "A330C9",

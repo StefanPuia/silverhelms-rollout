@@ -191,35 +191,17 @@ AceGUI:RegisterLayout("RollInfoVirtual",
 
 AceGUI:RegisterLayout("RollListRowLayout",
     function(content, children)
-        local width = 280
+        local roll = children[1]
+        local player = children[2]
 
-        if children[1] then
-            local roll = children[1]
-            roll.frame:SetPoint("TOPRIGHT", content, "TOPRIGHT", 0, -5)
-            roll.frame:SetSize(35, 30)
-            roll.label:SetSize(35, 30)
+        if player then
+            player.frame:SetPoint("LEFT", content, "LEFT", 0, 0)
+            player.frame:SetPoint("RIGHT", content, "RIGHT", -40, 0)
         end
 
-        if children[2] and children[1] then
-            local player = children[2]
-            player.frame:SetPoint("TOPLEFT", content, "TOPLEFT", 5, -5)
-            player.frame:SetPoint("TOPRIGHT", children[1].frame, "TOPLEFT", 5, 0)
-            player.frame:SetSize(180, 30)
-            player.label:SetSize(180, 30)
-        end
-
-        if children[3] and children[2] then
-            local guildRank = children[3]
-            guildRank.frame:SetPoint("TOPLEFT", children[2].frame, "BOTTOMLEFT", 0, -7)
-            guildRank.frame:SetPoint("TOPRIGHT", children[2].frame, "BOTTOMRIGHT", 0, -7)
-            guildRank.label:SetHeight(30)
-        end
-
-        if children[4] and children[1] then
-            local failMessage = children[4]
-            failMessage.frame:SetPoint("TOPRIGHT", children[1].frame, "BOTTOMRIGHT", 0, -7)
-            failMessage.frame:SetSize(100, 30)
-            failMessage.label:SetSize(100, 30)
+        if roll then
+            roll.frame:SetPoint("LEFT", player.frame, "RIGHT", 0, 0)
+            roll.frame:SetPoint("RIGHT", content, "RIGHT", 0, 0)
         end
     end
 )

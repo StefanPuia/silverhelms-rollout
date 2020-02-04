@@ -207,17 +207,39 @@ local function createItemIcon(itemLink, showLabel, width, anchor, height, fontSi
     return itemIcon
 end
 
+local function formatGuildRankName(guild, rank)
+    return string.format("%s%s%s%s%s",
+        Rollouts.utils.colour("<", "white"),
+        Rollouts.utils.colour(guild, "green"),
+        Rollouts.utils.colour("> [", "white"),
+        Rollouts.utils.colour(rank, "green"),
+        Rollouts.utils.colour("]", "white")
+    )
+end
+
 local function createRollsContainer()
     local scrollContainer, scroll = createScrollContainer()
     local displayRoll = Rollouts.getDisplayRoll()
     local rolls = displayRoll and displayRoll.rolls or {}
     for i, rollEntry in ipairs(rolls) do
-        local group = createSimpleGroup("RollListRowLayout", nil, 50)
+        local group = createSimpleGroup("RollListRowLayout", nil, 24)
 
-        group:AddChild(createLabel(rollEntry.roll, 15))
+        group:AddChild(createLabel(Rollouts.utils.colour(rollEntry.roll, rollEntry.failMessage and "red" or nil), 15))
         group:AddChild(createLabel(rollEntry.name, 15))
-        group:AddChild(createLabel(rollEntry.rankName, 15))
-        group:AddChild(createLabel(Rollouts.utils.colour(rollEntry.failMessage, "red"), 15))
+        -- group:AddChild(createLabel(rollEntry.rankName, 15))
+        -- group:AddChild(createLabel(Rollouts.utils.colour(rollEntry.failMessage, "red"), 15))
+
+        group.frame:SetScript("OnEnter", function()
+            GameTooltip:SetOwner(group.frame, "ANCHOR_NONE")
+            GameTooltip:SetPoint("TOPRIGHT", group.frame, "TOPLEFT")
+            GameTooltip:SetText(rollEntry.name)
+            GameTooltip:AddLine(formatGuildRankName(rollEntry.guildName, rollEntry.rankName))
+            GameTooltip:AddLine(string.format("Rolled: %s", rollEntry.roll))
+            if rollEntry.failMessage then
+                GameTooltip:AddLine("Fail Reason: " .. Rollouts.utils.colour(rollEntry.failMessage, "red"))
+            end
+            GameTooltip:Show()
+        end)
 
         scroll:AddChild(group)
     end
