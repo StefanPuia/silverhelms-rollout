@@ -396,6 +396,8 @@ end
 
 local function createMainWindow()
     local window = AceGUI:Create("Window")
+    _G.RolloutsMainWindow = window
+    table.insert(UISpecialFrames, "RolloutsMainWindow")
     Frames.mainWindow = window
     window.frame:SetMinResize(1200, 500)
     window.frame:SetMaxResize(1300, 1000)
