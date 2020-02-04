@@ -5,18 +5,18 @@ _G.RolloutsDebug = Rollouts.debug
 
 local randomData = {
     ["names"] = {
-        Rollouts.utils.colour("TestWarrior", "warrior"),
-        Rollouts.utils.colour("TestPaladin", "paladin"),
-        Rollouts.utils.colour("TestHunter", "hunter"),
-        Rollouts.utils.colour("TestRogue", "rogue"),
-        Rollouts.utils.colour("TestPriest", "priest"),
-        Rollouts.utils.colour("TestDK", "dk"),
-        Rollouts.utils.colour("TestShaman", "shaman"),
-        Rollouts.utils.colour("TestMage", "mage"),
-        Rollouts.utils.colour("TestWarlock", "warlock"),
-        Rollouts.utils.colour("TestMonk", "monk"),
-        Rollouts.utils.colour("TestDruid", "druid"),
-        Rollouts.utils.colour("TestDH", "dh"),
+        "TestWarrior",
+        "TestPaladin",
+        "TestHunter",
+        "TestRogue",
+        "TestPriest",
+        "TestDK",
+        "TestShaman",
+        "TestMage",
+        "TestWarlock",
+        "TestMonk",
+        "TestDruid",
+        "TestDH",
     }
 }
 
@@ -27,7 +27,7 @@ local function createRandomRoll()
     local rankId = math.random(Rollouts.utils.tableSize(guildData[guildId].ranks))
     local rankNameId = math.random(#guildData[guildId].ranks[rankId])
     local roll = math.random(100)
-    local name = randomData.names[classId] .. roll
+    local name = Rollouts.utils.colour(randomData.names[classId] .. roll, Rollouts.data.classColours[classId])
     return {name, roll, guildData[guildId].name, guildData[guildId].ranks[rankId][rankNameId], classId}
 end
 
@@ -50,14 +50,14 @@ Rollouts.debug.testCase = function()
     -- Pug, 99
     -- Puglet, 68
 
-    Rollouts.appendRoll("Albionna", "52", "The Silverhelms", "Silver Officer", 5)
-    Rollouts.appendRoll("Corpse", "12", "The Silverhelms", "Silvercorpse", 12)
-    Rollouts.appendRoll("Enma", "87", "The Silverhelms", "Officer Alt", 9)
-    Rollouts.appendRoll("Eyota", "13", "The Silverhelms", "SilverVeteran", 1)
-    Rollouts.appendRoll("Mixpizza", "65", "The Silverhelms", "Silverhelm", 7)
-    Rollouts.appendRoll("Pug", "99", "Random Guild", "Top Boi", 8)
-    Rollouts.appendRoll("Puglet", "68", "Other Guild", "Recruit", 3)
-    Rollouts.appendRoll("Raindrool", "58", "The Silverhelms", "Silver Alt", 7)
-    Rollouts.appendRoll("Stabby", "37", "The Silverhelms", "Silverhelm", 4)
-    Rollouts.appendRoll("Tanno", "74", "The Silverhelms", "Guild Dad", 10)
+    Rollouts.appendRoll(Rollouts.utils.colour("Albionna", Rollouts.data.classColours[5]), "52", "The Silverhelms", "Silver Officer", 5)
+    Rollouts.appendRoll(Rollouts.utils.colour("Corpse", Rollouts.data.classColours[12]), "12", "The Silverhelms", "Silvercorpse", 12)
+    Rollouts.appendRoll(Rollouts.utils.colour("Enma", Rollouts.data.classColours[9]), "87", "The Silverhelms", "Officer Alt", 9)
+    Rollouts.appendRoll(Rollouts.utils.colour("Eyota", Rollouts.data.classColours[1]), "13", "The Silverhelms", "SilverVeteran", 1)
+    Rollouts.appendRoll(Rollouts.utils.colour("Mixpizza", Rollouts.data.classColours[7]), "65", "The Silverhelms", "Silverhelm", 7)
+    Rollouts.appendRoll(Rollouts.utils.colour("Pug", Rollouts.data.classColours[8]), "99", "Random Guild", "Top Boi", 8)
+    Rollouts.appendRoll(Rollouts.utils.colour("Puglet", Rollouts.data.classColours[3]), "68", "Other Guild", "Recruit", 3)
+    Rollouts.appendRoll(Rollouts.utils.colour("Raindrool", Rollouts.data.classColours[7]), "58", "The Silverhelms", "Silver Alt", 7)
+    Rollouts.appendRoll(Rollouts.utils.colour("Stabby", Rollouts.data.classColours[4]), "37", "The Silverhelms", "Silverhelm", 4)
+    Rollouts.appendRoll(Rollouts.utils.colour("Tanno", Rollouts.data.classColours[10]), "74", "The Silverhelms", "Guild Dad", 10)
 end
