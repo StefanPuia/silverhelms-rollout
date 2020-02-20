@@ -153,7 +153,8 @@ local function createItemIcon(itemLink, showLabel, width, anchor, height, fontSi
     local itemIcon = createIcon(item[10], label, width, anchor, height, fontSize)
     if not item[10] then return itemIcon end
     itemIcon:SetCallback("OnEnter", function(widget)
-        GameTooltip:SetOwner(widget.frame, "ANCHOR_BOTTOMRIGHT")
+        GameTooltip:SetOwner(widget.frame, "ANCHOR_NONE")
+        GameTooltip:SetPoint("TOPLEFT", widget.frame, "TOPLEFT", width, -1 * width)
         GameTooltip:SetHyperlink(item[2])
         GameTooltip:Show()
     end)
@@ -219,7 +220,7 @@ local function createRollsContainer()
     end
     local container = createInlineGroup("Stretch")
     container:AddChild(scrollContainer)
-    return container
+    return container, scrollContainer
 end
 
 local function createRollInfoFrame()
@@ -376,14 +377,14 @@ local function createFinishEarlyButton()
     end, nil, disabled)
 end
 
-local function createCancelRollButton()
+local function createPauseUnpauseButton()
     local disabled = not Rollouts.env.live
     local display = Rollouts.isPaused() and "Resume" or "Pause"
     local buttonText = Rollouts.utils.colour(display, disabled and "gray" or nil)
     return createButton(buttonText, Rollouts.pauseUnpause, nil, disabled)
 end
 
-local function createPauseUnpauseButton()
+local function createCancelRollButton()
     local disabled = not Rollouts.env.live
     local buttonText = Rollouts.utils.colour("Cancel", disabled and "gray" or nil)
     return createButton(buttonText, Rollouts.cancelRoll, nil, disabled)
@@ -453,36 +454,28 @@ end
 --- MAIN WINDOW ---
 -------------------
 
-local function createMainWindow()
-    local window = AceGUI:Create("Rollouts-Window")
-    _G.RolloutsMainWindow = window
-    table.insert(UISpecialFrames, "RolloutsMainWindow")
-    Frames.mainWindow = window
-    window.frame:SetMinResize(900, 420)
-    window.frame:SetMaxResize(1300, 1000)
-    window:SetTitle("Rollouts")
-    window:EnableResize(not Rollouts.isRolling())
-    window:SetCallback("OnClose", function() Rollouts.frames.mainWindow.hide() end)
-
-    -- window:SetCallback("OnEnter", Rollouts.ui.pauseTick)
-    -- window:SetCallback("OnLeave", Rollouts.ui.resumeTick)
-    local windowData = Rollouts.env.mainWindowData
-    if windowData.size then window.frame:SetSize(unpack(windowData.size)) else window.frame:SetSize(1200, 500) end
-    if windowData.point then
-        local region1, parent, region2, x, y = unpack(windowData.point)
-        window.frame:SetPoint(region1, window.frame:GetParent(), region2, x, y)
-    end
-
+local function getMainWindowToDoLayout()
     local mainWindowLayout = "MainWindowNone"
     if Rollouts.env.showing == "live" then mainWindowLayout = "MainWindowLive" end
     if Rollouts.env.showing == "virtual" then mainWindowLayout = "MainWindowVirtual" end
-    window:SetLayout(mainWindowLayout)
+    return mainWindowLayout
+end
+
+local function updateWindowContents()
+    local window = Frames.mainWindow
+    if not window then return end
+
+    window:ReleaseChildren()
+    window.currentLayout = getMainWindowToDoLayout()
+    window:SetLayout(window.currentLayout)
 
     -- roll list
-    window:AddChild(createRollsContainer())
+    window.rollsContainer = createRollsContainer()
+    window:AddChild(window.rollsContainer)
     -- header labels
     window:AddChild(createLabel("Status: " .. Rollouts.getHeaderStatus()))
-    window:AddChild(createLabel("Time Left: " .. Rollouts.getTimeLeft()))
+    window.timeLeftLabel = createLabel("Time Left: " .. Rollouts.getTimeLeft())
+    window:AddChild(window.timeLeftLabel)
 
     local settingsIcon = createIcon(136243, nil, 35)
     settingsIcon:SetCallback("OnClick", function()
@@ -498,18 +491,37 @@ local function createMainWindow()
     -- roll history tabs
     local rollHistoryFrame = createHistoryViewFrame()
     window:AddChild(rollHistoryFrame)
+    window.currentHistoryTab = Rollouts.env.historyTab
 
     -- buttons
     if Rollouts.env.showing == "virtual" then
         window:AddChild(createCloseDetailViewButton())
     else
-        window:AddChild(createPauseUnpauseButton())
-        window:AddChild(createFinishEarlyButton())
         window:AddChild(createCancelRollButton())
+        window:AddChild(createFinishEarlyButton())
+        window.pauseButton = createPauseUnpauseButton()
+        window:AddChild(window.pauseButton)
     end
+    window:DoLayout()
+end
 
-    -- window:SetCallback("OnResize", function()
-    -- end)
+local function createMainWindow()
+    local window = AceGUI:Create("Rollouts-Window")
+    _G.RolloutsMainWindow = window
+    table.insert(UISpecialFrames, "RolloutsMainWindow")
+    Frames.mainWindow = window
+    window.frame:SetMinResize(900, 420)
+    window.frame:SetMaxResize(1300, 1000)
+    window:SetTitle("Rollouts")
+    window:EnableResize(true)
+    window:SetCallback("OnClose", function() Rollouts.frames.mainWindow.hide() end)
+    local windowData = Rollouts.env.mainWindowData
+    if windowData.size then window.frame:SetSize(unpack(windowData.size)) else window.frame:SetSize(1200, 500) end
+    if windowData.point then
+        local region1, parent, region2, x, y = unpack(windowData.point)
+        window.frame:SetPoint(region1, window.frame:GetParent(), region2, x, y)
+    end
+    updateWindowContents()
 end
 
 local function hideMainWindow()
@@ -534,9 +546,19 @@ local function showMainWindow()
 end
 
 local function updateMainWindow()
-    if Rollouts.frames.mainWindow.shown then
-        hideMainWindow()
-        showMainWindow()
+    local toDoLayout = getMainWindowToDoLayout()
+    if Frames.mainWindow and toDoLayout == Frames.mainWindow.currentLayout
+        and toDoLayout == "MainWindowLive" and Frames.mainWindow.currentHistoryTab == Rollouts.env.historyTab then
+        Frames.mainWindow.rollsContainer:ReleaseChildren()
+        local rollsContainer, scroll = createRollsContainer()
+        Frames.mainWindow.rollsContainer:AddChild(scroll)
+        Frames.mainWindow.timeLeftLabel:SetText("Time Left: " .. Rollouts.getTimeLeft())
+        Frames.mainWindow.pauseButton:SetText(Rollouts.isPaused() and "Resume" or "Pause")
+        Frames.mainWindow:DoLayout()
+    else
+        if Rollouts.frames.mainWindow.shown then
+            updateWindowContents()
+        end
     end
 end
 

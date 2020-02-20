@@ -241,6 +241,7 @@ Rollouts.pauseUnpause = function()
         tickSize = 0
     end
     isPaused = not isPaused
+    Rollouts.ui.updateWindow()
 end
 
 Rollouts.isPaused = function ()

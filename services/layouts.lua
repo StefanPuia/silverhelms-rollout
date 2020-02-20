@@ -75,23 +75,23 @@ AceGUI:RegisterLayout("MainWindowLive",
         local rollList, status, timeLeft, settings = commonMainWindow(content, children)
         local currentRoll = children[5]
         local rollHistory = children[6]
-        local buttonCancelRoll = children[7]
+        local buttonPauseRoll = children[7]
         local buttonFinishRoll = children[8]
-        local buttonPause = children[9]
+        local buttonCancelRoll = children[9]
 
-        if buttonCancelRoll and settings then
-            buttonCancelRoll.frame:SetPoint("RIGHT", settings.frame, "LEFT", 0, 0)
-            buttonCancelRoll.frame:SetSize(100, 35)
+        if buttonPauseRoll and settings then
+            buttonPauseRoll.frame:SetPoint("RIGHT", settings.frame, "LEFT", 0, 0)
+            buttonPauseRoll.frame:SetSize(100, 35)
         end
 
-        if buttonFinishRoll and buttonCancelRoll then
-            buttonFinishRoll.frame:SetPoint("RIGHT", buttonCancelRoll.frame, "LEFT", 0, 0)
+        if buttonFinishRoll and buttonPauseRoll then
+            buttonFinishRoll.frame:SetPoint("RIGHT", buttonPauseRoll.frame, "LEFT", 0, 0)
             buttonFinishRoll.frame:SetSize(100, 35)
         end
 
-        if buttonPause and buttonFinishRoll then
-            buttonPause.frame:SetPoint("RIGHT", buttonFinishRoll.frame, "LEFT", 0, 0)
-            buttonPause.frame:SetSize(100, 35)
+        if buttonCancelRoll and buttonFinishRoll then
+            buttonCancelRoll.frame:SetPoint("RIGHT", buttonFinishRoll.frame, "LEFT", 0, 0)
+            buttonCancelRoll.frame:SetSize(100, 35)
         end
 
         if currentRoll and rollList then
@@ -114,14 +114,14 @@ AceGUI:RegisterLayout("MainWindowVirtual",
         local rollList, status, timeLeft, settings = commonMainWindow(content, children)
         local currentRoll = children[5]
         local rollHistory = children[6]
-        local buttonCancelRoll = children[7]
+        local btnCloseDetails = children[7]
 
-        if buttonCancelRoll then
-            buttonCancelRoll.frame:SetPoint("RIGHT", settings.frame, "LEFT", 0, 0)
-            buttonCancelRoll.frame:SetSize(150, 35)
+        if btnCloseDetails then
+            btnCloseDetails.frame:SetPoint("RIGHT", settings.frame, "LEFT", 0, 0)
+            btnCloseDetails.frame:SetSize(150, 35)
         end
 
-        if currentRoll and timeLeft and buttonCancelRoll then
+        if currentRoll and timeLeft and btnCloseDetails then
             currentRoll.frame:SetPoint("TOPLEFT", timeLeft.frame, "BOTTOMLEFT", 1, 0)
             currentRoll.frame:SetPoint("TOPRIGHT", settings.frame, "BOTTOMRIGHT", 0, 0)
             currentRoll.frame:SetHeight(145)
