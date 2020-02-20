@@ -89,7 +89,9 @@ Rollouts.beginRoll = function(rollEntry, isRestart, rulePredicate, ruleMessage)
         if not currentRoll.equippable then currentRoll.rollType = 1 end -- if not equippable, change roll type to greed
 
         Rollouts.ui.updateWindow()
-        Rollouts.chat.sendWarning("Roll for " .. currentRoll.itemInfo[2] .. " " .. Rollouts.data.rollTypes[currentRoll.rollType] .. ruleMessage)
+        local countDisplay = #currentRoll.owners > 1 and ("x" .. #currentRoll.owners .. " ") or ""
+        Rollouts.chat.sendWarning("Roll for " .. countDisplay
+            .. currentRoll.itemInfo[2] .. " " .. Rollouts.data.rollTypes[currentRoll.rollType] .. ruleMessage)
     end
 end
 
@@ -232,6 +234,7 @@ Rollouts.handleWinningRolls = function()
             continueRoll(currentRoll.remainingOwners, currentRoll.rollType - 1)
         else
             whisperReturned(whisper, currentRoll.remainingOwners)
+            Rollouts.finishRoll()
         end
 
     else
@@ -239,6 +242,7 @@ Rollouts.handleWinningRolls = function()
             local message = message .. "No one rolled."
             Rollouts.chat.sendMessage(message)
             whisperReturned(whisper, currentRoll.owners)
+            Rollouts.finishRoll()
         else
             continueRoll(currentRoll.owners, currentRoll.rollType - 1)
         end
