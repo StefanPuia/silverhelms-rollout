@@ -25,16 +25,19 @@ function Rollouts:HandleWhisper(e, ...)
     local source = select(2, ...)
 
     if Rollouts.utils.unitInGroup(source) and Rollouts.utils.stringContainsItem(message) and Rollouts.utils.getEitherDBOption("enableWhisperAppend") then
-        local itemString = select(3, strfind(message, "|H(.-)|h"))
-        if itemString ~= nil then
-            local itemInfo = {GetItemInfo(itemString)}
-            if itemInfo[2] ~= nil then
-                source = Rollouts.utils.colourizeUnit(source)
-                Rollouts.appendToPending(Rollouts.utils.makeRollEntryObject(itemInfo[2], source))
-                return
+        local items = {}
+        for capture in string.gmatch(message, "|H(.-)|h") do
+            table.insert(items, capture)
+        end
+        for i, itemString in ipairs(items) do
+            if itemString ~= nil then
+                local itemInfo = {GetItemInfo(itemString)}
+                if itemInfo[2] ~= nil then
+                    source = Rollouts.utils.colourizeUnit(source)
+                    Rollouts.appendToPending(Rollouts.utils.makeRollEntryObject(itemInfo[2], source))
+                end
             end
         end
-
     end
 end
 

@@ -186,7 +186,10 @@ end
 
 Rollouts.utils.unitInGroup = function(unitName)
     unitName = Rollouts.utils.simplifyName(unitName)
-    return UnitInParty(unitName) or UnitInRaid(unitName)
+    if UnitInParty("player") then
+        return UnitInParty(unitName) or UnitInRaid(unitName)
+    end
+    return Rollouts.utils.simplifyName(GetUnitName("player")) == Rollouts.utils.simplifyName(unitName)
 end
 
 Rollouts.utils.tableSize = function(T)
