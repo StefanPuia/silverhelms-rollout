@@ -415,11 +415,11 @@ end
 -------------------
 
 local function createMainWindow()
-    local window = AceGUI:Create("Window")
+    local window = AceGUI:Create("Rollouts-Window")
     _G.RolloutsMainWindow = window
     table.insert(UISpecialFrames, "RolloutsMainWindow")
     Frames.mainWindow = window
-    window.frame:SetMinResize(1200, 500)
+    window.frame:SetMinResize(900, 420)
     window.frame:SetMaxResize(1300, 1000)
     window:SetTitle("Rollouts")
     window:EnableResize(not Rollouts.isRolling())
@@ -457,7 +457,8 @@ local function createMainWindow()
     end
 
     -- roll history tabs
-    window:AddChild(createHistoryViewFrame())
+    local rollHistoryFrame = createHistoryViewFrame()
+    window:AddChild(rollHistoryFrame)
 
     -- buttons
     if Rollouts.env.showing == "virtual" then
@@ -466,6 +467,9 @@ local function createMainWindow()
         window:AddChild(createFinishEarlyButton())
         window:AddChild(createCancelRollButton())
     end
+
+    -- window:SetCallback("OnResize", function()
+    -- end)
 end
 
 local function hideMainWindow()
@@ -496,9 +500,21 @@ local function updateMainWindow()
     end
 end
 
+local function getWindowSize(window, dim)
+    if window then
+        local width, height = window.frame:GetSize()
+        local size = { width = width, height = height }
+        return size[dim]
+    else
+        return -1
+    end
+end
+
 Rollouts.frames.mainWindow = {
     shown = false,
     show = showMainWindow,
     hide = hideMainWindow,
     update = updateMainWindow,
+    getWidth = function() return getWindowSize(Frames.mainWindow, "width") end,
+    getHeight = function() return getWindowSize(Frames.mainWindow, "height") end
 }

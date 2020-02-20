@@ -20,7 +20,7 @@ local CreateFrame, UIParent = CreateFrame, UIParent
 
 ]]
 do
-    local Type = "Window"
+    local Type = "Rollouts-Window"
     local Version = 6
 
     local function frameOnShow(this)
@@ -81,6 +81,7 @@ do
 
     local function sizerOnMouseUp(this)
         this:GetParent():StopMovingOrSizing()
+        this:GetParent().obj:Fire("OnResize")
     end
 
     local function SetTitle(self, title)
