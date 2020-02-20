@@ -231,3 +231,19 @@ Rollouts.utils.groupPending = function()
     Rollouts.utils.setDBOption(grouped, "data", "rolls", "pending")
     Rollouts.ui.updateWindow()
 end
+
+Rollouts.utils.cleanupHistory = function()
+    local days = Rollouts.utils.getEitherDBOption("autoRemoveDays")
+    local history = Rollouts.utils.getEitherDBOption("data", "rolls", "history")
+    local cleaned = {}
+    local now = GetServerTime()
+    if days > 0 then
+        local limit = now - 60 * 60 * 24 * days
+        for i = 1, #history do
+            if history[i].time > limit then
+                table.insert(cleaned, history[i])
+            end
+        end
+    end
+    Rollouts.utils.setDBOption(cleaned, "data", "rolls", "history")
+end

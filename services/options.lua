@@ -45,6 +45,7 @@ Rollouts.defaultOptions = {
         },
         showMinimapIcon = true,
         debugMode = false,
+        autoRemoveDays = 7,
 
 
         -- internal
@@ -197,8 +198,23 @@ local settingsTable = {
                     type = "description",
                     name = ""
                 },
-                debugMode = {
+                autoRemoveDays = {
                     order = 7,
+                    name = "Automatically remove history items  after this number of days:",
+                    type = "range",
+                    min = 0,
+                    max = 90,
+                    step = 1,
+                    set = function(info, val) setDBOption(val, "autoRemoveDays") end,
+                    get = function(info) return getEitherDBOption("autoRemoveDays") end
+                },
+                break3 = {
+                    order = 8,
+                    type = "description",
+                    name = ""
+                },
+                debugMode = {
+                    order = 9,
                     name = "Enable Debug mode",
                     type = "toggle",
                     set = function(info, val) setDBOption(val, "debugMode") end,

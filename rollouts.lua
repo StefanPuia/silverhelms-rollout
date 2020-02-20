@@ -26,6 +26,7 @@ function Rollouts:OnInitialize()
         }
     }
     self.uiTick = self:ScheduleRepeatingTimer(Rollouts.ui.uiTick, 0.1)
+    Rollouts.utils.cleanupHistory()
     Rollouts.ui.displayMinimapButton()
 end
 
