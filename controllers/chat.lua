@@ -34,11 +34,15 @@ function Rollouts:HandleWhisper(e, ...)
                 local itemInfo = {GetItemInfo(itemString)}
                 if itemInfo[2] ~= nil then
                     source = Rollouts.utils.colourizeUnit(source)
-                    Rollouts.appendToPending(Rollouts.utils.makeRollEntryObject(itemInfo[2], source))
+                    Rollouts.appendToPending(Rollouts.utils.makeRollEntryObject(itemInfo[2], { source }))
                 end
             end
         end
     end
+end
+
+local function sendSafe(message, channel)
+    SendChatMessage(message, channel)
 end
 
 Rollouts.chat.sendWarning = function(message)
@@ -48,7 +52,7 @@ Rollouts.chat.sendWarning = function(message)
             or UnitIsGroupAssistant("player", "LE_PARTY_CATEGORY_HOME")
             or UnitIsGroupAssistant("player", "LE_PARTY_CATEGORY_INSTANCE")
         ) then
-        SendChatMessage(message, "RAID_WARNING")
+        sendSafe(message, "RAID_WARNING")
     else
         Rollouts.chat.sendMessage(message)
     end
@@ -56,9 +60,9 @@ end
 
 Rollouts.chat.sendMessage = function(message)
     if UnitInRaid("player") then
-        SendChatMessage(message, "RAID")
+        sendSafe(message, "RAID")
     elseif UnitInParty("player") then
-        SendChatMessage(message, "PARTY")
+        sendSafe(message, "PARTY")
     end
     Rollouts.utils.printDebug(message)
 end

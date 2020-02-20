@@ -29,7 +29,7 @@ local function handleFullCommand(input, messageParts, startIndex)
                 for rollTypeId, t in ipairs(Rollouts.data.rollTypes) do
                     if rollType == t then
                         local owner = not Rollouts.utils.stringContainsItem(messageParts[startIndex + 2]) and messageParts[startIndex + 2] or nil
-                        return Rollouts.utils.makeRollEntryObject(itemInfo[2], owner, rollTypeId)
+                        return Rollouts.utils.makeRollEntryObject(itemInfo[2], { owner }, rollTypeId)
                     end
                 end
                 return true

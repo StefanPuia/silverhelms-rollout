@@ -139,7 +139,7 @@ local function statusColour(text, status)
     if status == "FINISHED" then return Rollouts.utils.colour(text, "green") end
     if status == "FINISHED-EARLY" then return Rollouts.utils.colour(text, "yellow") end
     if status == "CANCELLED" then return Rollouts.utils.colour(text, "red") end
-    if status == "CONTINUED" then return Rollouts.utils.colour(text, "cyan") end
+    if status == "CONTINUED" or status == "MULTIPLE" then return Rollouts.utils.colour(text, "cyan") end
     return text
 end
 
@@ -236,20 +236,12 @@ local function createRollInfoFrame()
 
     container:AddChild(createItemIcon(displayRoll.itemLink, true, 32))
     container:AddChild(createLabel(Rollouts.data.rollTypes[displayRoll.rollType], 20, 100))
-    container:AddChild(createLabel("Owner: " .. displayRoll.owner, 20, 500))
+    container:AddChild(createLabel("Owner: " .. table.concat(displayRoll.owners, ", "), 20, 500))
 
     if Rollouts.env.showing == "virtual" then
         container:AddChild(createLabel(statusColour(displayRoll.status, displayRoll.status)))
-        local winnerText = ""
-        local winners = Rollouts.getWinners(displayRoll)
-        if #winners >= 1 then
-            winnerText = "Winner:"
-            for i, win in ipairs(winners) do
-                winnerText = winnerText .. " " .. win.name
-            end
-            winnerText = winnerText .. " (" .. winners[1].roll .. ")"
-        end
-        container:AddChild(createLabel(winnerText, 20, 500))
+        local winners = Rollouts.getWinners(displayRoll, true)
+        container:AddChild(createLabel("Winner: " .. table.concat(winners, ", "), 20, 500))
     end
     return container
 end
@@ -264,8 +256,8 @@ local function createPendingRollsFrame()
             local itemLink = createItemIcon(row.itemLink, false, 32)
             group:AddChild(itemLink)
 
-            local owner = createLabel(row.owner, 15)
-            group:AddChild(owner)
+            local owners = createLabel(table.concat(row.owners, ", "), 15)
+            group:AddChild(owners)
 
             local timestamp = createLabel(statusColour(Rollouts.utils.formatStamp(row.time), row.status), 15)
             group:AddChild(timestamp)
@@ -304,8 +296,8 @@ local function createRollHistoryFrame()
             local itemLink = createItemIcon(row.itemLink, false, 32)
             group:AddChild(itemLink)
 
-            local owner = createLabel(row.owner, 15, 100, 15)
-            group:AddChild(owner)
+            local owners = createLabel(table.concat(row.owners, ", "), 15, 100, 15)
+            group:AddChild(owners)
 
             local winner = createLabel(table.concat(Rollouts.getWinners(row, true), ", "), 15)
             group:AddChild(winner)

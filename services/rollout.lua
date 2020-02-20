@@ -7,7 +7,8 @@ local timeLeft = 0
 local lastTick = 0
 local callbacks = {
     finish = nil,
-    cancel = nil
+    cancel = nil,
+    rulePredicate = nil
 }
 
 Rollouts.appendToHistory = function(roll)
@@ -41,12 +42,8 @@ Rollouts.cancelRoll = function()
     end
 end
 
-Rollouts.finishRoll = function(whisperBack)
+Rollouts.finishRoll = function()
     if currentRoll ~= nil then
-        if whisperBack then
-            local message = "No one rolled for your " .. currentRoll.itemLink .. ". You can scrap it!"
-            SendChatMessage(message, "WHISPER", GetDefaultLanguage("player"), Rollouts.utils.qualifyUnitName(currentRoll.owner))
-        end
         currentRoll.status = timeLeft == 0 and "FINISHED" or "FINISHED-EARLY"
         timeLeft = 0
         Rollouts.appendToHistory(currentRoll)
@@ -68,12 +65,15 @@ Rollouts.setCancelCallback = function(callbackCancel)
     callbacks.cancel = callbackCancel
 end
 
-Rollouts.beginRoll = function(rollEntry, isRestart)
+Rollouts.beginRoll = function(rollEntry, isRestart, rulePredicate, ruleMessage)
+    ruleMessage = ruleMessage and (". " .. ruleMessage) or ""
     if currentRoll == nil then
-        if not isRestart then
+        if isRestart ~= true then
             callbacks.finish = nil
             callbacks.cancel = nil
+            callbacks.rulePredicate = nil
         end
+        if rulePredicate then callbacks.rulePredicate = rulePredicate end
 
         currentRoll = Rollouts.utils.sanitizeRollEntryObject(rollEntry)
         Rollouts.env.live = currentRoll
@@ -89,7 +89,7 @@ Rollouts.beginRoll = function(rollEntry, isRestart)
         if not currentRoll.equippable then currentRoll.rollType = 1 end -- if not equippable, change roll type to greed
 
         Rollouts.ui.updateWindow()
-        Rollouts.chat.sendWarning("Roll for " .. currentRoll.itemInfo[2] .. " " .. Rollouts.data.rollTypes[currentRoll.rollType])
+        Rollouts.chat.sendWarning("Roll for " .. currentRoll.itemInfo[2] .. " " .. Rollouts.data.rollTypes[currentRoll.rollType] .. ruleMessage)
     end
 end
 
@@ -99,16 +99,23 @@ Rollouts.restartRoll = function(rollEntry)
     Rollouts.beginRoll(newInstance)
 end
 
+local function getRollPoints(roll)
+    if not roll then return 0 end
+    local points = roll.roll and tonumber(roll.roll) or 0
+    if Rollouts.utils.getEitherDBOption("guildRanking", "enabled") then
+        points = points + (roll.guild or 0) * 10000 + (roll.rank or 0) * 1000
+    end
+    if roll.failMessage ~= nil then points = -1/points end
+    return points
+end
+
 local function sortRolls()
     if currentRoll ~= nil then
         table.sort(currentRoll.rolls, function(a, b)
-            local pointsA = a.guild * 10000 + a.rank * 1000 + tonumber(a.roll)
-            local pointsB = b.guild * 10000 + b.rank * 1000 + tonumber(b.roll)
-
-            if a.failMessage ~= nil then pointsA = -1/pointsA end
-            if b.failMessage ~= nil then pointsB = -1/pointsB end
-
-            return pointsA > pointsB
+            local pointsA = getRollPoints(a)
+            local pointsB = getRollPoints(b)
+            if pointsA ~= pointsB then return pointsA > pointsB end
+            return Rollouts.utils.simplifyName(a.name) < Rollouts.utils.simplifyName(b.name)
         end)
     end
 end
@@ -117,46 +124,124 @@ local function hasSubsequentRolls()
     return Rollouts.utils.getEitherDBOption("restartIfNoRolls") and currentRoll.rollType > Rollouts.utils.getEitherDBOption("lowestRestart")
 end
 
+local function identicalRolls(roll1, roll2)
+    return getRollPoints(roll1) == getRollPoints(roll2) and roll1.failMessage == nil and roll2.failMessage == nil
+end
+
 Rollouts.getWinners = function(rollObj, justNames)
+    rollObj = rollObj or currentRoll
+    if not rollObj then return {} end
     if rollObj.status == "CANCELLED" then return {} end
     justNames = justNames or false
     local winning = {}
-    if #rollObj.rolls >= 1 then
-        if rollObj.rolls[1].failMessage == nil then
-            table.insert(winning, justNames and rollObj.rolls[1].name or rollObj.rolls[1])
+    local availableSpots = #rollObj.owners
+
+    for i = 1, availableSpots do
+        if rollObj.rolls[i] and rollObj.rolls[i].failMessage == nil then
+            table.insert(winning, rollObj.rolls[i])
         end
     end
-    if winning[1] then
-        for i = 2, #rollObj.rolls do
-            if rollObj.rolls[i].roll == winning[1].roll
-                    and rollObj.rolls[i].guild == winning[1].guild
-                    and rollObj.rolls[i].rank == winning[1].rank
-                    and rollObj.rolls[i].failMessage == nil then
-                table.insert(winning, justNames and rollObj.rolls[i].name or rollObj.rolls[i])
-            end
+
+    local lastRoll = winning[#winning]
+    for i = availableSpots + 1, #rollObj.rolls do
+        if identicalRolls(rollObj.rolls[i], lastRoll) then
+            table.insert(winning, rollObj.rolls[i])
+        else
+            break
         end
     end
+
+    if justNames then
+        local winningNames = {}
+        for i = 1, #winning do
+            table.insert(winningNames, winning[i].name)
+        end
+        -- print(table.concat(winningNames, " "))
+        return winningNames
+    end
+    -- print(Rollouts.utils.stringify(winning))
     return winning
 end
 
+local function giveAway(owner, winner)
+    Rollouts.chat.sendMessage(Rollouts.utils.simplifyName(owner, true) .. " trade " .. Rollouts.utils.simplifyName(winner, true))
+end
+
+local function continueRoll(owners, rollType, status, rulePredicate, ruleMessage)
+    timeLeft = Rollouts.utils.getEitherDBOption("rollTimeLimit")
+    currentRoll.status = status or "CONTINUED"
+    Rollouts.appendToHistory(currentRoll)
+    local auxRollObject = Rollouts.utils.makeRollEntryObject(currentRoll.itemLink, owners, rollType)
+    currentRoll = nil
+    Rollouts.beginRoll(auxRollObject, true, rulePredicate, ruleMessage)
+end
+
+local function whisperReturned(message, owners)
+    owners = owners or {}
+    for i, owner in ipairs(owners) do
+        SendChatMessage(message, "WHISPER", GetDefaultLanguage("player"), Rollouts.utils.qualifyUnitName(owner))
+    end
+end
+
 Rollouts.handleWinningRolls = function()
+    if not currentRoll then return end
     local winning = Rollouts.getWinners(currentRoll)
-    if #winning > 1 then
-        local wins = {}
-        for k,v in ipairs(winning) do table.insert(wins, v.name) end
-        Rollouts.chat.sendMessage("Multiple players rolled the same. " .. table.concat(wins, ", ") .. " please roll again.")
-        return true
-    elseif #winning == 1 then
-        local message = "Roll ended on " .. currentRoll.itemInfo[2] .. ". " .. Rollouts.utils.qualifyUnitName(winning[1].name, true) .. " won."
-        message = message .. " Please trade " .. Rollouts.utils.qualifyUnitName(currentRoll.owner, true) .. "."
+    local availableSpots = #currentRoll.owners
+    currentRoll.remainingOwners = Rollouts.utils.cloneArray(currentRoll.owners)
+    local message = "Roll ended on " .. currentRoll.itemInfo[2] .. ". "
+    local whisper = "No one rolled for your " .. currentRoll.itemLink .. ". You can scrap it!"
+
+    if #winning > availableSpots then
+        local distinct = {}
+        local sameRolls = {}
+        for i = 1, #winning - 1 do
+            if not identicalRolls(winning[i], winning[#winning]) then
+                table.insert(distinct, winning[i])
+            else
+                table.insert(sameRolls, winning[i].name)
+            end
+        end
+        table.insert(sameRolls, winning[#winning].name)
+
+        for i = 1, #distinct do
+            giveAway(currentRoll.remainingOwners[1], distinct[i].name)
+            table.remove(currentRoll.remainingOwners, 1)
+        end
+
+        Rollouts.chat.sendMessage("Multiple players rolled the same. " .. table.concat(sameRolls, ", ") .. " please roll again.")
+        continueRoll(currentRoll.remainingOwners, currentRoll.rollType, "MULTIPLE", function(rollEntry)
+            return Rollouts.utils.indexOf(sameRolls, function(win)
+                return Rollouts.utils.simplifyName(rollEntry.name, true) == Rollouts.utils.simplifyName(win, true)
+            end) > 0
+        end, "Only expecting rolls from " .. table.concat(sameRolls, ", "))
+
+    elseif #winning == availableSpots then
         Rollouts.chat.sendMessage(message)
-        return true
+        for i = 1, #winning do
+            giveAway(currentRoll.owners[i], winning[i].name)
+        end
+        Rollouts.finishRoll()
+
+    elseif #winning < availableSpots then
+        Rollouts.chat.sendMessage(message)
+        for i = 1, #winning do
+            giveAway(currentRoll.remainingOwners[1], winning[i].name)
+            table.remove(currentRoll.remainingOwners, 1)
+        end
+        if hasSubsequentRolls() then
+            continueRoll(currentRoll.remainingOwners, currentRoll.rollType - 1)
+        else
+            whisperReturned(whisper, currentRoll.remainingOwners)
+        end
+
     else
         if not hasSubsequentRolls() then
-            local message = "Roll ended on " .. currentRoll.itemInfo[2] .. ". No one rolled."
+            local message = message .. "No one rolled."
             Rollouts.chat.sendMessage(message)
+            whisperReturned(whisper, currentRoll.owners)
+        else
+            continueRoll(currentRoll.owners, currentRoll.rollType - 1)
         end
-        return false
     end
 end
 
@@ -172,8 +257,14 @@ local function validateRoll(rollObject)
         failMessage = Rollouts.data.failMessages["ARMOR_TYPE"]
     end
 
-    if Rollouts.utils.simplifyName(rollObject.name) == Rollouts.utils.simplifyName(currentRoll.owner) then
+    if Rollouts.utils.indexOf(currentRoll.owners, function(owner)
+        return Rollouts.utils.simplifyName(rollObject.name) == Rollouts.utils.simplifyName(owner)
+    end) > 0 then
         failMessage = Rollouts.data.failMessages["ROLL_OWNER"]
+    end
+
+    if callbacks.rulePredicate and not callbacks.rulePredicate(rollObject) then
+        failMessage = Rollouts.data.failMessages["ROLL_RULES"]
     end
 
     rollObject.failMessage = failMessage
@@ -260,17 +351,7 @@ Rollouts.rollTick = function()
             end
             if timeLeft <= 0 then
                 timeLeft = 0
-                if Rollouts.handleWinningRolls() then return Rollouts.finishRoll() end
-                if hasSubsequentRolls() then
-                    timeLeft = Rollouts.utils.getEitherDBOption("rollTimeLimit")
-                    currentRoll.status = "CONTINUED"
-                    Rollouts.appendToHistory(currentRoll)
-                    local auxRollObject = Rollouts.utils.makeRollEntryObject(currentRoll.itemLink, currentRoll.owner, currentRoll.rollType - 1)
-                    currentRoll = nil
-                    Rollouts.beginRoll(auxRollObject, true)
-                else
-                    Rollouts.finishRoll(true)
-                end
+                Rollouts.handleWinningRolls()
             else
                 local rollCountdown = Rollouts.utils.getEitherDBOption("rollCountdown")
                 if timeLeft == rollCountdown then
