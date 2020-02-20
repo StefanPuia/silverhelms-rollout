@@ -75,10 +75,11 @@ AceGUI:RegisterLayout("MainWindowLive",
         local rollList, status, timeLeft, settings = commonMainWindow(content, children)
         local currentRoll = children[5]
         local rollHistory = children[6]
-        local buttonFinishRoll = children[7]
-        local buttonCancelRoll = children[8]
+        local buttonCancelRoll = children[7]
+        local buttonFinishRoll = children[8]
+        local buttonPause = children[9]
 
-        if buttonCancelRoll then
+        if buttonCancelRoll and settings then
             buttonCancelRoll.frame:SetPoint("RIGHT", settings.frame, "LEFT", 0, 0)
             buttonCancelRoll.frame:SetSize(100, 35)
         end
@@ -88,7 +89,12 @@ AceGUI:RegisterLayout("MainWindowLive",
             buttonFinishRoll.frame:SetSize(100, 35)
         end
 
-        if currentRoll and children[1] and buttonCancelRoll then
+        if buttonPause and buttonFinishRoll then
+            buttonPause.frame:SetPoint("RIGHT", buttonFinishRoll.frame, "LEFT", 0, 0)
+            buttonPause.frame:SetSize(100, 35)
+        end
+
+        if currentRoll and rollList then
             currentRoll.frame:SetPoint("TOPLEFT", rollList.frame, "TOPRIGHT", 0, 0)
             currentRoll.frame:SetPoint("TOPRIGHT", settings.frame, "BOTTOMRIGHT", 0, 0)
             currentRoll.frame:SetHeight(100)

@@ -378,6 +378,13 @@ end
 
 local function createCancelRollButton()
     local disabled = not Rollouts.env.live
+    local display = Rollouts.isPaused() and "Resume" or "Pause"
+    local buttonText = Rollouts.utils.colour(display, disabled and "gray" or nil)
+    return createButton(buttonText, Rollouts.pauseUnpause, nil, disabled)
+end
+
+local function createPauseUnpauseButton()
+    local disabled = not Rollouts.env.live
     local buttonText = Rollouts.utils.colour("Cancel", disabled and "gray" or nil)
     return createButton(buttonText, Rollouts.cancelRoll, nil, disabled)
 end
@@ -496,6 +503,7 @@ local function createMainWindow()
     if Rollouts.env.showing == "virtual" then
         window:AddChild(createCloseDetailViewButton())
     else
+        window:AddChild(createPauseUnpauseButton())
         window:AddChild(createFinishEarlyButton())
         window:AddChild(createCancelRollButton())
     end

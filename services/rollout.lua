@@ -2,6 +2,7 @@ local LibStub = _G.LibStub
 local Rollouts = LibStub("AceAddon-3.0"):GetAddon("Rollouts")
 
 local currentRoll = nil
+local isPaused = false
 local timeLeft = 0
 local lastTick = 0
 local callbacks = {
@@ -80,6 +81,7 @@ Rollouts.beginRoll = function(rollEntry, isRestart)
 
         timeLeft = Rollouts.utils.getEitherDBOption("rollTimeLimit")
         lastTick = GetServerTime()
+        isPaused = false
 
         currentRoll.itemInfo = {GetItemInfo(currentRoll.itemLink)}
         local itemSlot = currentRoll.itemInfo[9]
@@ -234,12 +236,25 @@ Rollouts.getTimeLeft = function()
     return Rollouts.utils.colour(timeLeft, "red")
 end
 
+Rollouts.pauseUnpause = function()
+    if isPaused then
+        tickSize = 0
+    end
+    isPaused = not isPaused
+end
+
+Rollouts.isPaused = function ()
+    return isPaused
+end
+
 Rollouts.rollTick = function()
     if currentRoll ~= nil then
         local currentTick = GetServerTime()
         local tickSize = currentTick - lastTick
         if tickSize > 0 then
-            timeLeft = timeLeft - tickSize
+            if not isPaused then
+                timeLeft = timeLeft - tickSize
+            end
             if timeLeft <= 0 then
                 timeLeft = 0
                 if Rollouts.handleWinningRolls() then return Rollouts.finishRoll() end
