@@ -335,3 +335,109 @@ AceGUI:RegisterLayout("HistoryRollRow",
         end
     end
 )
+
+AceGUI:RegisterLayout("DebugWindowLayout",
+    function (content, children)
+        local editContainer = children[1]
+        local historyContainer = children[2]
+
+        if editContainer then
+            editContainer.frame:SetPoint("TOPLEFT", content, "TOPLEFT", 0, 0)
+            editContainer.frame:SetPoint("TOPRIGHT", content, "TOPRIGHT", 0, 0)
+            editContainer.frame:SetHeight(144)
+        end
+
+        if historyContainer and editContainer then
+            historyContainer.frame:SetPoint("TOPLEFT", editContainer.frame, "BOTTOMLEFT", 0, 10)
+            historyContainer.frame:SetPoint("TOPRIGHT", editContainer.frame, "BOTTOMRIGHT", 0, 10)
+            historyContainer.frame:SetPoint("BOTTOMLEFT", content, "BOTTOMLEFT", 0, 0)
+            historyContainer.frame:SetPoint("BOTTOMRIGHT", content, "BOTTOMRIGHT", 0, 0)
+        end
+    end
+)
+
+AceGUI:RegisterLayout("DebugEditContainerLayout",
+    function (content, children)
+        local width, height = content:GetSize()
+        local halfSize = (width - 15) / 2
+
+        local playerName = children[1]
+        local guildName = children[2]
+        local rankName = children[3]
+        local appendRollBtn = children[4]
+
+        local specName = children[5]
+        local rollValue = children[6]
+        local equipped = children[7]
+
+        if playerName then
+            playerName.frame:SetPoint("TOPLEFT", content, "TOPLEFT", 5, -5)
+            playerName.frame:SetWidth(halfSize)
+        end
+
+        if guildName and playerName then
+            guildName.frame:SetPoint("TOPLEFT", playerName.frame, "BOTTOMLEFT", 0, -2)
+            guildName.frame:SetPoint("TOPRIGHT", playerName.frame, "BOTTOMRIGHT", 0, -2)
+            guildName.frame:SetWidth(halfSize)
+        end
+
+        if rankName and guildName then
+            rankName.frame:SetPoint("TOPLEFT", guildName.frame, "BOTTOMLEFT", 0, -2)
+            rankName.frame:SetPoint("TOPRIGHT", guildName.frame, "BOTTOMRIGHT", 0, -2)
+            rankName.frame:SetWidth(halfSize)
+        end
+
+        if appendRollBtn and rankName then
+            appendRollBtn.frame:SetPoint("TOPLEFT", rankName.frame, "BOTTOMLEFT", 0, -2)
+            appendRollBtn.frame:SetPoint("TOPRIGHT", rankName.frame, "BOTTOMRIGHT", 0, -2)
+            appendRollBtn.frame:SetHeight(32)
+        end
+
+        if specName and playerName then
+            specName.frame:SetPoint("TOPLEFT", playerName.frame, "TOPRIGHT", 5, 0)
+            specName.frame:SetPoint("TOPRIGHT", content, "TOPRIGHT", -5, -5)
+            specName.frame:SetWidth(halfSize)
+        end
+
+        if rollValue and specName then
+            rollValue.frame:SetPoint("TOPLEFT", specName.frame, "BOTTOMLEFT", 0, -2)
+            rollValue.frame:SetPoint("TOPRIGHT", specName.frame, "BOTTOMRIGHT", 0, -2)
+            rollValue.frame:SetWidth(halfSize)
+        end
+
+        if equipped and rollValue then
+            equipped.frame:SetPoint("TOPLEFT", rollValue.frame, "BOTTOMLEFT", 0, -2)
+            equipped.frame:SetPoint("TOPRIGHT", rollValue.frame, "BOTTOMRIGHT", 0, -2)
+            equipped.frame:SetWidth(halfSize)
+        end
+    end
+)
+
+AceGUI:RegisterLayout("DebugRollHistoryRow",
+    function (content, children)
+        local playerName = children[1]
+        local rollValue = children[2]
+        local deleteBtn = children[3]
+        local appendBtn = children[4]
+
+        if playerName then
+            playerName.frame:SetPoint("LEFT", content, "LEFT", 0, 0)
+            playerName.frame:SetSize(180, 27)
+        end
+
+        if rollValue and playerName then
+            rollValue.frame:SetPoint("LEFT", playerName.frame, "RIGHT", 0, 0)
+            rollValue.frame:SetSize(70, 27)
+        end
+
+        if deleteBtn then
+            deleteBtn.frame:SetPoint("RIGHT", content, "RIGHT", 0, 0)
+            deleteBtn.frame:SetSize(40, 27)
+        end
+
+        if appendBtn and deleteBtn then
+            appendBtn.frame:SetPoint("RIGHT", deleteBtn.frame, "LEFT", 0, 0)
+            appendBtn.frame:SetSize(100, 27)
+        end
+    end
+)

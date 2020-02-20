@@ -168,3 +168,53 @@ Rollouts.data.classColours = {
     [11] = Rollouts.data.colours.druid, -- Druid
     [12] = Rollouts.data.colours.dh, -- DemonHunter
 }
+Rollouts.data.specs = {
+    -- Death Knight
+    { value = "6.250", text = "|cffC41F3BBlood|r" },
+    { value = "6.251", text = "|cffC41F3BFrost|r" },
+    { value = "6.252", text = "|cffC41F3BUnholy|r" },
+    -- Demon Hunter
+    { value = "12.577", text = "|cffA330C9Havoc|r" },
+    { value = "12.581", text = "|cffA330C9Vengeance|r" },
+    -- Druid
+    { value = "11.103", text = "|cffFF7D0AFeral|r" },
+    { value = "11.104", text = "|cffFF7D0AGuardian|r" },
+    { value = "11.102", text = "|cffFF7D0ABalance|r" },
+    { value = "11.105", text = "|cffFF7D0ARestoration|r" },
+    -- Hunter
+    { value = "3.253", text = "|cffA9D271Beast Mastery|r" },
+    { value = "3.254", text = "|cffA9D271Marksmanship|r" },
+    { value = "3.255", text = "|cffA9D271Survival|r" },
+    -- Mage
+    { value = "8.62", text = "|cff40C7EBArcane|r" },
+    { value = "8.63", text = "|cff40C7EBFire|r" },
+    { value = "8.64", text = "|cff40C7EBFrost|r" },
+    -- Monk
+    { value = "10.268", text = "|cff00FF96Brewmaster|r" },
+    { value = "10.269", text = "|cff00FF96Windwalker|r" },
+    { value = "10.270", text = "|cff00FF96Mistweaver|r" },
+    -- Paladin
+    { value = "2.65", text = "|cffF58CBAHoly|r" },
+    { value = "2.66", text = "|cffF58CBAProtection|r" },
+    { value = "2.70", text = "|cffF58CBARetribution|r" },
+    -- Priest
+    { value = "5.256", text = "|cffFFFFFFDiscipline|r" },
+    { value = "5.257", text = "|cffFFFFFFHoly|r" },
+    { value = "5.258", text = "|cffFFFFFFShadow|r" },
+    -- Rogue
+    { value = "4.259", text = "|cffFFF569Assassination|r" },
+    { value = "4.260", text = "|cffFFF569Outlaw|r" },
+    { value = "4.261", text = "|cffFFF569Subtlety|r" },
+    -- Shaman
+    { value = "7.263", text = "|cff0070DEEnhancement|r" },
+    { value = "7.262", text = "|cff0070DEElemental|r" },
+    { value = "7.264", text = "|cff0070DERestoration|r" },
+    -- Warlock
+    { value = "9.265", text = "|cff8787EDAffliction|r" },
+    { value = "9.266", text = "|cff8787EDDemonology|r" },
+    { value = "9.267", text = "|cff8787EDDestruction|r" },
+    -- Warrior
+    { value = "1.71", text = "|cffC79C6EArms|r" },
+    { value = "1.72", text = "|cffC79C6EFury|r" },
+    { value = "1.73", text = "|cffC79C6EProtection|r" },
+}

@@ -11,7 +11,19 @@ function Rollouts:OnInitialize()
         },
         live = nil,
         virtual = nil,
-        showing = "none"
+        showing = "none",
+        debugData = {
+            editing = {
+                name = "Player",
+                roll = 50,
+                guildName = "Guild",
+                rankName = "Rank",
+                class = 6,
+                spec = 250,
+                equipped = {}
+            },
+            rolls = {}
+        }
     }
     self.uiTick = self:ScheduleRepeatingTimer(Rollouts.ui.uiTick, 0.1)
     Rollouts.ui.displayMinimapButton()

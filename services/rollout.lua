@@ -87,7 +87,7 @@ Rollouts.beginRoll = function(rollEntry, isRestart)
         if not currentRoll.equippable then currentRoll.rollType = 1 end -- if not equippable, change roll type to greed
 
         Rollouts.ui.updateWindow()
-        Rollouts.chat.sendWarning("Roll for " .. currentRoll.itemLink .. " " .. Rollouts.data.rollTypes[currentRoll.rollType])
+        Rollouts.chat.sendWarning("Roll for " .. currentRoll.itemInfo[2] .. " " .. Rollouts.data.rollTypes[currentRoll.rollType])
     end
 end
 
@@ -189,7 +189,9 @@ Rollouts.appendRoll = function(name, roll, guild, rank, classId, spec, equipped)
         table.insert(currentRoll.rolls, 1, rollObj)
         sortRolls()
         Rollouts.ui.updateWindow()
+        return rollObj
     end
+    return false
 end
 
 Rollouts.getRoll = function(name)

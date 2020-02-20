@@ -56,6 +56,8 @@ function Rollouts:RolloutController(input)
             Rollouts.ui.toggleSettings()
         elseif command == "HELP" then
             printHelp()
+        elseif command == "DEBUG" then
+            Rollouts.debug.toggleDebugWindow()
         elseif command == "ADD" then
             local rollObject = handleFullCommand(input, messageParts, 1)
             if rollObject then
@@ -65,6 +67,8 @@ function Rollouts:RolloutController(input)
             local rollObject = handleFullCommand(input, messageParts)
             if rollObject then
                 Rollouts.beginRoll(rollObject)
+            else
+                printHelp()
             end
         end
     end

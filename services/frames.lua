@@ -4,80 +4,6 @@ local Rollouts = LibStub("AceAddon-3.0"):GetAddon("Rollouts")
 local Frames = {}
 Rollouts.frames = {}
 
--- local function autoLayoutSize(size, point, dimension)
---     if size == "auto" then
---         size = dimension - point
---     elseif string.sub(size, -1) == "%" then
---         size = tonumber(string.sub(size, 1, -2)) / 100 * dimension
---     end
---     return size
--- end
-
--- local function autoLayoutPosition(point, size, dimensions, padding, i)
---     size = size or {}
---     padding = padding or {}
---     i = i or 0
-
---     if string.sub(point[1], -1) == "%" then point[1] = (tonumber(string.sub(point[1], 1, -2)) / 100 * dimensions[1]) end
---     if string.sub(point[2], -1) == "%" then point[2] = (tonumber(string.sub(point[2], 1, -2)) / 100 * dimensions[2]) end
-
---     sizeX = tonumber(size[1]) ~= nil and size[1] or 0
---     sizeX = autoLayoutSize(sizeX, point[1], dimensions[1])
---     sizeY = tonumber(size[2]) ~= nil and size[2] or 0
---     sizeY = autoLayoutSize(sizeY, point[2], dimensions[2])
---     padX = padding[1] or 0
---     padY = padding[2] or 0
-
-
---     return point[1] + (i * (sizeX + padX)), -1 * (point[2] + (i * (sizeY + padY)))
--- end
-
--- local function init()
---     local layouts = {
-
---     }
-
---     for layoutName, layout in pairs(layouts) do
---         AceGUI:RegisterLayout(layoutName,
---             function(content, children)
---                 local width, height = content:GetSize()
---                 if #layout > 0 then
---                     for k,v in ipairs(layout) do
---                         if children[k] then
---                             local frame = children[k].frame
---                             if v.point then
---                                 local x, y = autoLayoutPosition(v.point, v.size, {width, height}, v.padding)
---                                 frame:SetPoint("TOPLEFT", content, v.anchor or "TOPLEFT", x, y)
---                             end
---                             if v.size then
---                                 frame:SetWidth(autoLayoutSize(v.size[1], v.point[1], width))
---                                 frame:SetHeight(autoLayoutSize(v.size[2], v.point[2], height))
---                                 frame:GetSize()
---                             end
---                         end
---                     end
---                 else
---                     for i = 0, (#children - 1) do
---                         local frame = children[i + 1].frame
---                         local x, y = autoLayoutPosition(layout.point, layout.size, {width, height}, layout.padding, i)
---                         frame:SetPoint("TOPLEFT", content, layout.anchor or "TOPLEFT", x, y)
---                         frame:SetWidth(autoLayoutSize(layout.size[1], layout.point[1], width))
---                         frame:SetHeight(autoLayoutSize(layout.size[2], layout.point[2], width))
---                         frame:GetSize()
---                     end
---                 end
---             end
---         )
---     end
--- end
-
-local function getWindowSize()
-    local size = {0, 0}
-    if Frames.mainWindow then
-        return Frames.mainWindow.frame:GetSize()
-    end
-end
-
 ----------------------
 --- CREATE WIDGETS ---
 ----------------------
@@ -169,6 +95,42 @@ local function createButton(text, onClick, autoWidth, disabled)
     return btn
 end
 
+local function createEditBox(text, width, height, onEnterPressed, maxLetters, label, onEnter, onLeave)
+    local editBox = AceGUI:Create("EditBox")
+    if label then editBox:SetLabel(label) end
+    if text then editBox:SetText(text) end
+    if width then editBox:SetWidth(width) end
+    if height then editBox:SetHeight(height) end
+    if onEnter then editBox:SetCallback("OnEnter", onEnter) end
+    if onLeave then editBox:SetCallback("OnLeave", onLeave) end
+    if onEnterPressed then editBox:SetCallback("OnEnterPressed", onEnterPressed) end
+    if maxLetters then editBox:SetMaxLetters(maxLetters) end
+    return editBox
+end
+
+local function createDropDown(text, items, width, height, label, value, onValueChanged, onClosed)
+    local dropDown = AceGUI:Create("Dropdown")
+    if text then dropDown:SetText(text) end
+    if width then dropDown:SetWidth(width) end
+    if height then dropDown:SetHeight(height) end
+    if label then dropDown:SetLabel(label) end
+    if value then dropDown:SetValue(value) end
+    if onValueChanged then dropDown:SetCallback("OnValueChanged", onValueChanged) end
+    if onClosed then dropDown:SetCallback("OnClosed", onClosed) end
+    local list = {}
+    local order = {}
+    if items then
+        for i,item in pairs(items) do
+            local value = item.value or i
+            local text = item.text or item
+            list[value] = text
+            table.insert(order, value)
+        end
+        dropDown:SetList(list, order)
+    end
+    return dropDown
+end
+
 ----------------------
 --- HELPER METHODS ---
 ----------------------
@@ -180,7 +142,6 @@ local function statusColour(text, status)
     if status == "CONTINUED" then return Rollouts.utils.colour(text, "cyan") end
     return text
 end
-
 
 --------------------------------
 --- CREATE CUSTOM COMPONENTS ---
@@ -217,6 +178,17 @@ local function formatGuildRankName(guild, rank)
     )
 end
 
+local function formatSpecDisplay(classId, specId)
+    if classId and specId then
+        for i,v in ipairs(Rollouts.data.specs) do
+            if v.value == classId .. "." .. specId then
+                return v.text
+            end
+        end
+    end
+    return ""
+end
+
 local function createRollsContainer()
     local scrollContainer, scroll = createScrollContainer()
     local displayRoll = Rollouts.getDisplayRoll()
@@ -231,12 +203,16 @@ local function createRollsContainer()
             GameTooltip:SetOwner(group.frame, "ANCHOR_NONE")
             GameTooltip:SetPoint("TOPRIGHT", group.frame, "TOPLEFT")
             GameTooltip:SetText(rollEntry.name)
+            if rollEntry.spec then GameTooltip:AddLine(formatSpecDisplay(rollEntry.class, rollEntry.spec)) end
             if rollEntry.guildName then GameTooltip:AddLine(formatGuildRankName(rollEntry.guildName, rollEntry.rankName)) end
             GameTooltip:AddLine(string.format("Rolled: %s", rollEntry.roll))
             if rollEntry.failMessage then
                 GameTooltip:AddLine("Fail Reason: " .. Rollouts.utils.colour(rollEntry.failMessage, "red"))
             end
             GameTooltip:Show()
+        end)
+        group.frame:SetScript("OnLeave", function()
+            GameTooltip:Hide()
         end)
 
         scroll:AddChild(group)
@@ -410,6 +386,62 @@ local function createCloseDetailViewButton()
     return createButton("Close details", Rollouts.ui.closeHistoryRollView)
 end
 
+local function createDebugEditContainer()
+    local container = createSimpleGroup("DebugEditContainerLayout")
+    
+    container:AddChild(createEditBox("Player", nil, 32, Rollouts.debug.setEditingData("name"), 15))
+    container:AddChild(createEditBox("Guild", nil, 32, Rollouts.debug.setEditingData("guildName"), 15))
+    container:AddChild(createEditBox("Rank", nil, 32, Rollouts.debug.setEditingData("rankName"), 15))
+    container:AddChild(createButton("Append Roll", Rollouts.debug.addRollFromEditingData))
+    
+    container:AddChild(createDropDown("Specialization", Rollouts.data.specs, nil, 32, nil, "6.250", Rollouts.debug.setEditingData("classAndSpec")))
+    container:AddChild(createEditBox("50", nil, 32, Rollouts.debug.setEditingData("roll"), 15))
+    container:AddChild(createEditBox("Equipped", nil, 32, Rollouts.debug.setEditingData("equipped"), 15))
+
+    return container
+end
+
+local function createDebugHistoryContainer()
+    local scrollContainer, scroll = createScrollContainer()
+    local debugData = Rollouts.env.debugData
+    local rolls = debugData and debugData.rolls or {}
+    for i, rollEntry in ipairs(rolls) do
+        local name, roll, guildName, rankName, classId, spec, equipped = unpack(rollEntry)
+        local group = createSimpleGroup("DebugRollHistoryRow", 480, 35)
+
+        group:AddChild(createLabel(name, 15))
+        group:AddChild(createLabel(roll, 15))
+        group:AddChild(createButton("X", function()
+            table.remove(rolls, i)
+            Rollouts.frames.debugWindow.updateHistory()
+        end))
+        group:AddChild(createButton("Append", function()
+            Rollouts.appendRoll(name, roll, guildName, rankName, classId, spec, equipped)
+        end))
+
+        group.frame:SetScript("OnEnter", function()
+            GameTooltip:SetOwner(group.frame, "ANCHOR_NONE")
+            GameTooltip:SetPoint("TOPRIGHT", group.frame, "TOPLEFT")
+            GameTooltip:SetText(name)
+            if spec then GameTooltip:AddLine(formatSpecDisplay(classId, spec)) end
+            if guildName then GameTooltip:AddLine(formatGuildRankName(guildName, rankName)) end
+            GameTooltip:AddLine(string.format("Rolled: %s", roll))
+            GameTooltip:Show()
+        end)
+        group.frame:SetScript("OnLeave", function()
+            GameTooltip:Hide()
+        end)
+        group.frame:SetScript("OnLeave", function()
+            GameTooltip:Hide()
+        end)
+
+        scroll:AddChild(group)
+    end
+    local container = createInlineGroup("Stretch")
+    container:AddChild(scrollContainer)
+    return container, scrollContainer
+end
+
 -------------------
 --- MAIN WINDOW ---
 -------------------
@@ -517,4 +549,60 @@ Rollouts.frames.mainWindow = {
     update = updateMainWindow,
     getWidth = function() return getWindowSize(Frames.mainWindow, "width") end,
     getHeight = function() return getWindowSize(Frames.mainWindow, "height") end
+}
+
+--------------------
+--- DEBUG WINDOW ---
+--------------------
+
+local function createDebugWindow()
+    local window = AceGUI:Create("Rollouts-Window")
+    _G.RolloutsDebugWindow = window
+    table.insert(UISpecialFrames, "RolloutsDebugWindow")
+    Frames.debugWindow = window
+    window:SetTitle("Rollouts Debug")
+    window.frame:SetSize(500, 500)
+    window:EnableResize(true)
+    window.frame:SetMinResize(500, 500)
+    window.frame:SetMaxResize(500, 1000)
+    window:SetCallback("OnClose", function() Rollouts.frames.debugWindow.hide() end)
+    window:SetLayout("DebugWindowLayout")
+
+    window:AddChild(createDebugEditContainer())
+    window.historyContainer = createDebugHistoryContainer()
+    window:AddChild(window.historyContainer)
+end
+
+local function updateDebugWindowHistory()
+    local window = Frames.debugWindow
+    if window then
+        local container, scroll = createDebugHistoryContainer()
+        window.historyContainer:ReleaseChildren()
+        window.historyContainer:AddChild(scroll)
+        window:DoLayout()
+    end
+end
+
+local function hideDebugWindow()
+    if Frames.debugWindow then
+        Frames.debugWindow:Hide()
+        Frames.debugWindow = nil
+    end
+    Rollouts.frames.debugWindow.shown = false
+end
+
+local function showDebugWindow()
+    if Frames.debugWindow then
+        hideDebugWindow()
+    end
+    createDebugWindow()
+    Frames.debugWindow:Show()
+    Rollouts.frames.debugWindow.shown = true
+end
+
+Rollouts.frames.debugWindow = {
+    shown = false,
+    show = showDebugWindow,
+    hide = hideDebugWindow,
+    updateHistory = updateDebugWindowHistory
 }

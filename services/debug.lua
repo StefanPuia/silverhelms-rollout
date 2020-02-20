@@ -50,22 +50,16 @@ Rollouts.debug.testCase = function()
     local expected = {
         { "tanno", 74 },
         { "chullee", 35 },
-
         { "stabby", 37 },
-
         { "corpse", 12 },
-
         { "puglet", 68 },
 
         -- fails
         { "albionna", 52 }, -- armor
         { "eyota", 13 }, -- armor
-
         { "mixpizza", 65 }, -- armor
-
         { "enma", 87 }, -- owner / armor
         { "raindrool", 58 }, -- armor
-
         { "pug", 99 }, -- armor
     }
 
@@ -100,4 +94,50 @@ Rollouts.debug.testCase = function()
 
     Rollouts:Print("Test completed.")
     Rollouts.finishRoll()
+end
+
+Rollouts.debug.toggleDebugWindow = function()
+    if Rollouts.frames.debugWindow.shown then
+        Rollouts.frames.debugWindow.hide()
+    else
+        Rollouts.frames.debugWindow.show()
+    end
+end
+
+Rollouts.debug.setEditingData = function(dataType)
+    return function(self, event, value)
+        if dataType == "classAndSpec" then
+            local class, spec = Rollouts.utils.strSplit(value, ".")
+            Rollouts.env.debugData.editing.class = tonumber(class)
+            Rollouts.env.debugData.editing.spec = tonumber(spec)
+        elseif dataType == "equipped" then
+            local items = Rollouts.utils.strSplit(value, ",")
+            local equipped = {}
+            for i, item in ipairs(items) do
+                local name, link = GetItemInfo(item)
+                if link then
+                    table.insert(equipped, link)
+                end
+            end
+            Rollouts.env.debugData.editing.equipped = equipped
+        else
+            Rollouts.env.debugData.editing[dataType] = value
+        end
+    end
+end
+
+Rollouts.debug.addRollFromEditingData = function()
+    local data = Rollouts.env.debugData.editing
+    local roll = data.roll
+    local guildName = data.guildName
+    local rankName = data.rankName
+    local classId = data.class
+    local spec = data.spec
+    local equipped = data.equipped
+    local name = Rollouts.utils.colour(data.name, Rollouts.data.classColours[classId])
+    local rollObj = Rollouts.appendRoll(name, roll, guildName, rankName, classId, spec, equipped)
+    if (rollObj) then
+        table.insert(Rollouts.env.debugData.rolls, {name, roll, guildName, rankName, classId, spec, equipped})
+        Rollouts.frames.debugWindow.updateHistory()
+    end
 end
