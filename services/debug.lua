@@ -39,25 +39,65 @@ Rollouts.debug.appendRandomRolls = function(number)
 end
 
 Rollouts.debug.testCase = function()
-    -- Tanno, 74
-    -- Albionna, 52
-    -- Eyota, 13
-    -- Mixpizza, 65
-    -- Stabby, 37
-    -- Enma, 87
-    -- Raindrool, 58
-    -- Corpse, 12
-    -- Pug, 99
-    -- Puglet, 68
+    Rollouts.beginRoll({
+        itemLink = 174137,
+        owner = "Enma",
+        time = GetServerTime(),
+        rollType = 3,
+        rolls = {}
+    })
 
-    Rollouts.appendRoll(Rollouts.utils.colour("Albionna", Rollouts.data.classColours[5]), "52", "The Silverhelms", "Silver Officer", 5)
-    Rollouts.appendRoll(Rollouts.utils.colour("Corpse", Rollouts.data.classColours[12]), "12", "The Silverhelms", "Silvercorpse", 12)
-    Rollouts.appendRoll(Rollouts.utils.colour("Enma", Rollouts.data.classColours[9]), "87", "The Silverhelms", "Officer Alt", 9)
-    Rollouts.appendRoll(Rollouts.utils.colour("Eyota", Rollouts.data.classColours[1]), "13", "The Silverhelms", "SilverVeteran", 1)
-    Rollouts.appendRoll(Rollouts.utils.colour("Mixpizza", Rollouts.data.classColours[7]), "65", "The Silverhelms", "Silverhelm", 7)
-    Rollouts.appendRoll(Rollouts.utils.colour("Pug", Rollouts.data.classColours[8]), "99", "Random Guild", "Top Boi", 8)
-    Rollouts.appendRoll(Rollouts.utils.colour("Puglet", Rollouts.data.classColours[3]), "68", "Other Guild", "Recruit", 3)
-    Rollouts.appendRoll(Rollouts.utils.colour("Raindrool", Rollouts.data.classColours[7]), "58", "The Silverhelms", "Silver Alt", 7)
-    Rollouts.appendRoll(Rollouts.utils.colour("Stabby", Rollouts.data.classColours[4]), "37", "The Silverhelms", "Silverhelm", 4)
-    Rollouts.appendRoll(Rollouts.utils.colour("Tanno", Rollouts.data.classColours[10]), "74", "The Silverhelms", "Guild Dad", 10)
+    local expected = {
+        { "tanno", 74 },
+        { "chullee", 35 },
+
+        { "stabby", 37 },
+
+        { "corpse", 12 },
+
+        { "puglet", 68 },
+
+        -- fails
+        { "albionna", 52 }, -- armor
+        { "eyota", 13 }, -- armor
+
+        { "mixpizza", 65 }, -- armor
+
+        { "enma", 87 }, -- owner / armor
+        { "raindrool", 58 }, -- armor
+
+        { "pug", 99 }, -- armor
+    }
+
+    local test = {
+        { "Albionna", "52", "The Silverhelms", "Silver Officer", 5},
+        { "Corpse", "12", "The Silverhelms", "Silvercorpse", 12},
+        { "Chullee", "35", "The Silverhelms", "SilverVeteran", 10},
+        { "Enma", "87", "The Silverhelms", "Officer Alt", 9},
+        { "Eyota", "13", "The Silverhelms", "SilverVeteran", 1},
+        { "Mixpizza", "65", "The Silverhelms", "Silverhelm", 7},
+        { "Pug", "99", "Random Guild", "Top Boi", 8},
+        { "Puglet", "68", "Other Guild", "Recruit", 4},
+        { "Raindrool", "58", "The Silverhelms", "Silver Alt", 7},
+        { "Stabby", "37", "The Silverhelms", "Silverhelm", 4},
+        { "Tanno", "74", "The Silverhelms", "Guild Dad", 10}
+    }
+
+    for i, roll in ipairs(test) do
+        Rollouts.appendRoll(Rollouts.utils.colour(roll[1], Rollouts.data.classColours[roll[5]]), roll[2], roll[3], roll[4], roll[5])
+    end
+
+    local displayRoll = Rollouts.getDisplayRoll()
+    local rolls = displayRoll and displayRoll.rolls or {}
+    for i, rollEntry in ipairs(rolls) do
+        local player = Rollouts.utils.simplifyName(rollEntry.name) or ""
+        if player ~= expected[i][1] then
+            Rollouts:Print("Test failed. Roll id: " .. i .. ". Expected " .. expected[i][1] .. " instead got " .. player)
+            Rollouts.finishRoll()
+            return
+        end
+    end
+
+    Rollouts:Print("Test completed.")
+    Rollouts.finishRoll()
 end

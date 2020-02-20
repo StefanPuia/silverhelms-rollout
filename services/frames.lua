@@ -34,7 +34,7 @@ Rollouts.frames = {}
 
 -- local function init()
 --     local layouts = {
-        
+
 --     }
 
 --     for layoutName, layout in pairs(layouts) do
@@ -253,7 +253,7 @@ local function createRollInfoFrame()
 
     local rollInfoLayout = Rollouts.env.showing == "virtual" and "RollInfoVirtual" or "RollInfoLive"
     container:SetLayout(rollInfoLayout)
-    
+
     container:AddChild(createItemIcon(displayRoll.itemLink, true, 32))
     container:AddChild(createLabel(Rollouts.data.rollTypes[displayRoll.rollType], 20, 100))
     container:AddChild(createLabel("Owner: " .. displayRoll.owner, 20, 500))
@@ -286,7 +286,7 @@ local function createPendingRollsFrame()
 
             local owner = createLabel(row.owner, 15)
             group:AddChild(owner)
-            
+
             local timestamp = createLabel(statusColour(Rollouts.utils.formatStamp(row.time), row.status), 15)
             group:AddChild(timestamp)
 
@@ -329,7 +329,7 @@ local function createRollHistoryFrame()
 
             local winner = createLabel(table.concat(Rollouts.getWinners(row, true), ", "), 15)
             group:AddChild(winner)
-            
+
             local timestamp = createLabel(statusColour(Rollouts.utils.formatStamp(row.time), row.status), 15)
             group:AddChild(timestamp)
 

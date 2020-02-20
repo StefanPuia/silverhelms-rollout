@@ -103,8 +103,8 @@ local function sortRolls()
             local pointsA = a.guild * 10000 + a.rank * 1000 + tonumber(a.roll)
             local pointsB = b.guild * 10000 + b.rank * 1000 + tonumber(b.roll)
 
-            if a.failMessage ~= nil then pointsA = 0 end
-            if b.failMessage ~= nil then pointsB = 0 end
+            if a.failMessage ~= nil then pointsA = -1/pointsA end
+            if b.failMessage ~= nil then pointsB = -1/pointsB end
 
             return pointsA > pointsB
         end)
@@ -146,7 +146,7 @@ Rollouts.handleWinningRolls = function()
         return true
     elseif #winning == 1 then
         local message = "Roll ended on " .. currentRoll.itemInfo[2] .. ". " .. Rollouts.utils.qualifyUnitName(winning[1].name, true) .. " won."
-        message = message .. " Please trade " .. currentRoll.owner .. "."
+        message = message .. " Please trade " .. Rollouts.utils.qualifyUnitName(currentRoll.owner, true) .. "."
         Rollouts.chat.sendMessage(message)
         return true
     else
@@ -158,27 +158,35 @@ Rollouts.handleWinningRolls = function()
     end
 end
 
+local function validateRoll(rollObject)
+    local failMessage = nil
+    local itemMaterial = currentRoll.itemInfo[7]
+    local itemSlot = currentRoll.itemInfo[9]
+
+    local isClassMaterial = (itemSlot ~= "INVTYPE_CLOAK" and itemMaterial == "Cloth")
+            or itemMaterial == "Leather" or itemMaterial == "Mail" or itemMaterial == "Plate"
+
+    if currentRoll.rollType > 1 and isClassMaterial and Rollouts.data.classArmorType[rollObject.class] ~= itemMaterial then
+        failMessage = Rollouts.data.failMessages["ARMOR_TYPE"]
+    end
+
+    if Rollouts.utils.simplifyName(rollObject.name) == Rollouts.utils.simplifyName(currentRoll.owner) then
+        failMessage = Rollouts.data.failMessages["ROLL_OWNER"]
+    end
+
+    rollObject.failMessage = failMessage
+end
+
 Rollouts.appendRoll = function(name, roll, guild, rank, classId, spec, equipped)
     if currentRoll ~= nil
             and not Rollouts.getRoll(name)
             and (Rollouts.utils.unitInGroup(name) and Rollouts.utils.unitInGroup("player") or not Rollouts.utils.unitInGroup("player"))
         then
 
-        local failMessage = nil
-        local itemMaterial = currentRoll.itemInfo[7]
-        local itemSlot = currentRoll.itemInfo[9]
+        local rollObj = Rollouts.utils.makeRollObject(name, roll, guild, rank, classId, nil, spec, equipped)
+        validateRoll(rollObj)
 
-        local isClassMaterial = (itemSlot ~= "INVTYPE_CLOAK" and itemMaterial == "Cloth") or itemMaterial == "Leather" or itemMaterial == "Mail" or itemMaterial == "Plate"
-        
-        if currentRoll.rollType > 1 and isClassMaterial and Rollouts.data.classArmorType[classId] ~= itemMaterial then
-            failMessage = Rollouts.data.failMessages["ARMOR_TYPE"]
-        end
-
-        if Rollouts.utils.simplifyName(name) == Rollouts.utils.simplifyName(currentRoll.owner) then
-            failMessage = Rollouts.data.failMessages["ROLL_OWNER"]
-        end
-
-        table.insert(currentRoll.rolls, 1, Rollouts.utils.makeRollObject(name, roll, guild, rank, classId, failMessage, spec, equipped))
+        table.insert(currentRoll.rolls, 1, rollObj)
         sortRolls()
         Rollouts.ui.updateWindow()
     end
@@ -205,6 +213,7 @@ Rollouts.updateRoll = function(name, guild, rank, class, spec, equipped)
             if class then roll.class = class end
             if spec then roll.spec = spec end
             if equipped then roll.equipped = equipped end
+            validateRoll(roll)
         end
     end
 end
