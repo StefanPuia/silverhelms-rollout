@@ -128,7 +128,8 @@ Rollouts.data.failMessages = {
     ["ARMOR_TYPE"] = "armor type",
     ["NOT_MS_STAT"] = "not MS stat",
     ["NOT_OS_STAT"] = "not OS stat",
-    ["ROLL_OWNER"] = "roll owner"
+    ["ROLL_OWNER"] = "roll owner",
+    ["ROLL_RULES"] = "roll rules"
 }
 Rollouts.data.colours = {
     red = "FF0000",

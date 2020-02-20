@@ -1,13 +1,14 @@
 examples = {
     pending = {{
         itemLink = 158362,
-        owner = "|cffFF7D0AOwner1|r",
+        owners = { "|cffFF7D0AOwner1|r" },
         time = 1118722038
     }},
     history = {{
         itemLink = 158362,
         itemInfo = { ... }, -- GetItemInfo()
-        owner = "|cffFF7D0AOwner1|r",
+        owners = {"|cffFF7D0A Owner1|r", "|cffFF7D0A Owner2|r"},
+        remainingOwners = {"|cffFF7D0A Owner3|r", "|cffFF7D0A Owner4|r"},
         time = 1118722038,
         rollType = "MS",
         status = "FINISHED",

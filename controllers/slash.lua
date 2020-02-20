@@ -28,8 +28,9 @@ local function handleFullCommand(input, messageParts, startIndex)
             if rollType == "MS" or rollType == "OS" or rollType == "GREED" then
                 for rollTypeId, t in ipairs(Rollouts.data.rollTypes) do
                     if rollType == t then
-                        local owner = not Rollouts.utils.stringContainsItem(messageParts[startIndex + 2]) and messageParts[startIndex + 2] or nil
-                        return Rollouts.utils.makeRollEntryObject(itemInfo[2], owner, rollTypeId)
+                        local owner = not Rollouts.utils.stringContainsItem(messageParts[startIndex + 2])
+                                and messageParts[startIndex + 2] or GetUnitName("player")
+                        return Rollouts.utils.makeRollEntryObject(itemInfo[2], { owner }, rollTypeId)
                     end
                 end
                 return true

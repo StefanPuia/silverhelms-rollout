@@ -226,6 +226,7 @@ AceGUI:RegisterLayout("HistoryViewFrame",
         local rollsHistoryButton = children[2]
         local pendingRolls = children[3]
         local queuePendingJobs = children[4]
+        local groupItems = children[5]
 
         if pendingRollsButton then
             pendingRollsButton.frame:SetPoint("TOPLEFT", content, "TOPLEFT", -1, 1)
@@ -245,6 +246,11 @@ AceGUI:RegisterLayout("HistoryViewFrame",
         if queuePendingJobs then
             queuePendingJobs.frame:SetPoint("TOPRIGHT", content, "TOPRIGHT", 1, 1)
             queuePendingJobs.frame:SetSize(200, 35)
+        end
+
+        if groupItems and queuePendingJobs then
+            groupItems.frame:SetPoint("RIGHT", queuePendingJobs.frame, "LEFT", 1, 1)
+            groupItems.frame:SetSize(120, 35)
         end
     end
 )

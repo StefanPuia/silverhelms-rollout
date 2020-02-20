@@ -76,13 +76,13 @@ Rollouts.utils.colour = function(text, rOrHex, g, b)
     return text
 end
 
-Rollouts.utils.makeRollEntryObject = function(itemLink, owner, rollType, time)
-    owner = owner or GetUnitName("player")
+Rollouts.utils.makeRollEntryObject = function(itemLink, owners, rollType, time)
+    owners = owners or { GetUnitName("player") }
     time = time or GetServerTime()
     rollType = rollType or Rollouts.utils.getEitherDBOption("defaultRollType")
     return {
         itemLink = itemLink,
-        owner = owner,
+        owners = Rollouts.utils.cloneArray(owners),
         time = time,
         rollType = rollType,
         rolls = {}
@@ -92,7 +92,7 @@ end
 Rollouts.utils.sanitizeRollEntryObject = function(entry)
     return {
         itemLink = entry.itemLink,
-        owner = entry.owner,
+        owners = entry.owners,
         time = entry.time,
         rollType = entry.rollType,
         rolls = {}
@@ -151,8 +151,10 @@ Rollouts.utils.colourizeUnit = function(unitName)
     return classId ~= nil and Rollouts.utils.colour(unitName, Rollouts.data.classColours[classId]) or unitName
 end
 
-Rollouts.utils.simplifyName = function(unitName)
-    return string.lower(Rollouts.utils.removeColour(Rollouts.utils.sanitizeUnitName(unitName)))
+Rollouts.utils.simplifyName = function(unitName, capitalise)
+    local simple = string.lower(Rollouts.utils.removeColour(Rollouts.utils.sanitizeUnitName(unitName)))
+    if capitalise then return Rollouts.utils.capitalise(simple) end
+    return simple
 end
 
 Rollouts.utils.removeColour = function(text)
@@ -202,4 +204,30 @@ Rollouts.utils.printDebug = function(text)
     if Rollouts.utils.getEitherDBOption("debugMode") then
         Rollouts:Print(text)
     end
+end
+
+Rollouts.utils.cloneArray = function(table)
+    local clone = {}
+    for k,v in pairs(table) do
+        clone[k] = v
+    end
+    return clone
+end
+
+Rollouts.utils.groupPending = function()
+    local pending = Rollouts.utils.getEitherDBOption("data", "rolls", "pending")
+    local grouped = {}
+    if #pending > 0 then table.insert(grouped, pending[1]) end
+    for i = 2, #pending do
+        local index = Rollouts.utils.indexOf(grouped, function(grp) return grp.itemLink == pending[i].itemLink end)
+        if index > 0 then
+            for o, owner in ipairs(pending[i].owners) do
+                table.insert(grouped[index].owners, owner)
+            end
+        else
+            table.insert(grouped, pending[i])
+        end
+    end
+    Rollouts.utils.setDBOption(grouped, "data", "rolls", "pending")
+    Rollouts.ui.updateWindow()
 end
