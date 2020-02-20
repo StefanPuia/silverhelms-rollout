@@ -213,3 +213,21 @@ Rollouts.utils.cloneArray = function(table)
     end
     return clone
 end
+
+Rollouts.utils.groupPending = function()
+    local pending = Rollouts.utils.getEitherDBOption("data", "rolls", "pending")
+    local grouped = {}
+    if #pending > 0 then table.insert(grouped, pending[1]) end
+    for i = 2, #pending do
+        local index = Rollouts.utils.indexOf(grouped, function(grp) return grp.itemLink == pending[i].itemLink end)
+        if index > 0 then
+            for o, owner in ipairs(pending[i].owners) do
+                table.insert(grouped[index].owners, owner)
+            end
+        else
+            table.insert(grouped, pending[i])
+        end
+    end
+    Rollouts.utils.setDBOption(grouped, "data", "rolls", "pending")
+    Rollouts.ui.updateWindow()
+end

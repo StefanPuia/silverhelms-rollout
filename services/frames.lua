@@ -355,6 +355,7 @@ local function createHistoryViewFrame()
             container:AddChild(createButton(Rollouts.ui.getQueueButtonText(), function()
                 Rollouts.ui.prepareQueue()
             end, nil, Rollouts.ui.isEnqueued()))
+            container:AddChild(createButton("Group Items", Rollouts.utils.groupPending))
         end
     elseif Rollouts.env.historyTab == "history" then
         container:AddChild(createRollHistoryFrame())
