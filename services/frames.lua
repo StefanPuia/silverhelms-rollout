@@ -215,6 +215,9 @@ local function createRollsContainer()
         group.frame:SetScript("OnLeave", function()
             GameTooltip:Hide()
         end)
+        group.frame:SetScript("OnMouseUp", function()
+            Rollouts.ui.manualFail(rollEntry)
+        end)
 
         scroll:AddChild(group)
     end

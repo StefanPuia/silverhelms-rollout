@@ -236,11 +236,12 @@ Rollouts.getTimeLeft = function()
     return Rollouts.utils.colour(timeLeft, "red")
 end
 
-Rollouts.pauseUnpause = function()
-    if isPaused then
+Rollouts.pauseUnpause = function(force)
+    isPaused = not isPaused
+    if force ~= nil then isPaused = force end
+    if not isPaused then
         tickSize = 0
     end
-    isPaused = not isPaused
     Rollouts.ui.updateWindow()
 end
 
@@ -250,6 +251,7 @@ end
 
 Rollouts.rollTick = function()
     if currentRoll ~= nil then
+        sortRolls()
         local currentTick = GetServerTime()
         local tickSize = currentTick - lastTick
         if tickSize > 0 then

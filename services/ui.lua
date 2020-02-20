@@ -196,3 +196,50 @@ Rollouts.ui.enqueue = function()
         clearQueue()
     end
 end
+
+Rollouts.ui.alert = function(text, onAccept, onCancel, timeout, dialogName, hasEditBox, button1, button2)
+    onAccept = onAccept or function() end
+    timeout = timeout or 0
+    dialogName = dialogName or "DEFAULT"
+    dialogName = "ROLLOUTS_DIALOG_" .. dialogName
+
+    if StaticPopupDialogs[dialogName] == nil then
+        StaticPopupDialogs[dialogName] = {
+            text = text,
+            button1 = button1 or "OK",
+            button2 = button2 or "Cancel",
+            OnAccept = onAccept,
+            OnCancel = onCancel,
+            timeout = 0,
+            whileDead = true,
+            hideOnEscape = false,
+            preferredIndex = 3
+        }
+        if hasEditBox then StaticPopupDialogs[dialogName].hasEditBox = true end
+    end
+    StaticPopup_Show(dialogName)
+end
+
+local function resetStateAfterManualFail()
+    if Rollouts.isPaused() then Rollouts.pauseUnpause(false) end
+    Rollouts.ui.updateWindow()
+end
+
+Rollouts.ui.manualFail = function(roll)
+    if Rollouts.isRolling() and Rollouts.env.showing == "live" and not roll.failMessage then
+        Rollouts.pauseUnpause(true)
+        Rollouts.ui.updateWindow()
+        Rollouts.ui.alert("Please enter a fail message:",
+            function(self, data)
+                local rollEntry = Rollouts.getRoll(roll.name)
+                if rollEntry then
+                    rollEntry.failMessage = self.editBox:GetText() or "test"
+                end
+                resetStateAfterManualFail()
+            end,
+            function(self, data)
+                resetStateAfterManualFail()
+            end,
+        nil, "FAIL_REASON", true)
+    end
+end
