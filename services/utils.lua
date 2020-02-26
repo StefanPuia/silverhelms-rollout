@@ -214,12 +214,52 @@ Rollouts.utils.cloneArray = function(table)
     return clone
 end
 
+Rollouts.utils.getItemLinkData = function(itemString)
+    if not itemString then return {} end
+    local _, itemID, enchantID, gemID1, gemID2, gemID3, gemID4,
+        suffixID, uniqueID, linkLevel, specializationID, upgradeTypeID, instanceDifficultyID, numBonusIDs = strsplit(":", itemString)
+    local tempString, _, _, _ = strmatch(itemString,
+        "item:[-%d]-:[-%d]-:[-%d]-:[-%d]-:[-%d]-:[-%d]-:[-%d]-:[-%d]-:[-%d]-:[-%d]-:[-%d]-:[-%d]-:[-%d]-:([-:%d]+):([-%d]-):([-%d]-):([-%d]-)|")
+    tempString = tempString or ""
+    local bonusIDs, upgradeValue
+    if upgradeTypeID and upgradeTypeID ~= "" then
+        upgradeValue = tempString:match("[-:%d]+:([-%d]+)")
+        bonusIDs = {strsplit(":", tempString:match("([-:%d]+):"))}
+    else
+        bonusIDs = {strsplit(":", tempString)}
+    end
+
+    return {
+        itemId = itemID,
+        enchantId = enchantID,
+        gemId1 = gemID1,
+        gemId2 = gemID2,
+        gemId3 = gemID3,
+        gemId4 = gemID4,
+        suffixId = suffixID,
+        uniqueId = uniqueID,
+        linkLevel = linkLevel,
+        specializationId = specializationID,
+        upgradeTypeId = upgradeTypeID,
+        instanceDifficultyId = instanceDifficultyID,
+        numBonusIds = numBonusIDs,
+        bonusIds = bonusIDs,
+        upgradeValue = upgradeValue
+    }
+end
+
+local function canBeGrouped(itemLink1, itemLink2)
+    local itemData1 = Rollouts.utils.getItemLinkData(itemLink1)
+    local itemData2 = Rollouts.utils.getItemLinkData(itemLink2)
+    return itemData1.itemId == itemData2.itemId
+end
+
 Rollouts.utils.groupPending = function()
     local pending = Rollouts.utils.getEitherDBOption("data", "rolls", "pending")
     local grouped = {}
     if #pending > 0 then table.insert(grouped, pending[1]) end
     for i = 2, #pending do
-        local index = Rollouts.utils.indexOf(grouped, function(grp) return grp.itemLink == pending[i].itemLink end)
+        local index = Rollouts.utils.indexOf(grouped, function(grp) return canBeGrouped(grp.itemLink, pending[i].itemLink) end)
         if index > 0 then
             for o, owner in ipairs(pending[i].owners) do
                 table.insert(grouped[index].owners, owner)
