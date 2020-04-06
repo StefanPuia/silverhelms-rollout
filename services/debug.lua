@@ -250,7 +250,7 @@ Rollouts.debug.testCase = function()
         Rollouts:Print("Starting test [" .. Rollouts.utils.colour(testName, "yellow") .. "].")
         Rollouts.cancelRoll()
         Rollouts.beginRoll({
-            itemLink = testCase.itemLink or 174137,
+            itemLink = testCase.itemLink or "item:174137::::::::20:264::::::",
             owners = testCase.owners,
             time = GetServerTime(),
             rollType = 3,

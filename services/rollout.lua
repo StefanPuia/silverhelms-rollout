@@ -91,7 +91,7 @@ Rollouts.beginRoll = function(rollEntry, isRestart, rulePredicate, ruleMessage)
         Rollouts.ui.updateWindow()
         local countDisplay = #currentRoll.owners > 1 and ("x" .. #currentRoll.owners .. " ") or ""
         Rollouts.chat.sendWarning("Roll for " .. countDisplay
-            .. currentRoll.itemInfo[2] .. " " .. Rollouts.data.rollTypes[currentRoll.rollType] .. ruleMessage)
+            .. (currentRoll.itemInfo[2] or "") .. " " .. (Rollouts.data.rollTypes[currentRoll.rollType] or "") .. ruleMessage)
     end
 end
 
@@ -190,7 +190,7 @@ Rollouts.handleWinningRolls = function()
     local winning = Rollouts.getWinners(currentRoll)
     local availableSpots = #currentRoll.owners
     currentRoll.remainingOwners = Rollouts.utils.cloneArray(currentRoll.owners)
-    local message = "Roll ended on " .. currentRoll.itemInfo[2] .. ". "
+    local message = "Roll ended on " .. (currentRoll.itemInfo[2] or "") .. ". "
     local whisper = "No one rolled for your " .. currentRoll.itemLink .. ". You can scrap it!"
 
     if #winning > availableSpots then
