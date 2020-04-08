@@ -69,7 +69,7 @@ local testCases = {
     },
     ["No winner"] = {
         owners = { "Enma" },
-        itemLink = 6543,
+        itemLink = "item:174137::::::::20:264::::::",
         steps = {{
             rolls = {
                 { "Chullee", "35", "The Silverhelms", "SilverVeteran", 10},
@@ -142,7 +142,7 @@ local testCases = {
     },
     ["A lot of winners, few owners"] = {
         owners = { "Owner1", "Owner2", "Owner3" },
-        itemLink = 6543,
+        itemLink = "item:174137::::::::20:264::::::",
         steps = {{ -- 1
             rolls = {
                 { "Player5", "85", "Guild", "Rank", 5},

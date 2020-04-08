@@ -357,12 +357,15 @@ Rollouts.rollTick = function()
                 timeLeft = 0
                 Rollouts.handleWinningRolls()
             else
-                local rollCountdown = Rollouts.utils.getEitherDBOption("rollCountdown")
-                if timeLeft == rollCountdown then
-                    Rollouts.chat.sendWarning(currentRoll.itemLink .. " Roll ending in " .. timeLeft)
-                end
-                if timeLeft < rollCountdown then
-                    Rollouts.chat.sendMessage(timeLeft)
+                if not isPaused then
+                    local rollCountdown = Rollouts.utils.getEitherDBOption("rollCountdown")
+                    if timeLeft == rollCountdown then
+                        Rollouts.chat.sendWarning(currentRoll.itemLink .. " Roll ending in " .. timeLeft)
+                    elseif timeLeft < rollCountdown and timeLeft % 5 == 0 then
+                        Rollouts.chat.sendWarning(currentRoll.itemLink .. " Roll ending in " .. timeLeft)
+                    elseif timeLeft < rollCountdown and timeLeft < 5 then
+                        Rollouts.chat.sendMessage(timeLeft)
+                    end
                 end
             end
         end
