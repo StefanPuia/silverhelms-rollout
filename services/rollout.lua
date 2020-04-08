@@ -166,7 +166,7 @@ Rollouts.getWinners = function(rollObj, justNames)
 end
 
 local function giveAway(owner, winner)
-    Rollouts.chat.sendMessage(Rollouts.utils.simplifyName(owner, true) .. " trade " .. Rollouts.utils.simplifyName(winner, true))
+    Rollouts.chat.sendMessage(Rollouts.utils.simplifyName(winner, true) .. " trade " .. Rollouts.utils.simplifyName(owner, true))
 end
 
 local function continueRoll(owners, rollType, status, rulePredicate, ruleMessage)
