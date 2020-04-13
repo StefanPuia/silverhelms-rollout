@@ -29,11 +29,11 @@ Rollouts.defaultOptions = {
                     }
                 },
                 [2] = {
-                    name = "The Silverhelms",
+                    name = "Example Guild",
                     ranks = {
-                        [1] = {"Officer Alt", "Silver Alt", "Silvercorpse", "Silverfriend"},
-                        [2] = {"Silverhelm"},
-                        [3] = {"Guild Dad", "Guild Mom", "Silver Officer", "SilverVeteran", "Silver Knight"}
+                        [1] = {"Alt", "Social", "Officer Alt"},
+                        [2] = {"Trial"},
+                        [3] = {"Raider", "Veteran", "Officer"}
                     }
                 }
             }
@@ -149,7 +149,7 @@ local settingsTable = {
             }
         },
         advancedOptions = {
-            order = 2,
+            order = 3,
             name = "Advanced Options",
             type = "group",
             args = {
@@ -219,11 +219,38 @@ local settingsTable = {
                     type = "toggle",
                     set = function(info, val) setDBOption(val, "debugMode") end,
                     get = function(info) return getEitherDBOption("debugMode") end
+                },
+                break4 = {
+                    order = 10,
+                    type = "description",
+                    name = ""
+                },
+                runTestCase = {
+                    order = 11,
+                    name = "Run Test Cases",
+                    type = "execute",
+                    func = function() Rollouts.debug.testCase() end
+                },
+                break5 = {
+                    order = 12,
+                    type = "description",
+                    name = ""
+                },
+                clearHistory = {
+                    order = 13,
+                    name = "Clear History",
+                    type = "execute",
+                    func = function()
+                        Rollouts.ui.alert("Are you sure you want to clear the history?",
+                        function()
+                            setDBOption({}, "data", "rolls", "history")
+                        end, false, false, "RESET_DEFAULTS")
+                    end
                 }
             }
         },
         guildRanking = {
-            order = 3,
+            order = 2,
             name = "Guild Ranking",
             type = "group",
             args = {
@@ -238,11 +265,43 @@ local settingsTable = {
                     name = "Ranks",
                     type = "input",
                     width = "full",
-                    multiline = 15,
-                    get = function(info) return Rollouts.utils.stringify(getEitherDBOption("guildRanking", "guilds")) end,
-                    set = function() Rollouts:Print("Ranks cannot be changed from settings yet") end
+                    multiline = 20,
+                    get = function(info) return Rollouts.utils.stringifyGuildRanking(getEitherDBOption("guildRanking", "guilds")) end,
+                    set = function(info, val)
+                        local parsed = Rollouts.utils.parseGuildRanking(val)
+                        if parsed ~= nil then
+                            setDBOption(parsed, "guildRanking", "guilds")
+                        else
+                            Rollouts:Print("Cannot parse the rankings. Please check your syntax.")
+                        end
+                    end
                 }
             }
+        },
+        resetOptions = {
+            order = 4,
+            name = "Reset Defaults",
+            type = "execute",
+            func = function()
+                Rollouts.ui.alert("Are you sure you want to reset your settings?",
+                function()
+                    setDBOption(Rollouts.defaultOptions.global.rollTimeLimit, "rollTimeLimit")
+                    setDBOption(Rollouts.defaultOptions.global.rollCountdown, "rollCountdown")
+                    setDBOption(Rollouts.defaultOptions.global.defaultRollType, "defaultRollType")
+                    setDBOption(Rollouts.defaultOptions.global.restartIfNoRolls, "restartIfNoRolls")
+                    setDBOption(Rollouts.defaultOptions.global.lowestRestart, "lowestRestart")
+                    setDBOption(Rollouts.defaultOptions.global.enableWhisperAppend, "enableWhisperAppend")
+
+                    setDBOption(Rollouts.defaultOptions.global.guildRanking.enabled, "guildRanking", "enabled")
+                    setDBOption(Rollouts.defaultOptions.global.guildRanking.guilds, "guildRanking", "guilds")
+
+                    setDBOption(Rollouts.defaultOptions.global.showMinimapIcon, "showMinimapIcon")
+                    setDBOption(Rollouts.defaultOptions.global.debugMode, "debugMode")
+                    setDBOption(Rollouts.defaultOptions.global.autoRemoveDays, "autoRemoveDays")
+
+                    Rollouts:Print("Settings reset to defaults.")
+                end, false, false, "RESET_DEFAULTS")
+            end
         }
     }
 }

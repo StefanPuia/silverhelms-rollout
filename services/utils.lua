@@ -287,3 +287,65 @@ Rollouts.utils.cleanupHistory = function()
     end
     Rollouts.utils.setDBOption(cleaned, "data", "rolls", "history")
 end
+
+Rollouts.utils.parseGuildRanking = function(input)
+    if not input then return nil end
+    local guilds = {}
+    local lastGuild = nil
+    local lines = Rollouts.utils.strSplit(input, "\n")
+    for p, l in ipairs(lines) do
+        local line = string.trim(l)
+        if line ~= "" then
+            if string.find(line, "-\\-") == 1 then
+                -- comment, do nothing
+            elseif string.find(line, "#") == 1 then
+                if lastGuild ~= nil then table.insert(guilds, lastGuild) end
+                local guildName = string.trim(string.sub(line, 2))
+                lastGuild = {
+                    name = guildName,
+                    ranks = {}
+                }
+            else
+                if lastGuild == nil then return nil end
+                local ranks = Rollouts.utils.strSplit(line, ",")
+                for i, rank in ipairs(ranks) do ranks[i] = string.trim(rank) end
+                table.insert(lastGuild.ranks, ranks)
+            end
+        end
+    end
+    if lastGuild ~= nil then table.insert(guilds, lastGuild) end
+
+    local sortedGuilds = {}
+    for i = #guilds, 1, -1 do
+        local sortedRanks = {}
+        for j = #(guilds[i].ranks), 1, -1 do
+            table.insert(sortedRanks, guilds[i].ranks[j])
+        end
+        table.insert(sortedGuilds, {
+            name = guilds[i].name,
+            ranks = sortedRanks
+        })
+    end
+
+    return sortedGuilds
+end
+
+Rollouts.utils.stringifyGuildRanking = function(ranking)
+    local output = {
+        "-- Use dashes (--) to show comments",
+        "-- Hashtags (#) mean a guild name",
+        "-- Split ranks that should have the same ranking with a comma (,)",
+        "-- Keep in mind that guild names and ranks are case-sensitive (aA)",
+        "-- Use asterisk (*) to allow any rank",
+        ""
+    }
+
+    for guildId = #ranking, 1, -1 do
+        table.insert(output, "\n# " .. ranking[guildId].name)
+        for rankId = #ranking[guildId].ranks, 1, -1 do
+            table.insert(output, table.concat(ranking[guildId].ranks[rankId], ", "))
+        end
+    end
+
+    return table.concat(output, "\n")
+end

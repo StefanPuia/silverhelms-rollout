@@ -34,19 +34,20 @@ end
 local testCases = {
     ["Single winner"] = {
         owners = { "Enma" },
+        itemLink = "item:174137::::::::20:264::::::",
         steps = {{
             rolls = {
-                { "Albionna", "52", "The Silverhelms", "Silver Officer", 5},
-                { "Corpse", "12", "The Silverhelms", "Silvercorpse", 12},
-                { "Chullee", "35", "The Silverhelms", "SilverVeteran", 10},
-                { "Enma", "87", "The Silverhelms", "Officer Alt", 9},
-                { "Eyota", "52", "The Silverhelms", "SilverVeteran", 1},
-                { "Mixpizza", "65", "The Silverhelms", "Silverhelm", 7},
+                { "Albionna", "52", "Example Guild", "Officer", 5},
+                { "Corpse", "12", "Example Guild", "Social", 12},
+                { "Chullee", "35", "Example Guild", "Veteran", 10},
+                { "Enma", "87", "Example Guild", "Officer Alt", 9},
+                { "Eyota", "52", "Example Guild", "Veteran", 1},
+                { "Mixpizza", "65", "Example Guild", "Trial", 7},
                 { "Pug", "99", "Random Guild", "Top Boi", 8},
                 { "Puglet", "68", "Other Guild", "Recruit", 4},
-                { "Raindrool", "58", "The Silverhelms", "Silver Alt", 7},
-                { "Stabby", "37", "The Silverhelms", "Silverhelm", 4},
-                { "Tanno", "74", "The Silverhelms", "Guild Dad", 10}
+                { "Raindrool", "58", "Example Guild", "Alt", 7},
+                { "Stabby", "37", "Example Guild", "Trial", 4},
+                { "Tanno", "74", "Example Guild", "Officer", 10}
             },
             expected = {
                 order = {
@@ -69,12 +70,12 @@ local testCases = {
     },
     ["No winner"] = {
         owners = { "Enma" },
-        itemLink = "item:174137::::::::20:264::::::",
+        itemLink = "item:6543::::::::20:264:::1:1706:::",
         steps = {{
             rolls = {
-                { "Chullee", "35", "The Silverhelms", "SilverVeteran", 10},
-                { "Tanno", "74", "The Silverhelms", "Guild Dad", 10},
-                { "Enma", "87", "The Silverhelms", "Officer Alt", 9},
+                { "Chullee", "35", "Example Guild", "Veteran", 10},
+                { "Tanno", "74", "Example Guild", "Officer", 10},
+                { "Enma", "87", "Example Guild", "Officer Alt", 9},
             },
             expected = {
                 order = {
@@ -88,13 +89,14 @@ local testCases = {
     },
     ["Two winners"] = {
         owners = { "Enma", "Albionna" },
+        itemLink = "item:174137::::::::20:264::::::",
         steps = {{
             rolls = {
-                { "Chullee", "35", "The Silverhelms", "SilverVeteran", 10},
-                { "Tanno", "74", "The Silverhelms", "Guild Dad", 10},
-                { "Albionna", "52", "The Silverhelms", "Silver Officer", 5},
-                { "Enma", "87", "The Silverhelms", "Officer Alt", 9},
-                { "Corpse", "12", "The Silverhelms", "Silvercorpse", 12}
+                { "Chullee", "35", "Example Guild", "Veteran", 10},
+                { "Tanno", "74", "Example Guild", "Officer", 10},
+                { "Albionna", "52", "Example Guild", "Officer", 5},
+                { "Enma", "87", "Example Guild", "Officer Alt", 9},
+                { "Corpse", "12", "Example Guild", "Social", 12}
             },
             expected = {
                 order = {
@@ -110,11 +112,12 @@ local testCases = {
     },
     ["Multiple winners one owner"] = {
         owners = { "Enma" },
+        itemLink = "item:174137::::::::20:264::::::",
         steps = {{
             rolls = {
-                { "Tanno", "74", "The Silverhelms", "Guild Dad", 10},
-                { "Chullee", "74", "The Silverhelms", "SilverVeteran", 10},
-                { "Albionna", "52", "The Silverhelms", "Silver Officer", 5}
+                { "Tanno", "74", "Example Guild", "Officer", 10},
+                { "Chullee", "74", "Example Guild", "Veteran", 10},
+                { "Albionna", "52", "Example Guild", "Officer", 5}
             },
             expected = {
                 order = {
@@ -126,9 +129,9 @@ local testCases = {
             }
         }, {
             rolls = {
-                { "Chullee", "58", "The Silverhelms", "SilverVeteran", 10},
-                { "Tanno", "23", "The Silverhelms", "Guild Dad", 10},
-                { "Albionna", "100", "The Silverhelms", "Silver Officer", 5}
+                { "Chullee", "58", "Example Guild", "Veteran", 10},
+                { "Tanno", "23", "Example Guild", "Officer", 10},
+                { "Albionna", "100", "Example Guild", "Officer", 5}
             },
             expected = {
                 order = {
@@ -142,7 +145,7 @@ local testCases = {
     },
     ["A lot of winners, few owners"] = {
         owners = { "Owner1", "Owner2", "Owner3" },
-        itemLink = "item:174137::::::::20:264::::::",
+        itemLink = "item:6543::::::::20:264:::1:1706:::",
         steps = {{ -- 1
             rolls = {
                 { "Player5", "85", "Guild", "Rank", 5},
@@ -227,25 +230,29 @@ Rollouts.debug.appendRandomRolls = function(number)
 end
 
 local function printTestFailure(testName, stepId, rollId, expectedType, expected, actual)
-    local message = "Test [" .. Rollouts.utils.colour(testName, "red") .. "] step [" .. stepId .. "] failed. "
+    local message = "Test [" .. Rollouts.utils.colour(testName, "red") .. "], step [" .. stepId .. "] failed. "
     if rollId then message = message .. "Roll " .. rollId .. ". " end
     message = message .. "\nExpected " .. expectedType .. ": '" .. expected .. "'. Instead got '" .. actual .. "'\n"
     Rollouts:Print(message)
 end
 
-local function assert(testName, stepId, rollId, expectedType, expected, actual)
+local function assert(testName, stepId, rollId, expectedType, expected, actual, stats)
     if expected ~= actual then
         printTestFailure(testName, stepId, rollId, expectedType, expected, actual)
+        stats.breakout = true
+        stats.failed = stats.failed + 1
+        return false
     end
+    return true
 end
 
 Rollouts.debug.testCase = function()
     local failed = 0
-    local completed = 0
+    local testStats = { failed = 0, completed = 0, breakout = false }
+
     Rollouts:Print("Running test cases...\n")
-    local breakout = false
     for testName, testCase in pairs(testCases) do
-        if breakout then break end
+        if testStats.breakout then break end
 
         Rollouts:Print("Starting test [" .. Rollouts.utils.colour(testName, "yellow") .. "].")
         Rollouts.cancelRoll()
@@ -259,7 +266,7 @@ Rollouts.debug.testCase = function()
 
         local testSteps = testCase.steps
         for stepIndex = 1, #testSteps do
-            if breakout then break end
+            if testStats.breakout then break end
             local testStep = testSteps[stepIndex]
 
             for rollId, roll in ipairs(testStep.rolls) do
@@ -269,53 +276,39 @@ Rollouts.debug.testCase = function()
             local displayRoll = Rollouts.getDisplayRoll()
             local rolls = displayRoll and displayRoll.rolls or {}
             local expectedOrder = testStep.expected.order
-            assert(testName, stepIndex, nil, "rolls count", #expectedOrder, #rolls)
+
+            if not assert(testName, stepIndex, nil, "rolls count", #expectedOrder, #rolls, testStats) then break end
+
             for rollId, rollEntry in ipairs(rolls) do
                 local expectedRollName = expectedOrder[rollId][1]
                 local expectedRollValue = expectedOrder[rollId][2]
-                if breakout then break end
                 local player = Rollouts.utils.simplifyName(rollEntry.name) or ""
-                if player ~= expectedRollName then
-                    printTestFailure(testName, stepIndex, rollId, "roll order", expectedRollName, player)
-                    failed = failed + 1
-                    breakout = true
-                    break
-                end
-                if tonumber(rollEntry.roll) ~= expectedRollValue then
-                    printTestFailure(testName, stepIndex, rollId, "roll value", expectedRollValue, rollEntry.roll)
-                    failed = failed + 1
-                    breakout = true
-                    break
-                end
+                if not assert(testName, stepIndex, rollId, "roll order", expectedRollName, player, testStats) then break end
+                if not assert(testName, stepIndex, rollId, "roll value", expectedRollValue, tonumber(rollEntry.roll), testStats) then break end
             end
 
+            if testStats.breakout then break end
             local expectedWinners = testStep.expected.winners
             local actualWinners = Rollouts.getWinners(nil, true)
-            assert(testName, stepIndex, nil, "winner count", #expectedWinners, #actualWinners)
-            for i = 1, #expectedWinners do
-                if breakout then break end
+            if not assert(testName, stepIndex, nil, "winner count", #expectedWinners, #actualWinners, testStats) then break end
 
+            for i = 1, #expectedWinners do
                 local player = Rollouts.utils.simplifyName(actualWinners[i]) or "nil"
-                if player ~= expectedWinners[i] then
-                    printTestFailure(testName, stepIndex, i, "winner", expectedWinners[i], player)
-                    failed = failed + 1
-                    breakout = true
-                    break
-                end
+                if not assert(testName, stepIndex, i, "winner", expectedWinners[i], player, testStats) then break end
             end
 
             Rollouts.handleWinningRolls()
         end
 
-        if not breakout then
+        if not testStats.breakout then
             Rollouts:Print("Test [" .. Rollouts.utils.colour(testName, "green") .. "] completed successfully.\n")
             Rollouts.cancelRoll()
-            completed = completed + 1
+            testStats.completed = testStats.completed + 1
         end
     end
     Rollouts.handleWinningRolls()
-    Rollouts:Print("Tests finished. " .. Rollouts.utils.colour(completed, "green") .. " completed and "
-            .. Rollouts.utils.colour(failed, "red") .. " failed.")
+    Rollouts:Print("Tests finished. " .. Rollouts.utils.colour(testStats.completed, "green") .. " completed and "
+            .. Rollouts.utils.colour(testStats.failed, "red") .. " failed.")
 end
 
 Rollouts.debug.toggleDebugWindow = function()
