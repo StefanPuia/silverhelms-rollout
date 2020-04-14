@@ -5,6 +5,7 @@ local SLASH_COMMAND = "rollout"
 local function printHelp()
     Rollouts.Print("Rollout commands:")
     Rollouts.Print("/" .. SLASH_COMMAND .. " - show the rollout window")
+    Rollouts.Print("/" .. SLASH_COMMAND .. " [Item Link] - start a default type roll")
     Rollouts.Print("/" .. SLASH_COMMAND .. " <MS/OS/GREED> <Character?> [Item Link] - starts a rollout")
     Rollouts.Print("/" .. SLASH_COMMAND .. " add <MS/OS/GREED> <Character?> [Item Link] - append the roll to the pending queue")
     Rollouts.Print("/" .. SLASH_COMMAND .. " <stop/cancel> - cancels the rollout")
@@ -35,7 +36,9 @@ local function handleFullCommand(input, messageParts, startIndex)
                 end
                 return true
             else
-                Rollouts:Print("Specify a roll type <MS/OS/GREED>. /rollout help")
+                local owner = not Rollouts.utils.stringContainsItem(messageParts[startIndex + 2])
+                    and messageParts[startIndex + 2] or GetUnitName("player")
+                return Rollouts.utils.makeRollEntryObject(itemInfo[2], { owner }, Rollouts.utils.getEitherDBOption("defaultRollType"))
             end
         end
     else
