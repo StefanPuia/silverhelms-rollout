@@ -126,6 +126,7 @@ Rollouts.data.specStats = {
 }
 Rollouts.data.failMessages = {
     ["ARMOR_TYPE"] = "armor type",
+    ["WEAPON_TYPE"] = "weapon type",
     ["NOT_MS_STAT"] = "not MS stat",
     ["NOT_OS_STAT"] = "not OS stat",
     ["ROLL_OWNER"] = "roll owner",
@@ -232,4 +233,18 @@ Rollouts.data.classes = {
     MONK = 10,
     DRUID = 11,
     DEMONHUNTER = 12,
+}
+Rollouts.data.weaponProficiencies = {
+    [1] = { "Axes", "Swords", "Maces", "Polearms", "Staves", "Daggers", "Fist", "Bows", "Crossbows", "Guns", "Thrown", "Shields" },
+    [2] = { "Axes", "Swords", "Maces", "Polearms", "Shields" },
+    [3] = { "Axes", "Swords", "Polearms", "Staves", "Daggers", "Fist", "Bows", "Crossbows", "Guns" },
+    [4] = { "One-Handed Axes", "One-Handed Swords", "One-Handed Maces", "Daggers", "Fist", "Bows", "Crossbows", "Guns", "Thrown" },
+    [5] = { "One-Handed Maces", "Staves", "Daggers", "Wands" },
+    [6] = { "Axes", "Swords", "Maces", "Polearms" },
+    [7] = { "Axes", "Maces", "Staves", "Daggers", "Fist", "Shields" },
+    [8] = { "One-Handed Swords", "Staves", "Daggers", "Wands" },
+    [9] = { "One-Handed Swords", "Staves", "Daggers", "Wands" },
+    [10] = { "One-Handed Axes", "One-Handed Swords", "One-Handed Maces", "Polearms", "Staves", "Fist" },
+    [11] = { "Maces", "Polearms", "Staves", "Daggers", "Fist" },
+    [12] = { "Warglaives", "Fist Weapons", "One-Handed Axes", "One-Handed Swords"}
 }

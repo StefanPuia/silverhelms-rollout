@@ -165,6 +165,10 @@ Rollouts.utils.removeColour = function(text)
     return hasColour and string.sub(text, 11, -3) or text
 end
 
+Rollouts.utils.contains = function(array, item)
+    return Rollouts.utils.indexOf(array, item) > 0
+end
+
 Rollouts.utils.indexOf = function(table, predicate)
     for i, v in ipairs(table) do
         if type(predicate) == "function" then

@@ -253,14 +253,19 @@ end
 
 local function validateRoll(rollObject)
     local failMessage = nil
-    local itemMaterial = currentRoll.itemInfo[7]
+    local itemSubType = currentRoll.itemInfo[7]
     local itemSlot = currentRoll.itemInfo[9]
 
-    local isClassMaterial = (itemSlot ~= "INVTYPE_CLOAK" and itemMaterial == "Cloth")
-            or itemMaterial == "Leather" or itemMaterial == "Mail" or itemMaterial == "Plate"
+    local isClassMaterial = (itemSlot ~= "INVTYPE_CLOAK" and itemSubType == "Cloth")
+            or itemSubType == "Leather" or itemSubType == "Mail" or itemSubType == "Plate"
 
-    if currentRoll.rollType > 1 and isClassMaterial and Rollouts.data.classArmorType[rollObject.class] ~= itemMaterial then
+    if currentRoll.rollType > 1 and isClassMaterial and Rollouts.data.classArmorType[rollObject.class] ~= itemSubType then
         failMessage = Rollouts.data.failMessages["ARMOR_TYPE"]
+    end
+
+    if currentRoll.rollType > 1 and Rollouts.utils.contains({"INVTYPE_WEAPON", "INVTYPE_SHIELD"}, itemSlot)
+            and not Rollouts.utils.contains(Rollouts.data.weaponProficiencies[rollObject.class], itemSubType) then
+        failMessage = Rollouts.data.failMessages["WEAPON_TYPE"]
     end
 
     if Rollouts.utils.indexOf(currentRoll.owners, function(owner)
