@@ -1,4 +1,5 @@
 local LibStub = _G.LibStub
+local LGIST = LibStub:GetLibrary("LibGroupInSpecT-1.1-eq")
 local Rollouts = LibStub("AceAddon-3.0"):GetAddon("Rollouts")
 Rollouts.chat = {}
 
@@ -12,10 +13,37 @@ function Rollouts:HandleRollMessage(e, message)
     if name and roll and minRoll and maxRoll then
         if tonumber(minRoll) == Rollouts.utils.getEitherDBOption("roll", "min")
                 and tonumber(maxRoll) == Rollouts.utils.getEitherDBOption("roll", "max") then
-                
+
             local guildName, guildRankName = GetGuildInfo(name)
             local classId = select(3, UnitClass(name))
-            Rollouts.appendRoll(Rollouts.utils.colourizeUnit(name), roll, guildName, guildRankName, classId)
+
+            if not guildName and not classId then
+                local guildMember = Rollouts.utils.queryGuildMembers(name)
+                if guildMember then
+                    guildName = GetGuildInfo("player")
+                    guildRankName = guildMember.rank
+                    classId = Rollouts.data.classes[guildMember.classFileName]
+                end
+            end
+
+            local specId = nil
+            local equipped = nil
+            local guid = UnitGUID(name)
+            local cachedInfo = LGIST:GetCachedInfo(guid)
+            if cachedInfo then
+                specId = cachedInfo.global_spec_id
+                if Rollouts.env.live then
+                    local slots = Rollouts.data.slots[Rollouts.env.live.itemInfo[9]]
+                    equipped = {}
+                    for _,slot in ipairs(slots) do
+                        table.insert(equipped, cachedInfo.equipped[slot])
+                    end
+                end
+            else
+                LGIST:Rescan(guid)
+            end
+
+            Rollouts.appendRoll(Rollouts.utils.colourizeUnit(name, classId), roll, guildName, guildRankName, classId, specId, equipped)
         end
     end
 end

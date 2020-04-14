@@ -145,9 +145,11 @@ Rollouts.utils.sanitizeUnitName = function(unitName)
     return ({unitName:gsub("-" .. GetRealmName(), "")})[1]
 end
 
-Rollouts.utils.colourizeUnit = function(unitName)
+Rollouts.utils.colourizeUnit = function(unitName, classId)
     unitName = Rollouts.utils.sanitizeUnitName(unitName)
-    local classId = UnitIsVisible(unitName) and select(3, UnitClass(unitName)) or nil
+    if not classId then
+        classId = UnitIsVisible(unitName) and select(3, UnitClass(unitName)) or nil
+    end
     return classId ~= nil and Rollouts.utils.colour(unitName, Rollouts.data.classColours[classId]) or unitName
 end
 
@@ -348,4 +350,31 @@ Rollouts.utils.stringifyGuildRanking = function(ranking)
     end
 
     return table.concat(output, "\n")
+end
+
+Rollouts.utils.queryGuildMembers = function(player)
+    numTotalMembers, numOnlineMaxLevelMembers, numOnlineMembers = GetNumGuildMembers();
+
+    for i = 0, numTotalMembers do
+    name, rank, rankIndex, level, class, zone, note,
+            officernote, online, status, classFileName = GetGuildRosterInfo(i)
+
+        if name == Rollouts.utils.qualifyUnitName(player) then
+            return {
+            name = name,
+            rank = rank,
+            rankIndex = rankIndex,
+            level = level,
+            class = class,
+            zone = zone,
+            note = note,
+            officernote = officernote,
+            online = online,
+            status = status,
+            classFileName = classFileName
+        }
+        end
+    end
+
+    return nil
 end

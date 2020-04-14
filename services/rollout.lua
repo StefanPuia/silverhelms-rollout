@@ -1,4 +1,5 @@
 local LibStub = _G.LibStub
+local LGIST = LibStub:GetLibrary("LibGroupInSpecT-1.1-eq")
 local Rollouts = LibStub("AceAddon-3.0"):GetAddon("Rollouts")
 
 local currentRoll = nil
@@ -66,6 +67,7 @@ Rollouts.setCancelCallback = function(callbackCancel)
 end
 
 Rollouts.beginRoll = function(rollEntry, isRestart, rulePredicate, ruleMessage)
+    LGIST:Rescan()
     ruleMessage = ruleMessage and (". " .. ruleMessage) or ""
     if currentRoll == nil then
         if isRestart ~= true then

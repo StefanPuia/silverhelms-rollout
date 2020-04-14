@@ -143,32 +143,6 @@ local function statusColour(text, status)
     return text
 end
 
---------------------------------
---- CREATE CUSTOM COMPONENTS ---
---------------------------------
-
-local function createItemIcon(itemLink, showLabel, width, anchor, height, fontSize)
-    local item = itemLink and {GetItemInfo(itemLink)} or {}
-    label = showLabel and item[2] or ""
-    local itemIcon = createIcon(item[10], label, width, anchor, height, fontSize)
-    if not item[10] then return itemIcon end
-    itemIcon:SetCallback("OnEnter", function(widget)
-        GameTooltip:SetOwner(widget.frame, "ANCHOR_NONE")
-        GameTooltip:SetPoint("TOPLEFT", widget.frame, "TOPLEFT", width, -1 * width)
-        GameTooltip:SetHyperlink(item[2])
-        GameTooltip:Show()
-    end)
-    itemIcon:SetCallback("OnLeave", function(widget)
-        GameTooltip:Hide()
-    end)
-    itemIcon:SetCallback("OnClick", function(widget)
-        if IsShiftKeyDown() and item[2] then
-            ChatEdit_InsertLink(item[2])
-        end
-    end)
-    return itemIcon
-end
-
 local function formatGuildRankName(guild, rank)
     return string.format("%s%s%s%s%s",
         Rollouts.utils.colour("<", "white"),
@@ -190,6 +164,52 @@ local function formatSpecDisplay(classId, specId)
     return ""
 end
 
+local function addItemToGameTooltip(itemLink, refItemInfo)
+    local itemInfo = {GetItemInfo(itemLink)}
+    if not itemInfo then return end
+    GameTooltip:AddLine("|T" .. itemInfo[10] .. ":0|t " .. itemLink)
+
+    local itemLevel = GetDetailedItemLevelInfo(itemLink)
+    local diff = ""
+    if refItemInfo then
+        local refItemLevel = GetDetailedItemLevelInfo(refItemInfo[2])
+        diff = itemLevel - refItemLevel
+        if diff < 0 then
+            diff = Rollouts.utils.colour("-" .. diff, "red")
+        elseif diff > 0 then
+            diff = Rollouts.utils.colour("+" .. diff, "green")
+        end
+    end
+    GameTooltip:AddLine(diff .. " (" .. itemLevel .. ")")
+end
+
+--------------------------------
+--- CREATE CUSTOM COMPONENTS ---
+--------------------------------
+
+local function createItemIcon(itemLink, showLabel, width, anchor, height, fontSize)
+    local item = itemLink and {GetItemInfo(itemLink)} or {}
+    label = showLabel and item[2] or ""
+    local itemIcon = createIcon(item[10], label, width, anchor, height, fontSize)
+    if not item[10] then return itemIcon end
+    itemIcon:SetCallback("OnEnter", function(widget)
+        GameTooltip:SetOwner(widget.frame, "ANCHOR_NONE")
+        GameTooltip:SetPoint("TOPLEFT", widget.frame, "TOPLEFT", width, -1 * width)
+        GameTooltip:SetHyperlink(item[2])
+        GameTooltip:Show()
+    end)
+    itemIcon:SetCallback("OnLeave", function(widget)
+        GameTooltip:SetOwner(UIParent, "ANCHOR_NONE")
+        GameTooltip:Hide()
+    end)
+    itemIcon:SetCallback("OnClick", function(widget)
+        if IsShiftKeyDown() and item[2] then
+            ChatEdit_InsertLink(item[2])
+        end
+    end)
+    return itemIcon
+end
+
 local function createRollsContainer()
     local scrollContainer, scroll = createScrollContainer()
     local displayRoll = Rollouts.getDisplayRoll()
@@ -204,15 +224,22 @@ local function createRollsContainer()
             GameTooltip:SetOwner(group.frame, "ANCHOR_NONE")
             GameTooltip:SetPoint("TOPRIGHT", group.frame, "TOPLEFT")
             GameTooltip:SetText(rollEntry.name)
-            if rollEntry.spec then GameTooltip:AddLine(formatSpecDisplay(rollEntry.class, rollEntry.spec)) end
+            if rollEntry.spec then GameTooltip:SetText(rollEntry.name .. " - " .. formatSpecDisplay(rollEntry.class, rollEntry.spec)) end
             if rollEntry.guildName then GameTooltip:AddLine(formatGuildRankName(rollEntry.guildName, rollEntry.rankName)) end
             GameTooltip:AddLine(string.format("Rolled: %s", rollEntry.roll))
             if rollEntry.failMessage then
                 GameTooltip:AddLine("Fail Reason: " .. Rollouts.utils.colour(rollEntry.failMessage, "red"))
             end
+            if rollEntry.equipped then
+                for _,item in ipairs(rollEntry.equipped) do
+                    GameTooltip:AddLine("")
+                    addItemToGameTooltip(item, displayRoll.itemInfo)
+                end
+            end
             GameTooltip:Show()
         end)
         group.frame:SetScript("OnLeave", function()
+            GameTooltip:SetOwner(UIParent, "ANCHOR_NONE")
             GameTooltip:Hide()
         end)
         group.frame:SetScript("OnMouseUp", function()
@@ -432,9 +459,7 @@ local function createDebugHistoryContainer()
             GameTooltip:Show()
         end)
         group.frame:SetScript("OnLeave", function()
-            GameTooltip:Hide()
-        end)
-        group.frame:SetScript("OnLeave", function()
+            GameTooltip:SetOwner(UIParent, "ANCHOR_NONE")
             GameTooltip:Hide()
         end)
 
