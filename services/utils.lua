@@ -382,3 +382,25 @@ Rollouts.utils.queryGuildMembers = function(player)
 
     return nil
 end
+
+Rollouts.utils.getItemMainStats = function(itemLinkString)
+    local _,itemLink = GetItemInfo(itemLinkString)
+    if not itemLink then return nil end
+    GameTooltip:SetOwner(UIParent, "ANCHOR_NONE")
+    GameTooltip:SetHyperlink(itemLink)
+    GameTooltip:Show()
+    local stats = {}
+    for i = 1, select("#", GameTooltip:GetRegions()) do
+        local region = select(i, GameTooltip:GetRegions())
+        if region and region:GetObjectType() == "FontString" then
+            local text = region:GetText() -- string or nil
+            local stat = string.upper(string.match(text or "", "+[%d,]+ (%w+)") or "")
+            if stat and Rollouts.utils.indexOf({"STRENGTH", "INTELLECT", "AGILITY"}, stat) > 0 then
+                table.insert(stats, stat)
+            end
+        end
+    end
+    GameTooltip:Hide()
+
+    return #stats ~= 0 and stats or nil
+end

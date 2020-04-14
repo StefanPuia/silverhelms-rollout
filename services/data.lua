@@ -58,71 +58,71 @@ Rollouts.data.stats = {
     [3] = "INTELLECT"
 }
 Rollouts.data.classStats = {
-    ["1"] = {Rollouts.data.stats[1]}, -- Warrior
-    ["2"] = {Rollouts.data.stats[1], Rollouts.data.stats[3]}, -- Paladin
-    ["3"] = {Rollouts.data.stats[2]}, -- Hunter
-    ["4"] = {Rollouts.data.stats[2]}, -- Rogue
-    ["5"] = {Rollouts.data.stats[3]}, -- Priest
-    ["6"] = {Rollouts.data.stats[1]}, -- DeathKnight
-    ["7"] = {Rollouts.data.stats[2], Rollouts.data.stats[3]}, -- Shaman
-    ["8"] = {Rollouts.data.stats[3]}, -- Mage
-    ["9"] = {Rollouts.data.stats[3]}, -- Warlock
-    ["10"] = {Rollouts.data.stats[2]}, -- Monk
-    ["11"] = {Rollouts.data.stats[2], Rollouts.data.stats[3]}, -- Druid
-    ["12"] = {Rollouts.data.stats[2]}, -- DemonHunter
+    [1] = {Rollouts.data.stats[1]}, -- Warrior
+    [2] = {Rollouts.data.stats[1], Rollouts.data.stats[3]}, -- Paladin
+    [3] = {Rollouts.data.stats[2]}, -- Hunter
+    [4] = {Rollouts.data.stats[2]}, -- Rogue
+    [5] = {Rollouts.data.stats[3]}, -- Priest
+    [6] = {Rollouts.data.stats[1]}, -- DeathKnight
+    [7] = {Rollouts.data.stats[2], Rollouts.data.stats[3]}, -- Shaman
+    [8] = {Rollouts.data.stats[3]}, -- Mage
+    [9] = {Rollouts.data.stats[3]}, -- Warlock
+    [10] = {Rollouts.data.stats[2]}, -- Monk
+    [11] = {Rollouts.data.stats[2], Rollouts.data.stats[3]}, -- Druid
+    [12] = {Rollouts.data.stats[2]}, -- DemonHunter
 }
 Rollouts.data.specStats = {
     -- Death Knight
-    ["250"] = Rollouts.data.stats[1], -- Blood
-    ["251"] = Rollouts.data.stats[1], -- Frost
-    ["252"] = Rollouts.data.stats[1], -- Unholy
+    [250] = Rollouts.data.stats[1], -- Blood
+    [251] = Rollouts.data.stats[1], -- Frost
+    [252] = Rollouts.data.stats[1], -- Unholy
     -- Paladin
-    ["66"] = Rollouts.data.stats[1], -- Protection
-    ["70"] = Rollouts.data.stats[1], -- Retribution
+    [66] = Rollouts.data.stats[1], -- Protection
+    [70] = Rollouts.data.stats[1], -- Retribution
     -- Warrior
-    ["71"] = Rollouts.data.stats[1], -- Arms
-    ["72"] = Rollouts.data.stats[1], -- Fury
-    ["73"] = Rollouts.data.stats[1], -- Protection
+    [71] = Rollouts.data.stats[1], -- Arms
+    [72] = Rollouts.data.stats[1], -- Fury
+    [73] = Rollouts.data.stats[1], -- Protection
     -- Demon Hunter
-    ["577"] = Rollouts.data.stats[2], -- Havoc
-    ["581"] = Rollouts.data.stats[2], -- Vengeance
+    [577] = Rollouts.data.stats[2], -- Havoc
+    [581] = Rollouts.data.stats[2], -- Vengeance
     -- Druid
-    ["103"] = Rollouts.data.stats[2], -- Feral
-    ["104"] = Rollouts.data.stats[2], -- Guardian
+    [103] = Rollouts.data.stats[2], -- Feral
+    [104] = Rollouts.data.stats[2], -- Guardian
     -- Hunter
-    ["253"] = Rollouts.data.stats[2], -- Beast Mastery
-    ["254"] = Rollouts.data.stats[2], -- Marksmanship
-    ["255"] = Rollouts.data.stats[2], -- Survival
+    [253] = Rollouts.data.stats[2], -- Beast Mastery
+    [254] = Rollouts.data.stats[2], -- Marksmanship
+    [255] = Rollouts.data.stats[2], -- Survival
     -- Monk
-    ["268"] = Rollouts.data.stats[2], -- Brewmaster
-    ["269"] = Rollouts.data.stats[2], -- Windwalker
-    ["270"] = Rollouts.data.stats[2], -- Mistweaver
+    [268] = Rollouts.data.stats[2], -- Brewmaster
+    [269] = Rollouts.data.stats[2], -- Windwalker
+    [270] = Rollouts.data.stats[2], -- Mistweaver
     -- Rogue
-    ["259"] = Rollouts.data.stats[2], -- Assassination
-    ["260"] = Rollouts.data.stats[2], -- Outlaw
-    ["261"] = Rollouts.data.stats[2], -- Subtlety
+    [259] = Rollouts.data.stats[2], -- Assassination
+    [260] = Rollouts.data.stats[2], -- Outlaw
+    [261] = Rollouts.data.stats[2], -- Subtlety
     -- Shaman
-    ["263"] = Rollouts.data.stats[2], -- Enhancement
+    [263] = Rollouts.data.stats[2], -- Enhancement
     -- Druid
-    ["102"] = Rollouts.data.stats[3], -- Balance
-    ["105"] = Rollouts.data.stats[3], -- Restoration
+    [102] = Rollouts.data.stats[3], -- Balance
+    [105] = Rollouts.data.stats[3], -- Restoration
     -- Mage
-    ["62"] = Rollouts.data.stats[3], -- Arcane
-    ["63"] = Rollouts.data.stats[3], -- Fire
-    ["64"] = Rollouts.data.stats[3], -- Frost
+    [62] = Rollouts.data.stats[3], -- Arcane
+    [63] = Rollouts.data.stats[3], -- Fire
+    [64] = Rollouts.data.stats[3], -- Frost
     -- Paladin
-    ["65"] = Rollouts.data.stats[3], -- Holy
+    [65] = Rollouts.data.stats[3], -- Holy
     -- Priest
-    ["256"] = Rollouts.data.stats[3], -- Discipline
-    ["257"] = Rollouts.data.stats[3], -- Holy
-    ["258"] = Rollouts.data.stats[3], -- Shadow
+    [256] = Rollouts.data.stats[3], -- Discipline
+    [257] = Rollouts.data.stats[3], -- Holy
+    [258] = Rollouts.data.stats[3], -- Shadow
     -- Shaman
-    ["262"] = Rollouts.data.stats[3], -- Elemental
-    ["264"] = Rollouts.data.stats[3], -- Restoration
+    [262] = Rollouts.data.stats[3], -- Elemental
+    [264] = Rollouts.data.stats[3], -- Restoration
     -- Warlock
-    ["265"] = Rollouts.data.stats[3], -- Affliction
-    ["266"] = Rollouts.data.stats[3], -- Demonology
-    ["267"] = Rollouts.data.stats[3], -- Destruction
+    [265] = Rollouts.data.stats[3], -- Affliction
+    [266] = Rollouts.data.stats[3], -- Demonology
+    [267] = Rollouts.data.stats[3], -- Destruction
 }
 Rollouts.data.failMessages = {
     ["ARMOR_TYPE"] = "armor type",

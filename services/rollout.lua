@@ -252,6 +252,7 @@ Rollouts.handleWinningRolls = function()
 end
 
 local function validateRoll(rollObject)
+    local getEitherDBOption = Rollouts.utils.getEitherDBOption
     local failMessage = nil
     local itemSubType = currentRoll.itemInfo[7]
     local itemSlot = currentRoll.itemInfo[9]
@@ -259,16 +260,36 @@ local function validateRoll(rollObject)
     local isClassMaterial = (itemSlot ~= "INVTYPE_CLOAK" and itemSubType == "Cloth")
             or itemSubType == "Leather" or itemSubType == "Mail" or itemSubType == "Plate"
 
-    if currentRoll.rollType > 1 and isClassMaterial and Rollouts.data.classArmorType[rollObject.class] ~= itemSubType then
+    if getEitherDBOption("enableArmorTypeValidation") and currentRoll.rollType > 1 
+            and isClassMaterial and Rollouts.data.classArmorType[rollObject.class] ~= itemSubType then
         failMessage = Rollouts.data.failMessages["ARMOR_TYPE"]
     end
 
-    if currentRoll.rollType > 1 and Rollouts.utils.contains({"INVTYPE_WEAPON", "INVTYPE_SHIELD"}, itemSlot)
+    if getEitherDBOption("enableWeaponTypeValidation") and currentRoll.rollType > 1
+            and Rollouts.utils.contains({"INVTYPE_WEAPON", "INVTYPE_SHIELD"}, itemSlot)
             and not Rollouts.utils.contains(Rollouts.data.weaponProficiencies[rollObject.class], itemSubType) then
         failMessage = Rollouts.data.failMessages["WEAPON_TYPE"]
     end
 
-    if Rollouts.utils.indexOf(currentRoll.owners, function(owner)
+    local currentRollStats = Rollouts.utils.getItemMainStats(currentRoll.itemLink)
+    if getEitherDBOption("enableStatValidation") and currentRollStats then
+        local foundOSStat = false
+        for _,stat in ipairs(currentRollStats) do
+            if Rollouts.utils.contains(Rollouts.data.classStats[rollObject.class], stat) then
+                foundOSStat = true
+                break
+            end
+        end
+        if currentRoll.rollType >= 2 and not foundOSStat then
+            failMessage = Rollouts.data.failMessages["NOT_" .. Rollouts.data.rollTypes[currentRoll.rollType] .. "_STAT"]
+        elseif currentRoll.rollType == 3
+                and rollObject.spec
+                and not Rollouts.utils.contains(currentRollStats, Rollouts.data.specStats[rollObject.spec]) then
+            failMessage = Rollouts.data.failMessages["NOT_MS_STAT"]
+        end
+    end
+
+    if getEitherDBOption("enableOwnerValidation") and Rollouts.utils.indexOf(currentRoll.owners, function(owner)
         return Rollouts.utils.simplifyName(rollObject.name) == Rollouts.utils.simplifyName(owner)
     end) > 0 then
         failMessage = Rollouts.data.failMessages["ROLL_OWNER"]

@@ -16,6 +16,11 @@ Rollouts.defaultOptions = {
         enableWhisperAppend = true,
         -- default roll type
         defaultRollType = 3,
+        -- validation
+        enableArmorTypeValidation = true,
+        enableWeaponTypeValidation = true,
+        enableOwnerValidation = true,
+        enableStatValidation = true,
         -- toggle rank priority
         guildRanking = {
             enabled = true,
@@ -141,15 +146,99 @@ local settingsTable = {
                 },
                 enableWhisperAppend = {
                     order = 11,
-                    name = "Enable whisper append",
+                    name = "Enable whispered item capture",
                     type = "toggle",
                     set = function(info, val) setDBOption(val, "enableWhisperAppend") end,
                     get = function(info) return getEitherDBOption("enableWhisperAppend") end
                 }
             }
         },
-        advancedOptions = {
+        validationOptions = {
+            order = 2,
+            name = "Roll Validation",
+            type = "group",
+            args = {
+                enableArmorTypeValidation = {
+                    order = 1,
+                    name = "Armor Type Validation",
+                    type = "toggle",
+                    set = function(info, val) setDBOption(val, "enableArmorTypeValidation") end,
+                    get = function(info) return getEitherDBOption("enableArmorTypeValidation") end
+                },
+                break1 = {
+                    order = 2,
+                    type = "description",
+                    name = ""
+                },
+                enableWeaponTypeValidation = {
+                    order = 3,
+                    name = "Weapon Type Validation",
+                    type = "toggle",
+                    set = function(info, val) setDBOption(val, "enableWeaponTypeValidation") end,
+                    get = function(info) return getEitherDBOption("enableWeaponTypeValidation") end
+                },
+                break2 = {
+                    order = 4,
+                    type = "description",
+                    name = ""
+                },
+                enableOwnerValidation = {
+                    order = 5,
+                    name = "Reject Owner",
+                    type = "toggle",
+                    set = function(info, val) setDBOption(val, "enableOwnerValidation") end,
+                    get = function(info) return getEitherDBOption("enableOwnerValidation") end
+                },
+                break3 = {
+                    order = 6,
+                    type = "description",
+                    name = ""
+                },
+                enableStatValidation = {
+                    order = 7,
+                    name = "Stat Validation",
+                    type = "toggle",
+                    set = function(info, val) setDBOption(val, "enableStatValidation") end,
+                    get = function(info) return getEitherDBOption("enableStatValidation") end
+                },
+                break4 = {
+                    order = 8,
+                    type = "description",
+                    name = ""
+                },
+            }
+        },
+        guildRanking = {
             order = 3,
+            name = "Guild Ranking",
+            type = "group",
+            args = {
+                enable = {
+                    name = "Enable Ranking",
+                    type = "toggle",
+                    width = "full",
+                    set = function(info, val) setDBOption(val, "guildRanking", "enabled") end,
+                    get = function(info) return getEitherDBOption("guildRanking", "enabled") end
+                },
+                ranks = {
+                    name = "Ranks",
+                    type = "input",
+                    width = "full",
+                    multiline = 20,
+                    get = function(info) return Rollouts.utils.stringifyGuildRanking(getEitherDBOption("guildRanking", "guilds")) end,
+                    set = function(info, val)
+                        local parsed = Rollouts.utils.parseGuildRanking(val)
+                        if parsed ~= nil then
+                            setDBOption(parsed, "guildRanking", "guilds")
+                        else
+                            Rollouts:Print("Cannot parse the rankings. Please check your syntax.")
+                        end
+                    end
+                }
+            }
+        },
+        advancedOptions = {
+            order = 4,
             name = "Advanced Options",
             type = "group",
             args = {
@@ -249,37 +338,8 @@ local settingsTable = {
                 }
             }
         },
-        guildRanking = {
-            order = 2,
-            name = "Guild Ranking",
-            type = "group",
-            args = {
-                enable = {
-                    name = "Enable Ranking",
-                    type = "toggle",
-                    width = "full",
-                    set = function(info, val) setDBOption(val, "guildRanking", "enabled") end,
-                    get = function(info) return getEitherDBOption("guildRanking", "enabled") end
-                },
-                ranks = {
-                    name = "Ranks",
-                    type = "input",
-                    width = "full",
-                    multiline = 20,
-                    get = function(info) return Rollouts.utils.stringifyGuildRanking(getEitherDBOption("guildRanking", "guilds")) end,
-                    set = function(info, val)
-                        local parsed = Rollouts.utils.parseGuildRanking(val)
-                        if parsed ~= nil then
-                            setDBOption(parsed, "guildRanking", "guilds")
-                        else
-                            Rollouts:Print("Cannot parse the rankings. Please check your syntax.")
-                        end
-                    end
-                }
-            }
-        },
         resetOptions = {
-            order = 4,
+            order = 5,
             name = "Reset Defaults",
             type = "execute",
             func = function()
@@ -293,11 +353,16 @@ local settingsTable = {
                     setDBOption(Rollouts.defaultOptions.global.enableWhisperAppend, "enableWhisperAppend")
 
                     setDBOption(Rollouts.defaultOptions.global.guildRanking.enabled, "guildRanking", "enabled")
-                    setDBOption(Rollouts.defaultOptions.global.guildRanking.guilds, "guildRanking", "guilds")
+                    setDBOption({ [1] = { name = "*", ranks = {{"*"}} } }, "guildRanking", "guilds")
 
                     setDBOption(Rollouts.defaultOptions.global.showMinimapIcon, "showMinimapIcon")
                     setDBOption(Rollouts.defaultOptions.global.debugMode, "debugMode")
                     setDBOption(Rollouts.defaultOptions.global.autoRemoveDays, "autoRemoveDays")
+
+                    setDBOption(Rollouts.defaultOptions.global.enableArmorTypeValidation, "enableArmorTypeValidation")
+                    setDBOption(Rollouts.defaultOptions.global.enableWeaponTypeValidation, "enableWeaponTypeValidation")
+                    setDBOption(Rollouts.defaultOptions.global.enableOwnerValidation, "enableOwnerValidation")
+                    setDBOption(Rollouts.defaultOptions.global.enableStatValidation, "enableStatValidation")
 
                     Rollouts:Print("Settings reset to defaults.")
                 end, false, false, "RESET_DEFAULTS")
