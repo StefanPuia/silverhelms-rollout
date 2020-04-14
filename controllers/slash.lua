@@ -36,9 +36,7 @@ local function handleFullCommand(input, messageParts, startIndex)
                 end
                 return true
             else
-                local owner = not Rollouts.utils.stringContainsItem(messageParts[startIndex + 2])
-                    and messageParts[startIndex + 2] or GetUnitName("player")
-                return Rollouts.utils.makeRollEntryObject(itemInfo[2], { owner }, Rollouts.utils.getEitherDBOption("defaultRollType"))
+                return Rollouts.utils.makeRollEntryObject(itemInfo[2], { GetUnitName("player") }, Rollouts.utils.getEitherDBOption("defaultRollType"))
             end
         end
     else
