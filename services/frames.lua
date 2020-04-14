@@ -173,9 +173,9 @@ local function addItemToGameTooltip(itemLink, refItemInfo)
     local diff = ""
     if refItemInfo then
         local refItemLevel = GetDetailedItemLevelInfo(refItemInfo[2])
-        diff = itemLevel - refItemLevel
+        diff = refItemLevel - itemLevel
         if diff < 0 then
-            diff = Rollouts.utils.colour("-" .. diff, "red")
+            diff = Rollouts.utils.colour(diff, "red")
         elseif diff > 0 then
             diff = Rollouts.utils.colour("+" .. diff, "green")
         end
