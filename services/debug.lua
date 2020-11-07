@@ -279,6 +279,7 @@ Rollouts.debug.testCase = function()
 
             if not assert(testName, stepIndex, nil, "rolls count", #expectedOrder, #rolls, testStats) then break end
 
+            if testStats.breakout then break end
             for rollId, rollEntry in ipairs(rolls) do
                 local expectedRollName = expectedOrder[rollId][1]
                 local expectedRollValue = expectedOrder[rollId][2]
@@ -292,11 +293,13 @@ Rollouts.debug.testCase = function()
             local actualWinners = Rollouts.getWinners(nil, true)
             if not assert(testName, stepIndex, nil, "winner count", #expectedWinners, #actualWinners, testStats) then break end
 
+            if testStats.breakout then break end
             for i = 1, #expectedWinners do
                 local player = Rollouts.utils.simplifyName(actualWinners[i]) or "nil"
                 if not assert(testName, stepIndex, i, "winner", expectedWinners[i], player, testStats) then break end
             end
 
+            if testStats.breakout then break end
             Rollouts.handleWinningRolls()
         end
 
