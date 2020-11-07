@@ -105,11 +105,40 @@ end
 
 local function getRollPoints(roll)
     if not roll then return 0 end
+
+    local order = {
+        guild = 100000,
+        guildRank = 10000,
+        ilvl = 1000,
+    }
+
+    -- sort owner at the bottom
+    -- local rollName = Rollouts.utils.simplifyName(roll.name)
+    -- if currentRoll ~= nil and Rollouts.utils.indexOf(currentRoll.owners, function(owner)
+    --     return Rollouts.utils.simplifyName(owner) == rollName
+    -- end) > 0 then
+    --     return -1
+    -- end
+
     local points = roll.roll and tonumber(roll.roll) or 0
+
+    -- guild ranking
     if Rollouts.utils.getEitherDBOption("guildRanking", "enabled") then
-        points = points + (roll.guild or 0) * 10000 + (roll.rank or 0) * 1000
+        points = points + (roll.guild or 0) * order.guild + (roll.rank or 0) * order.guildRank
     end
-    if roll.failMessage ~= nil then points = -1/points end
+
+        -- ilvl threshold
+    if roll.ilvl and roll.ilvl > 0 and currentRoll ~= nil and currentRoll.itemInfo[4] then
+        local threshold = Rollouts.utils.getEitherDBOption("minIlvlThreshold")
+        local ilvl = currentRoll.itemInfo[4] or 0
+        local rollIlvl = roll.ilvl or 1
+        if ilvl - rollIlvl >= threshold then
+            points = points + (1 / roll.ilvl * order.ilvl)
+        end
+    end
+
+
+    if roll.failMessage ~= nil then return -1/points end
     return points
 end
 

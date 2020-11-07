@@ -14,6 +14,8 @@ Rollouts.defaultOptions = {
         lowestRestart = 2, -- 3 = MS, 2 = OS, 1 = GREED
         -- default roll for whispers (0 to disable whsiper checks)
         enableWhisperAppend = true,
+        -- override sorting if ilvl threshold is met
+        minIlvlThreshold = 0,
         -- default roll type
         defaultRollType = 3,
         -- validation
@@ -150,6 +152,21 @@ local settingsTable = {
                     type = "toggle",
                     set = function(info, val) setDBOption(val, "enableWhisperAppend") end,
                     get = function(info) return getEitherDBOption("enableWhisperAppend") end
+                },
+                break6 = {
+                    order = 12,
+                    type = "description",
+                    name = ""
+                },
+                minIlvlThreshold = {
+                    order = 13,
+                    name = "Sort rolls higher up if ilvl difference is bigger than this",
+                    type = "range",
+                    min = 0,
+                    max = 100,
+                    step = 1,
+                    set = function(info, val) setDBOption(val, "minIlvlThreshold") end,
+                    get = function(info) return getEitherDBOption("minIlvlThreshold") end
                 }
             }
         },
@@ -351,6 +368,7 @@ local settingsTable = {
                     setDBOption(Rollouts.defaultOptions.global.restartIfNoRolls, "restartIfNoRolls")
                     setDBOption(Rollouts.defaultOptions.global.lowestRestart, "lowestRestart")
                     setDBOption(Rollouts.defaultOptions.global.enableWhisperAppend, "enableWhisperAppend")
+                    setDBOption(Rollouts.defaultOptions.global.minIlvlThreshold, "minIlvlThreshold")
 
                     setDBOption(Rollouts.defaultOptions.global.guildRanking.enabled, "guildRanking", "enabled")
                     setDBOption({ [1] = { name = "*", ranks = {{"*"}} } }, "guildRanking", "guilds")
