@@ -11,6 +11,7 @@ The way it works is: raiders whisper the items they want to share with the desig
 * guild ranks based priority
 * declining roles for wrong gear type on MS and OS rolls
 * support for any non-equippable items
+* prioritize players with lower item level in the same guild/rank based on a threshold
 * rollout history with complete roll list
 * grouping items
 * handling multiple winners
@@ -20,8 +21,8 @@ The way it works is: raiders whisper the items they want to share with the desig
 * manual fail reason
 
 ### Known Bugs
-* addon requires elvui and addonskins otherwise elements are not aligned
-* pressing the group button does not take into account sockets or extra * stats
-* sometimes, a "ghost" button appears that seems to be linked to the * window, but is not interactable
+* addon requires elvui and addonskins otherwise elements are not aligned (everything still works, but there are some weird spaces)
+* pressing the group button does not take into account sockets or extra * stats (it will just group everything and some of the items will be lost)
+* sometimes, a "ghost" button appears that seems to be linked to the * window, but is not interactable (closing and re-opening the window should fix that)
 
 Check [the issues](https://git.stefanpuia.co.uk/stefan.puia/silverhelms-rollouts/issues)

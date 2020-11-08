@@ -3,7 +3,7 @@
 ## Title: Silverhelms Rollouts
 ## Author: Steph
 ## Notes: A loot distributing helper addon for <The Silverhelms> guild.
-## Version: 1.0.0a
+## Version: 1.2.0b
 ## SavedVariables: RolloutsDB
 # Dependencies: AddOnSkins
 
