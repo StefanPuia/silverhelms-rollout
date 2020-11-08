@@ -219,6 +219,49 @@ local testCases = {
                 winners = { "player3" }
             }
         }}
+    },
+    ["Weapon check"] = {
+        owners = { "Tanno" },
+        itemLink = "item:150424::::::::60:::::",
+        steps = {{
+            rolls = {
+                { "Albionna", "52", "Example Guild", "Officer", 5, 257},
+                { "Corpse", "12", "Example Guild", "Social", 12, 577},
+                { "Chullee", "35", "Example Guild", "Veteran", 10, 269},
+                { "Enma", "87", "Example Guild", "Officer", 9},
+                { "Eyota", "52", "Example Guild", "Veteran", 1, 72},
+                { "Tanno", "74", "Example Guild", "Officer", 10},
+            },
+            expected = {
+                order = {
+                    { "enma", 87 },
+                    { "albionna", 52 },
+                    -- fails
+                    { "tanno", 74 }, -- owner
+                    { "eyota", 52 }, -- weapon
+                    { "chullee", 35 }, -- weapon
+                    { "corpse", 12 }, -- weapon
+                },
+                winners = { "enma" }
+            }
+        }}
+    },
+    ["Ilvl threshold check"] = {
+        owners = { "Enma" },
+        itemLink = "|cffa335ee|Hitem:159256::::::::50:257::35:8:6534:6578:6579:6438:6462:6515:1538:4786::::|h[Iron-Kelp Wristwraps]|h|r",
+        steps = {{
+            rolls = {
+                { "Nympse", "52", "Example Guild", "Officer", 5, 257, {"|cffa335ee|Hitem:159256::::::::50:257::35:8:6534:6578:6579:6438:6462:6515:1538:4786::::|h[Iron-Kelp Wristwraps]|h|r"}},
+                { "Chhe", "8", "Example Guild", "Officer", 8, 64, {"|cff1eff00|Hitem:154692::::::::50:257::13:2:1693:6848::::|h[Tidespray Linen Bracers of the Fireflash]|h|r"}},
+            },
+            expected = {
+                order = {
+                    { "chhe", 8 },
+                    { "nympse", 52 },
+                },
+                winners = { "chhe" }
+            }
+        }}
     }
 }
 
@@ -270,7 +313,7 @@ Rollouts.debug.testCase = function()
             local testStep = testSteps[stepIndex]
 
             for rollId, roll in ipairs(testStep.rolls) do
-                Rollouts.appendRoll(Rollouts.utils.colour(roll[1], Rollouts.data.classColours[roll[5]]), roll[2], roll[3], roll[4], roll[5])
+                Rollouts.appendRoll(Rollouts.utils.colour(roll[1], Rollouts.data.classColours[roll[5]]), roll[2], roll[3], roll[4], roll[5], roll[6], roll[7])
             end
 
             local displayRoll = Rollouts.getDisplayRoll()

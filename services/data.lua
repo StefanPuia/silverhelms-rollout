@@ -127,6 +127,7 @@ Rollouts.data.specStats = {
 Rollouts.data.failMessages = {
     ["ARMOR_TYPE"] = "armor type",
     ["WEAPON_TYPE"] = "weapon type",
+    ["CLASS_WEAPON_TYPE"] = "class weapon type",
     ["NOT_MS_STAT"] = "not MS stat",
     ["NOT_OS_STAT"] = "not OS stat",
     ["ROLL_OWNER"] = "roll owner",
@@ -234,17 +235,141 @@ Rollouts.data.classes = {
     DRUID = 11,
     DEMONHUNTER = 12,
 }
-Rollouts.data.weaponProficiencies = {
-    [1] = { "One-Handed Axes", "Two-Handed Axes", "One-Handed Swords", "Two-Handed Swords", "One-Handed Maces", "Two-Handed Maces", "Polearms", "Staves", "Daggers", "Fist", "Bows", "Crossbows", "Guns", "Thrown", "Shields" },
-    [2] = { "One-Handed Axes", "Two-Handed Axes", "One-Handed Swords", "Two-Handed Swords", "One-Handed Maces", "Two-Handed Maces", "Polearms", "Shields" },
-    [3] = { "One-Handed Axes", "Two-Handed Axes", "One-Handed Swords", "Two-Handed Swords", "Polearms", "Staves", "Daggers", "Fist", "Bows", "Crossbows", "Guns" },
-    [4] = { "One-Handed Axes", "One-Handed Swords", "One-Handed Maces", "Daggers", "Fist", "Bows", "Crossbows", "Guns", "Thrown" },
-    [5] = { "One-Handed Maces", "Staves", "Daggers", "Wands" },
-    [6] = { "One-Handed Axes", "Two-Handed Axes", "One-Handed Swords", "Two-Handed Swords", "One-Handed Maces", "Two-Handed Maces", "Polearms" },
-    [7] = { "One-Handed Axes", "Two-Handed Axes", "One-Handed Maces", "Two-Handed Maces", "Staves", "Daggers", "Fist", "Shields" },
-    [8] = { "One-Handed Swords", "Staves", "Daggers", "Wands" },
-    [9] = { "One-Handed Swords", "Staves", "Daggers", "Wands" },
-    [10] = { "One-Handed Axes", "One-Handed Swords", "One-Handed Maces", "Polearms", "Staves", "Fist" },
-    [11] = { "One-Handed Maces", "Two-Handed Maces", "Polearms", "Staves", "Daggers", "Fist" },
-    [12] = { "Warglaives", "Fist Weapons", "One-Handed Axes", "One-Handed Swords"}
+
+local WEAPON = {
+    H1 = {
+        AXE = "One-Handed Axes",
+        SWORD = "One-Handed Swords",
+        MACE = "One-Handed Maces",
+        FIST = "Fist",
+        SHIELD = "Shields",
+        DAGGER = "Daggers",
+        WAND = "Wands",
+        WARGLAIVE = "Warglaives"
+    },
+    H2 = {
+        AXE = "Two-Handed Axes",
+        SWORD = "Two-Handed Swords",
+        MACE = "Two-Handed Maces",
+        POLEARM = "Polearms",
+        STAVE = "Staves",
+        BOW = "Bows",
+        CROSSBOW = "Crossbows",
+        GUN = "Guns",
+    }
 }
+
+Rollouts.data.weaponProficiencies = {
+    -- Mage
+    [62] = { WEAPON.H1.SWORD, WEAPON.H2.STAVE, WEAPON.H1.DAGGER, WEAPON.H1.WAND }, -- Arcane
+    [63] = { WEAPON.H1.SWORD, WEAPON.H2.STAVE, WEAPON.H1.DAGGER, WEAPON.H1.WAND }, -- Fire
+    [64] = { WEAPON.H1.SWORD, WEAPON.H2.STAVE, WEAPON.H1.DAGGER, WEAPON.H1.WAND }, -- Frost
+    -- Paladin
+    [66] = { WEAPON.H1.AXE, WEAPON.H1.SWORD, WEAPON.H1.MACE, WEAPON.H1.SHIELD }, -- Protection
+    [70] = { WEAPON.H2.AXE, WEAPON.H2.SWORD, WEAPON.H2.MACE, WEAPON.H2.POLEARM }, -- Retribution
+    [65] = { WEAPON.H1.AXE, WEAPON.H1.SWORD, WEAPON.H1.MACE, WEAPON.H2.MACE, WEAPON.H2.POLEARM, WEAPON.H1.SHIELD }, -- Holy
+    -- Warrior
+    [71] = { WEAPON.H2.AXE, WEAPON.H2.SWORD, WEAPON.H2.MACE, WEAPON.H2.POLEARM }, -- Arms
+    [72] = { WEAPON.H1.AXE, WEAPON.H2.AXE, WEAPON.H1.SWORD, WEAPON.H2.SWORD, WEAPON.H1.MACE, WEAPON.H2.MACE, WEAPON.H2.POLEARM, WEAPON.H1.FIST }, -- Fury
+    [73] = { WEAPON.H1.AXE, WEAPON.H1.SWORD, WEAPON.H1.MACE, WEAPON.H1.SHIELD }, -- Protection
+    -- Druid
+    [103] = { WEAPON.H2.MACE, WEAPON.H2.POLEARM, WEAPON.H2.STAVE }, -- Feral
+    [104] = { WEAPON.H2.MACE, WEAPON.H2.POLEARM, WEAPON.H2.STAVE }, -- Guardian
+    [102] = { WEAPON.H1.MACE, WEAPON.H2.MACE, WEAPON.H2.POLEARM, WEAPON.H2.STAVE, WEAPON.H1.DAGGER }, -- Balance
+    [105] = { WEAPON.H1.MACE, WEAPON.H2.MACE, WEAPON.H2.POLEARM, WEAPON.H2.STAVE, WEAPON.H1.DAGGER }, -- Restoration
+    -- Death Knight
+    [250] = { WEAPON.H2.AXE, WEAPON.H2.SWORD, WEAPON.H2.MACE, WEAPON.H2.POLEARM }, -- Blood
+    [251] = { WEAPON.H1.AXE, WEAPON.H2.AXE, WEAPON.H1.SWORD, WEAPON.H2.SWORD, WEAPON.H1.MACE, WEAPON.H2.MACE, WEAPON.H2.POLEARM }, -- Frost
+    [252] = { WEAPON.H2.AXE, WEAPON.H2.SWORD, WEAPON.H2.MACE, WEAPON.H2.POLEARM }, -- Unholy
+    -- Hunter
+    [253] = { WEAPON.H1.SWORD, WEAPON.H2.BOW, WEAPON.H2.CROSSBOW, WEAPON.H2.GUN }, -- Beast Mastery
+    [254] = { WEAPON.H1.SWORD, WEAPON.H2.BOW, WEAPON.H2.CROSSBOW, WEAPON.H2.GUN }, -- Marksmanship
+    [255] = { WEAPON.H1.SWORD, WEAPON.H2.POLEARM }, -- Survival
+    -- Priest
+    [256] = { WEAPON.H1.MACE, WEAPON.H2.STAVE, WEAPON.H1.DAGGER, WEAPON.H1.WAND }, -- Discipline
+    [257] = { WEAPON.H1.MACE, WEAPON.H2.STAVE, WEAPON.H1.DAGGER, WEAPON.H1.WAND }, -- Holy
+    [258] = { WEAPON.H1.MACE, WEAPON.H2.STAVE, WEAPON.H1.DAGGER, WEAPON.H1.WAND }, -- Shadow
+    -- Rogue
+    [259] = { WEAPON.H1.DAGGER }, -- Assassination
+    [260] = { WEAPON.H1.AXE, WEAPON.H1.SWORD, WEAPON.H1.MACE, WEAPON.H1.FIST }, -- Outlaw
+    [261] = { WEAPON.H1.DAGGER }, -- Subtlety
+    -- Shaman
+    [262] = { WEAPON.H1.AXE, WEAPON.H1.MACE, WEAPON.H2.MACE, WEAPON.H2.STAVE, WEAPON.H1.DAGGER, WEAPON.H1.SHIELD }, -- Elemental
+    [264] = { WEAPON.H1.AXE, WEAPON.H1.MACE, WEAPON.H2.MACE, WEAPON.H2.STAVE, WEAPON.H1.DAGGER, WEAPON.H1.SHIELD }, -- Restoration
+    [263] = { WEAPON.H1.AXE, WEAPON.H1.MACE, WEAPON.H1.FIST }, -- Enhancement
+    -- Warlock
+    [265] = { WEAPON.H1.SWORD, WEAPON.H2.STAVE, WEAPON.H1.DAGGER, WEAPON.H1.WAND }, -- Affliction
+    [266] = { WEAPON.H1.SWORD, WEAPON.H2.STAVE, WEAPON.H1.DAGGER, WEAPON.H1.WAND }, -- Demonology
+    [267] = { WEAPON.H1.SWORD, WEAPON.H2.STAVE, WEAPON.H1.DAGGER, WEAPON.H1.WAND }, -- Destruction
+    -- Monk
+    [268] = { WEAPON.H1.AXE, WEAPON.H1.SWORD, WEAPON.H2.MACE, WEAPON.H2.POLEARM, WEAPON.H2.STAVE, WEAPON.H1.FIST }, -- Brewmaster
+    [269] = { WEAPON.H1.AXE, WEAPON.H1.SWORD, WEAPON.H2.MACE, WEAPON.H2.POLEARM, WEAPON.H2.STAVE, WEAPON.H1.FIST }, -- Windwalker
+    [270] = { WEAPON.H1.AXE, WEAPON.H1.SWORD, WEAPON.H2.MACE, WEAPON.H2.POLEARM, WEAPON.H2.STAVE, WEAPON.H1.FIST }, -- Mistweaver
+    -- Demon Hunter
+    [577] = { WEAPON.H1.WARGLAIVE, WEAPON.H1.FIST, WEAPON.H1.AXE, WEAPON.H1.SWORD}, -- Havoc
+    [581] = { WEAPON.H1.WARGLAIVE, WEAPON.H1.FIST, WEAPON.H1.AXE, WEAPON.H1.SWORD}, -- Vengeance
+}
+
+Rollouts.data.classWeapons = {
+    [1] = {
+        Rollouts.data.weaponProficiencies[71],
+        Rollouts.data.weaponProficiencies[72],
+        Rollouts.data.weaponProficiencies[73],
+    }, -- Warrior
+    [2] = {
+        Rollouts.data.weaponProficiencies[65],
+        Rollouts.data.weaponProficiencies[66],
+        Rollouts.data.weaponProficiencies[70],
+    }, -- Paladin
+    [3] = {
+        Rollouts.data.weaponProficiencies[253],
+        Rollouts.data.weaponProficiencies[254],
+        Rollouts.data.weaponProficiencies[255],
+    }, -- Hunter
+    [4] = {
+        Rollouts.data.weaponProficiencies[259],
+        Rollouts.data.weaponProficiencies[260],
+        Rollouts.data.weaponProficiencies[261],
+    }, -- Rogue
+    [5] = {
+        Rollouts.data.weaponProficiencies[256],
+        Rollouts.data.weaponProficiencies[257],
+        Rollouts.data.weaponProficiencies[258],
+    }, -- Priest
+    [6] = {
+        Rollouts.data.weaponProficiencies[250],
+        Rollouts.data.weaponProficiencies[251],
+        Rollouts.data.weaponProficiencies[252],
+    }, -- DeathKnight
+    [7] = {
+        Rollouts.data.weaponProficiencies[262],
+        Rollouts.data.weaponProficiencies[264],
+        Rollouts.data.weaponProficiencies[263],
+    }, -- Shaman
+    [8] = {
+        Rollouts.data.weaponProficiencies[62],
+        Rollouts.data.weaponProficiencies[63],
+        Rollouts.data.weaponProficiencies[64],
+    }, -- Mage
+    [9] = {
+        Rollouts.data.weaponProficiencies[265],
+        Rollouts.data.weaponProficiencies[266],
+        Rollouts.data.weaponProficiencies[267],
+    }, -- Warlock
+    [10] = {
+        Rollouts.data.weaponProficiencies[268],
+        Rollouts.data.weaponProficiencies[269],
+        Rollouts.data.weaponProficiencies[270],
+    }, -- Monk
+    [11] = {
+        Rollouts.data.weaponProficiencies[102],
+        Rollouts.data.weaponProficiencies[103],
+        Rollouts.data.weaponProficiencies[104],
+        Rollouts.data.weaponProficiencies[105],
+    }, -- Druid
+    [12] = {
+        Rollouts.data.weaponProficiencies[577],
+        Rollouts.data.weaponProficiencies[581],
+    }, -- DemonHunter
+}
+

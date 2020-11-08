@@ -110,6 +110,7 @@ local function getRollPoints(roll)
         guild = 100000,
         guildRank = 10000,
         ilvl = 1000,
+        roll = 1
     }
 
     -- sort owner at the bottom
@@ -120,20 +121,24 @@ local function getRollPoints(roll)
     --     return -1
     -- end
 
-    local points = roll.roll and tonumber(roll.roll) or 0
+    local points = (roll.roll and tonumber(roll.roll) or 0) * order.roll
 
     -- guild ranking
     if Rollouts.utils.getEitherDBOption("guildRanking", "enabled") then
         points = points + (roll.guild or 0) * order.guild + (roll.rank or 0) * order.guildRank
     end
 
-        -- ilvl threshold
-    if roll.ilvl and roll.ilvl > 0 and currentRoll ~= nil and currentRoll.itemInfo[4] then
-        local threshold = Rollouts.utils.getEitherDBOption("minIlvlThreshold")
+    -- ilvl threshold
+    if roll.equipped ~= nil and currentRoll ~= nil and currentRoll.itemInfo[4] ~= nil then
+        local threshold = Rollouts.utils.getEitherDBOption("minIlvlThreshold") or 0
         local ilvl = currentRoll.itemInfo[4] or 0
-        local rollIlvl = roll.ilvl or 1
-        if ilvl - rollIlvl >= threshold then
-            points = points + (1 / roll.ilvl * order.ilvl)
+
+        for _, eqItem in ipairs(roll.equipped) do
+            local rollIlvl = ({GetItemInfo(eqItem)})[4] or 0
+            local delta = ilvl - rollIlvl
+            if delta > 0 and delta >= threshold then
+                points = points + order.ilvl
+            end
         end
     end
 
@@ -295,9 +300,16 @@ local function validateRoll(rollObject)
     end
 
     if getEitherDBOption("enableWeaponTypeValidation") and currentRoll.rollType > 1
-            and Rollouts.utils.contains({"INVTYPE_WEAPON", "INVTYPE_SHIELD"}, itemSlot)
-            and not Rollouts.utils.contains(Rollouts.data.weaponProficiencies[rollObject.class], itemSubType) then
-        failMessage = Rollouts.data.failMessages["WEAPON_TYPE"]
+            and Rollouts.utils.contains({"INVTYPE_WEAPON", "INVTYPE_SHIELD", "INVTYPE_RANGEDRIGHT"}, itemSlot) then
+        if rollObject.spec ~= nil then
+            if not Rollouts.utils.contains(Rollouts.data.weaponProficiencies[rollObject.spec], itemSubType) then
+                failMessage = Rollouts.data.failMessages["WEAPON_TYPE"]
+            end
+        elseif rollObject.class ~= nil then
+            if not Rollouts.utils.canClassEquip(rollObject.class, itemSubType) then
+                failMessage = Rollouts.data.failMessages["CLASS_WEAPON_TYPE"]
+            end
+        end
     end
 
     local currentRollStats = Rollouts.utils.getItemMainStats(currentRoll.itemLink)

@@ -404,3 +404,15 @@ Rollouts.utils.getItemMainStats = function(itemLinkString)
 
     return #stats ~= 0 and stats or nil
 end
+
+Rollouts.utils.canClassEquip = function(class, weaponType)
+    if class == nil or weaponType == nil then return false end
+    local classWeaponList = Rollouts.data.classWeapons[class]
+    local allWeapons = {}
+    for _,list in ipairs(classWeaponList) do
+        for _,v in ipairs(list) do
+            table.insert(allWeapons, v)
+        end
+    end
+    return Rollouts.utils.contains(allWeapons, weaponType)
+end
