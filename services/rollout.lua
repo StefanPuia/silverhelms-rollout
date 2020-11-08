@@ -129,8 +129,8 @@ local function getRollPoints(roll)
     end
 
     -- ilvl threshold
-    if roll.equipped ~= nil and currentRoll ~= nil and currentRoll.itemInfo[4] ~= nil then
-        local threshold = Rollouts.utils.getEitherDBOption("minIlvlThreshold") or 0
+    local threshold = Rollouts.utils.getEitherDBOption("minIlvlThreshold") or 0
+    if roll.equipped ~= nil and currentRoll ~= nil and currentRoll.itemInfo[4] ~= nil and threshold > 0 then
         local ilvl = currentRoll.itemInfo[4] or 0
 
         for _, eqItem in ipairs(roll.equipped) do
