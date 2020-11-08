@@ -291,10 +291,19 @@ local function validateRoll(rollObject)
     local itemSubType = currentRoll.itemInfo[7]
     local itemSlot = currentRoll.itemInfo[9]
 
+    if getEitherDBOption("enableTokenClassValidation") and itemSubType == "Context Token" and currentRoll ~= nil then
+        local itemData = Rollouts.utils.getItemLinkData(currentRoll.itemLink)
+        if itemData ~= nil and itemData.itemId ~= nil then
+            if not Rollouts.utils.contains(Rollouts.data.tokenClasses[rollObject.class], itemData.itemId) then
+                failMessage = Rollouts.data.failMessages["TOKEN_CLASS"]
+            end
+        end
+    end
+
     local isClassMaterial = (itemSlot ~= "INVTYPE_CLOAK" and itemSubType == "Cloth")
             or itemSubType == "Leather" or itemSubType == "Mail" or itemSubType == "Plate"
 
-    if getEitherDBOption("enableArmorTypeValidation") and currentRoll.rollType > 1 
+    if getEitherDBOption("enableArmorTypeValidation") and currentRoll.rollType > 1
             and isClassMaterial and Rollouts.data.classArmorType[rollObject.class] ~= itemSubType then
         failMessage = Rollouts.data.failMessages["ARMOR_TYPE"]
     end

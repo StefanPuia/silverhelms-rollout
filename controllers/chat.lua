@@ -33,7 +33,11 @@ function Rollouts:HandleRollMessage(e, message)
             if cachedInfo then
                 specId = cachedInfo.global_spec_id
                 if Rollouts.env.live then
-                    local slots = Rollouts.data.slots[Rollouts.env.live.itemInfo[9]]
+                    local rollSlot = Rollouts.env.live.itemInfo[9]
+                    if not rollSlot or rollSlot == "" or rollSlot == nil then
+                        rollSlot = Rollouts.utils.getRollSlotForToken(Rollouts.env.live.itemLink)
+                    end
+                    local slots = Rollouts.data.slots[rollSlot]
                     equipped = {}
                     for _,slot in ipairs(slots) do
                         table.insert(equipped, cachedInfo.equipped[slot])

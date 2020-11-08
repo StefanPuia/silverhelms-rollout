@@ -26,7 +26,7 @@ Rollouts.data.slots = {
     ["INVTYPE_CLOAK"] = {15},
     ["INVTYPE_WEAPON"] = {16,17},
     ["INVTYPE_SHIELD"] = {17},
-    ["INVTYPE_2HWEAPON"] = {16},
+    ["INVTYPE_2HWEAPON"] = {16,17},
     ["INVTYPE_WEAPONMAINHAND"] = {16},
     ["INVTYPE_WEAPONOFFHAND"] = {17},
     ["INVTYPE_HOLDABLE"] = {17},
@@ -131,7 +131,8 @@ Rollouts.data.failMessages = {
     ["NOT_MS_STAT"] = "not MS stat",
     ["NOT_OS_STAT"] = "not OS stat",
     ["ROLL_OWNER"] = "roll owner",
-    ["ROLL_RULES"] = "roll rules"
+    ["ROLL_RULES"] = "roll rules",
+    ["TOKEN_CLASS"] = "token class"
 }
 Rollouts.data.colours = {
     red = "FF0000",
@@ -373,3 +374,36 @@ Rollouts.data.classWeapons = {
     }, -- DemonHunter
 }
 
+Rollouts.data.tokenSlot = {
+    ["INVTYPE_WEAPON"] = {
+        '183893', -- Abominable Anima Spherule 200
+        '183896', -- Abominable Anima Spherule 207
+        '183892', -- Mystic Anima Spherule 200
+        '183897', -- Mystic Anima Spherule 207
+        '183891', -- Venerated Anima Spherule 200
+        '183898', -- Venerated Anima Spherule 207
+        '183890', -- Zenith Anima Spherule 200
+        '183899', -- Zenith Anima Spherule 207
+    },
+    ["INVTYPE_WEAPONOFFHAND"] = {
+        '183888', -- Apogee Anima Bead 200
+        '183895', -- Apogee Anima Bead 207
+        '183889', -- Thaumaturgic Anima Bead 200
+        '183894', -- Thaumaturgic Anima Bead 207
+    }
+}
+
+Rollouts.data.tokenClasses = {
+    [1] = { '183890', '183899', '183888', '183895' }, -- Warrior
+    [2] = { '183891', '183898', '183888', '183895' }, -- Paladin
+    [3] = { '183892', '183897', }, -- Hunter
+    [4] = { '183890', '183899', }, -- Rogue
+    [5] = { '183891', '183898', '183888', '183895' }, -- Priest
+    [6] = { '183893', '183896', }, -- DeathKnight
+    [7] = { '183891', '183898', '183889', '183894' }, -- Shaman
+    [8] = { '183892', '183897', '183889', '183894' }, -- Mage
+    [9] = { '183893', '183896', '183889', '183894' }, -- Warlock
+    [10] = { '183890', '183899', '183888', '183895' }, -- Monk
+    [11] = { '183892', '183897', '183889', '183894' }, -- Druid
+    [12] = { '183893', '183896', }, -- DemonHunter
+}

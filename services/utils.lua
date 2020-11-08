@@ -416,3 +416,16 @@ Rollouts.utils.canClassEquip = function(class, weaponType)
     end
     return Rollouts.utils.contains(allWeapons, weaponType)
 end
+
+Rollouts.utils.getRollSlotForToken = function(itemLink)
+    local itemData = Rollouts.utils.getItemLinkData(itemLink)
+    if itemData ~= nil and itemData.itemId ~= nil then
+        local itemId = itemData.itemId
+        for slot, itemIds in pairs(Rollouts.data.tokenSlot) do
+            if Rollouts.utils.contains(itemIds, itemId) then
+                return slot
+            end
+        end
+    end
+    return ""
+end

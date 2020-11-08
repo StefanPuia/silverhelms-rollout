@@ -23,6 +23,7 @@ Rollouts.defaultOptions = {
         enableWeaponTypeValidation = true,
         enableOwnerValidation = true,
         enableStatValidation = true,
+        enableTokenClassValidation = true,
         -- toggle rank priority
         guildRanking = {
             enabled = true,
@@ -220,6 +221,18 @@ local settingsTable = {
                 },
                 break4 = {
                     order = 8,
+                    type = "description",
+                    name = ""
+                },
+                enableTokenClassValidation = {
+                    order = 9,
+                    name = "Token Class Validation",
+                    type = "toggle",
+                    set = function(info, val) setDBOption(val, "enableTokenClassValidation") end,
+                    get = function(info) return getEitherDBOption("enableTokenClassValidation") end
+                },
+                break5 = {
+                    order = 10,
                     type = "description",
                     name = ""
                 },
