@@ -87,7 +87,9 @@ Rollouts.beginRoll = function(rollEntry, isRestart, rulePredicate, ruleMessage)
 
         currentRoll.itemInfo = {GetItemInfo(currentRoll.itemLink)}
         local itemSlot = currentRoll.itemInfo[9]
-        currentRoll.equippable = Rollouts.data.slots[itemSlot] ~= nil and #Rollouts.data.slots[itemSlot] > 0
+        local tokenSlot = Rollouts.utils.getRollSlotForToken(currentRoll.itemLink)
+        currentRoll.equippable = (Rollouts.data.slots[itemSlot] ~= nil and #Rollouts.data.slots[itemSlot] > 0)
+                or (Rollouts.data.slots[tokenSlot] ~= nil and #Rollouts.data.slots[tokenSlot] > 0)
         if not currentRoll.equippable then currentRoll.rollType = 1 end -- if not equippable, change roll type to greed
 
         Rollouts.ui.updateWindow()
