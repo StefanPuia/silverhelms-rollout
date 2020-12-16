@@ -16,6 +16,8 @@ Rollouts.defaultOptions = {
         enableWhisperAppend = true,
         -- override sorting if ilvl threshold is met
         minIlvlThreshold = 0,
+        -- enablePauseIfUnsure
+        enablePauseIfUnsure = true,
         -- default roll type
         defaultRollType = 3,
         -- validation
@@ -89,11 +91,11 @@ local settingsTable = {
                     set = function(info, val) setDBOption(val, "rollTimeLimit") end,
                     get = function(info) return getEitherDBOption("rollTimeLimit") end
                 },
-                break1 = {
-                    order = 2,
-                    type = "description",
-                    name = ""
-                },
+                -- break1 = {
+                --     order = 2,
+                --     type = "description",
+                --     name = ""
+                -- },
                 rollCountdown = {
                     order = 3,
                     name = "Warning countdown",
@@ -117,25 +119,13 @@ local settingsTable = {
                     set = function(info, val) setDBOption(val, "defaultRollType") end,
                     get = function(info) return getEitherDBOption("defaultRollType") end
                 },
-                break3 = {
-                    order = 6,
-                    type = "description",
-                    name = ""
-                },
-                restartIfNoRolls = {
-                    order = 7,
-                    name = "Restart if no rolls",
-                    type = "toggle",
-                    set = function(info, val) setDBOption(val, "restartIfNoRolls") end,
-                    get = function(info) return getEitherDBOption("restartIfNoRolls") end
-                },
-                break4 = {
-                    order = 8,
-                    type = "description",
-                    name = ""
-                },
+                -- break3 = {
+                --     order = 6,
+                --     type = "description",
+                --     name = ""
+                -- },
                 lowestRestart = {
-                    order = 9,
+                    order = 7,
                     name = "Lowest restart",
                     type = "select",
                     values = Rollouts.data.rollTypes,
@@ -143,6 +133,18 @@ local settingsTable = {
                     get = function(info) return getEitherDBOption("lowestRestart") end
                 },
                 break5 = {
+                    order = 8,
+                    type = "description",
+                    name = ""
+                },
+                restartIfNoRolls = {
+                    order = 9,
+                    name = "Restart if no rolls",
+                    type = "toggle",
+                    set = function(info, val) setDBOption(val, "restartIfNoRolls") end,
+                    get = function(info) return getEitherDBOption("restartIfNoRolls") end
+                },
+                break4 = {
                     order = 10,
                     type = "description",
                     name = ""
@@ -168,7 +170,19 @@ local settingsTable = {
                     step = 1,
                     set = function(info, val) setDBOption(val, "minIlvlThreshold") end,
                     get = function(info) return getEitherDBOption("minIlvlThreshold") end
-                }
+                },
+                enablePauseIfUnsure = {
+                    order = 11,
+                    name = "Pause the roll before the end if data is missing",
+                    type = "toggle",
+                    set = function(info, val) setDBOption(val, "enablePauseIfUnsure") end,
+                    get = function(info) return getEitherDBOption("enablePauseIfUnsure") end
+                },
+                break7 = {
+                    order = 12,
+                    type = "description",
+                    name = ""
+                },
             }
         },
         validationOptions = {

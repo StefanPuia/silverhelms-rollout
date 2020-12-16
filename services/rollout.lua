@@ -360,6 +360,9 @@ Rollouts.appendRoll = function(name, roll, guild, rank, classId, spec, equipped)
             and (Rollouts.utils.unitInGroup(name) and Rollouts.utils.unitInGroup("player") or not Rollouts.utils.unitInGroup("player"))
         then
 
+        local timeLeftAfterTick = timeLeft - (GetServerTime() - lastTick)
+        if isPaused and timeLeftAfterTick <= 0 then return end
+
         local rollObj = Rollouts.utils.makeRollObject(name, roll, guild, rank, classId, nil, spec, equipped)
         validateRoll(rollObj)
 
@@ -397,6 +400,38 @@ Rollouts.updateRoll = function(name, guild, rank, class, spec, equipped)
     end
 end
 
+Rollouts.forceRollDataUpdate = function()
+    if currentRoll ~= nil then
+        for _, roll in ipairs(currentRoll.rolls) do
+            if Rollouts.rollMissingData(roll) then
+                local name = roll.name
+                local guid = UnitGUID(name)
+                local cachedInfo = LGIST:GetCachedInfo(guid)
+                local guildName, guildRankName = GetGuildInfo(Rollouts.utils.simplifyName(roll.name))
+
+                local specId = nil
+                local equipped = nil
+                if cachedInfo then
+                    specId = cachedInfo.global_spec_id
+                    if currentRoll then
+                        local rollSlot = currentRoll.itemInfo[9]
+                        if not rollSlot or rollSlot == "" or rollSlot == nil then
+                            rollSlot = Rollouts.utils.getRollSlotForToken(currentRoll.itemLink)
+                        end
+                        local slots = Rollouts.data.slots[rollSlot]
+                        equipped = {}
+                        for _,slot in ipairs(slots) do
+                            table.insert(equipped, cachedInfo.equipped[slot])
+                        end
+                    end
+                else
+                    LGIST:Rescan(guid)
+                end
+                Rollouts.updateRoll(roll.name, guildName, guildRankName, nil, specId, equipped)
+            end
+        end
+    end
+end
 
 Rollouts.getHeaderStatus = function()
     if currentRoll ~= nil then
@@ -424,12 +459,45 @@ Rollouts.isPaused = function ()
     return isPaused
 end
 
+Rollouts.rollMissingData = function (roll)
+    local missing = {}
+    if not roll.guildName then table.insert(missing, "guild") end
+    if not roll.rankName then table.insert(missing, "rank") end
+    if not roll.class then table.insert(missing, "class") end
+    if not roll.spec then table.insert(missing, "spec") end
+    if not roll.equipped then table.insert(missing, "equipped") end
+    if #roll.equipped == 0 then table.insert(missing, "equipped items") end
+    if #missing > 0 then return roll.name .. " is missing: " .. table.concat(missing, ", ") end
+    return nil
+end
+
+Rollouts.currentRollMissingData = function ()
+    local missing = {}
+    if currentRoll ~= nil then
+        for _, roll in ipairs(currentRoll.rolls) do
+            local missingData = Rollouts.rollMissingData(roll)
+            if missingData ~= nil then
+                table.insert(missing, missingData)
+            end
+        end
+    end
+    return #missing > 0 and missing or nil
+end
+
 Rollouts.rollTick = function()
     if currentRoll ~= nil then
+        Rollouts.forceRollDataUpdate()
         sortRolls()
         local currentTick = GetServerTime()
         local tickSize = currentTick - lastTick
         if tickSize > 0 then
+            local missingData = Rollouts.currentRollMissingData()
+            if not isPaused and Rollouts.utils.getEitherDBOption("enablePauseIfUnsure") and timeLeft - tickSize <= 0 and missingData then
+                isPaused = true
+                Rollouts.chat.sendMessage("This roll needs manual attention. Please wait.")
+                print("Roll paused because data is missing")
+                print(table.concat(missingData, "\n"))
+            end
             if not isPaused then
                 timeLeft = timeLeft - tickSize
             end

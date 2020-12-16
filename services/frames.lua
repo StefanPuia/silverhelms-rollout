@@ -166,7 +166,7 @@ end
 
 local function addItemToGameTooltip(itemLink, refItemInfo)
     local itemInfo = {GetItemInfo(itemLink)}
-    if not itemInfo then return end
+    if not itemInfo or not itemInfo[10] then return end
     GameTooltip:AddLine("|T" .. itemInfo[10] .. ":0|t " .. itemLink)
 
     local itemLevel = GetDetailedItemLevelInfo(itemLink)
