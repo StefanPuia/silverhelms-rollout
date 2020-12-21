@@ -390,12 +390,13 @@ Rollouts.updateRoll = function(name, guild, rank, class, spec, equipped)
     if currentRoll ~= nil then
         local roll = Rollouts.getRoll(name)
         if roll then
-            if guild then roll.guild = guild end
-            if rank then roll.rank = rank end
+            if guild then roll.guildName = guild end
+            if rank then roll.rankName = rank end
             if class then roll.class = class end
             if spec then roll.spec = spec end
             if equipped then roll.equipped = equipped end
             validateRoll(roll)
+            Rollouts.ui.updateWindow()
         end
     end
 end
