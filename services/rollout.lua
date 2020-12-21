@@ -405,10 +405,10 @@ Rollouts.forceRollDataUpdate = function()
     if currentRoll ~= nil then
         for _, roll in ipairs(currentRoll.rolls) do
             if Rollouts.rollMissingData(roll) then
-                local name = roll.name
+                local name = Rollouts.utils.simplifyName(roll.name)
                 local guid = UnitGUID(name)
                 local cachedInfo = LGIST:GetCachedInfo(guid)
-                local guildName, guildRankName = GetGuildInfo(Rollouts.utils.simplifyName(roll.name))
+                local guildName, guildRankName = GetGuildInfo(name)
 
                 local specId = nil
                 local equipped = nil
@@ -496,8 +496,12 @@ Rollouts.rollTick = function()
             if not isPaused and Rollouts.utils.getEitherDBOption("enablePauseIfUnsure") and timeLeft - tickSize <= 0 and missingData then
                 isPaused = true
                 Rollouts.chat.sendMessage("This roll needs manual attention. Please wait.")
-                print("Roll paused because data is missing")
-                print(table.concat(missingData, "\n"))
+                Rollouts.Print("Roll paused because data is missing")
+                Rollouts.Print(table.concat(missingData, "\n"))
+            end
+            if isPaused and not missingData and timeLeft - tickSize <= 0 then
+                Rollouts.Print("Data restored automatically. Finishing the roll.")
+                isPaused = false
             end
             if not isPaused then
                 timeLeft = timeLeft - tickSize

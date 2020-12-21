@@ -25,4 +25,4 @@ The way it works is: raiders whisper the items they want to share with the desig
 * pressing the group button does not take into account sockets or extra * stats (it will just group everything and some of the items will be lost)
 * sometimes, a "ghost" button appears that seems to be linked to the * window, but is not interactable (closing and re-opening the window should fix that)
 
-Check [the issues](https://git.stefanpuia.co.uk/stefan.puia/silverhelms-rollouts/issues)
+Check [the issues](https://github.com/StefanPuia/silverhelms-rollout/issues)
