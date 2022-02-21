@@ -293,7 +293,7 @@ local function validateRoll(rollObject)
     local itemSubType = currentRoll.itemInfo[7]
     local itemSlot = currentRoll.itemInfo[9]
 
-    if getEitherDBOption("enableTokenClassValidation") and itemSubType == "Context Token" and currentRoll ~= nil then
+    if getEitherDBOption("enableTokenClassValidation") and Rollouts.utils.contains({"Context Token", "Junk"}, itemSubType) and currentRoll ~= nil then
         local itemData = Rollouts.utils.getItemLinkData(currentRoll.itemLink)
         if itemData ~= nil and itemData.itemId ~= nil then
             if not Rollouts.utils.contains(Rollouts.data.tokenClasses[rollObject.class], itemData.itemId) then
