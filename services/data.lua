@@ -374,66 +374,155 @@ Rollouts.data.classWeapons = {
     }, -- DemonHunter
 }
 
+local TOKENS = {
+  ['PATCH_9_2'] = {
+    ['VENERATED'] = { -- Paladin, Priest, Shaman
+      ['HELM'] = '191003',
+      ['CHEST'] = '191012',
+      ['SHOULDER'] = '191008',
+      ['HANDS'] = '191016',
+      ['LEGS'] = '191020',
+    },
+    ['DREADFUL'] = { -- Death Knight, Demon Hunter, Warlock
+      ['HELM'] = '191005',
+      ['CHEST'] = '191010',
+      ['SHOULDER'] = '191006',
+      ['HANDS'] = '191014',
+      ['LEGS'] = '191018',
+    },
+    ['MYSTIC'] = { -- Druid, Hunter, Mage
+      ['HELM'] = '191002',
+      ['CHEST'] = '191011',
+      ['SHOULDER'] = '191007',
+      ['HANDS'] = '191015',
+      ['LEGS'] = '191019',
+    },
+    ['ZENITH'] = { -- Monk, Rogue, Warrior
+      ['HELM'] = '191004',
+      ['CHEST'] = '191013',
+      ['SHOULDER'] = '191009',
+      ['HANDS'] = '191017',
+      ['LEGS'] = '191021',
+    },
+  }
+}
+
 Rollouts.data.tokenSlot = {
-    ["INVTYPE_WEAPON"] = {
-        '183893', -- Abominable Anima Spherule 200
-        '183896', -- Abominable Anima Spherule 207
-        '183892', -- Mystic Anima Spherule 200
-        '183897', -- Mystic Anima Spherule 207
-        '183891', -- Venerated Anima Spherule 200
-        '183898', -- Venerated Anima Spherule 207
-        '183890', -- Zenith Anima Spherule 200
-        '183899', -- Zenith Anima Spherule 207
-    },
-    ["INVTYPE_WEAPONOFFHAND"] = {
-        '183888', -- Apogee Anima Bead 200
-        '183895', -- Apogee Anima Bead 207
-        '183889', -- Thaumaturgic Anima Bead 200
-        '183894', -- Thaumaturgic Anima Bead 207
-    },
     ["INVTYPE_HEAD"] = {
-        '191010',
-        '191011',
-        '191012',
-        '191013',
+        TOKENS.PATCH_9_2.DREADFUL.HELM,
+        TOKENS.PATCH_9_2.MYSTIC.HELM,
+        TOKENS.PATCH_9_2.ZENITH.HELM,
+        TOKENS.PATCH_9_2.VENERATED.HELM,
     },
     ["INVTYPE_SHOULDER"] = {
-        '191014',
-        '191015',
-        '191016',
-        '191017',
+        TOKENS.PATCH_9_2.DREADFUL.SHOULDER,
+        TOKENS.PATCH_9_2.MYSTIC.SHOULDER,
+        TOKENS.PATCH_9_2.ZENITH.SHOULDER,
+        TOKENS.PATCH_9_2.VENERATED.SHOULDER,
     },
     ["INVTYPE_CHEST"] = {
-        '191005',
-        '191002',
-        '191003',
-        '191004',
+        TOKENS.PATCH_9_2.DREADFUL.CHEST,
+        TOKENS.PATCH_9_2.MYSTIC.CHEST,
+        TOKENS.PATCH_9_2.ZENITH.CHEST,
+        TOKENS.PATCH_9_2.VENERATED.CHEST,
     },
     ["INVTYPE_HAND"] = {
-        '191018',
-        '191019',
-        '191020',
-        '191021',
+        TOKENS.PATCH_9_2.DREADFUL.HANDS,
+        TOKENS.PATCH_9_2.MYSTIC.HANDS,
+        TOKENS.PATCH_9_2.ZENITH.HANDS,
+        TOKENS.PATCH_9_2.VENERATED.HANDS,
     },
     ["INVTYPE_LEGS"] = {
-        '191006',
-        '191007',
-        '191008',
-        '191009',
+        TOKENS.PATCH_9_2.DREADFUL.LEGS,
+        TOKENS.PATCH_9_2.MYSTIC.LEGS,
+        TOKENS.PATCH_9_2.ZENITH.LEGS,
+        TOKENS.PATCH_9_2.VENERATED.LEGS,
     },
 }
 
 Rollouts.data.tokenClasses = {
-    [1] = {'183890', '183899', '183888', '183895', '191013', '191017', '191004', '191021', '191009'}, -- Warrior
-    [2] = {'183891', '183898', '183888', '183895', '191012', '191016', '191003', '191020', '191008'}, -- Paladin
-    [3] = {'183892', '183897', '191011', '191015', '191002', '191019', '191007'}, -- Hunter
-    [4] = {'183890', '183899', '191013', '191017', '191004', '191021', '191009'}, -- Rogue
-    [5] = {'183891', '183898', '183888', '183895', '191012', '191016', '191003', '191020', '191008'}, -- Priest
-    [6] = {'183893', '183896', '191010', '191014', '191005', '191018', '191006'}, -- DeathKnight
-    [7] = {'183891', '183898', '183889', '183894', '191012', '191016', '191003', '191020', '191008'}, -- Shaman
-    [8] = {'183892', '183897', '183889', '183894', '191011', '191015', '191002', '191019', '191007'}, -- Mage
-    [9] = {'183893', '183896', '183889', '183894', '191010', '191014', '191005', '191018', '191006'}, -- Warlock
-    [10] = {'183890', '183899', '183888', '183895', '191013', '191017', '191004', '191021', '191009'}, -- Monk
-    [11] = {'183892', '183897', '183889', '183894', '191011', '191015', '191002', '191019', '191007'}, -- Druid
-    [12] = {'183893', '183896', '191010', '191014', '191005', '191018', '191006'}, -- DemonHunter
+    [1] = { -- Warrior
+      TOKENS.PATCH_9_2.ZENITH.HELM,
+      TOKENS.PATCH_9_2.ZENITH.CHEST,
+      TOKENS.PATCH_9_2.ZENITH.SHOULDER,
+      TOKENS.PATCH_9_2.ZENITH.HANDS,
+      TOKENS.PATCH_9_2.ZENITH.LEGS,
+    },
+    [2] = { -- Paladin
+      TOKENS.PATCH_9_2.VENERATED.HELM,
+      TOKENS.PATCH_9_2.VENERATED.CHEST,
+      TOKENS.PATCH_9_2.VENERATED.SHOULDER,
+      TOKENS.PATCH_9_2.VENERATED.HANDS,
+      TOKENS.PATCH_9_2.VENERATED.LEGS,
+    },
+    [3] = { -- Hunter
+      TOKENS.PATCH_9_2.MYSTIC.HELM,
+      TOKENS.PATCH_9_2.MYSTIC.CHEST,
+      TOKENS.PATCH_9_2.MYSTIC.SHOULDER,
+      TOKENS.PATCH_9_2.MYSTIC.HANDS,
+      TOKENS.PATCH_9_2.MYSTIC.LEGS,
+    },
+    [4] = { -- Rogue
+      TOKENS.PATCH_9_2.ZENITH.HELM,
+      TOKENS.PATCH_9_2.ZENITH.CHEST,
+      TOKENS.PATCH_9_2.ZENITH.SHOULDER,
+      TOKENS.PATCH_9_2.ZENITH.HANDS,
+      TOKENS.PATCH_9_2.ZENITH.LEGS,
+    },
+    [5] = { -- Priest
+      TOKENS.PATCH_9_2.VENERATED.HELM,
+      TOKENS.PATCH_9_2.VENERATED.CHEST,
+      TOKENS.PATCH_9_2.VENERATED.SHOULDER,
+      TOKENS.PATCH_9_2.VENERATED.HANDS,
+      TOKENS.PATCH_9_2.VENERATED.LEGS,
+    },
+    [6] = { -- DeathKnight
+      TOKENS.PATCH_9_2.DREADFUL.HELM,
+      TOKENS.PATCH_9_2.DREADFUL.CHEST,
+      TOKENS.PATCH_9_2.DREADFUL.SHOULDER,
+      TOKENS.PATCH_9_2.DREADFUL.HANDS,
+      TOKENS.PATCH_9_2.DREADFUL.LEGS,
+    },
+    [7] = { -- Shaman
+      TOKENS.PATCH_9_2.VENERATED.HELM,
+      TOKENS.PATCH_9_2.VENERATED.CHEST,
+      TOKENS.PATCH_9_2.VENERATED.SHOULDER,
+      TOKENS.PATCH_9_2.VENERATED.HANDS,
+      TOKENS.PATCH_9_2.VENERATED.LEGS,
+    },
+    [8] = { -- Mage
+      TOKENS.PATCH_9_2.MYSTIC.HELM,
+      TOKENS.PATCH_9_2.MYSTIC.CHEST,
+      TOKENS.PATCH_9_2.MYSTIC.SHOULDER,
+      TOKENS.PATCH_9_2.MYSTIC.HANDS,
+      TOKENS.PATCH_9_2.MYSTIC.LEGS,
+    },
+    [9] = { -- Warlock
+      TOKENS.PATCH_9_2.DREADFUL.HELM,
+      TOKENS.PATCH_9_2.DREADFUL.CHEST,
+      TOKENS.PATCH_9_2.DREADFUL.SHOULDER,
+      TOKENS.PATCH_9_2.DREADFUL.HANDS,
+      TOKENS.PATCH_9_2.DREADFUL.LEGS,
+    },
+    [10] = { -- Monk
+      TOKENS.PATCH_9_2.ZENITH.HELM,
+      TOKENS.PATCH_9_2.ZENITH.CHEST,
+      TOKENS.PATCH_9_2.ZENITH.SHOULDER,
+      TOKENS.PATCH_9_2.ZENITH.HANDS,
+      TOKENS.PATCH_9_2.ZENITH.LEGS,
+    },
+    [11] = { -- Druid
+      TOKENS.PATCH_9_2.MYSTIC.HELM,
+      TOKENS.PATCH_9_2.MYSTIC.CHEST,
+      TOKENS.PATCH_9_2.MYSTIC.SHOULDER,
+      TOKENS.PATCH_9_2.MYSTIC.HANDS,
+      TOKENS.PATCH_9_2.MYSTIC.LEGS,
+    },
+    [12] = { -- DemonHunter
+      TOKENS.PATCH_9_2.DREADFUL.HELM,
+      TOKENS.PATCH_9_2.DREADFUL.CHEST,
+      TOKENS.PATCH_9_2.DREADFUL.SHOULDER,
+      TOKENS.PATCH_9_2.DREADFUL.HANDS,
+      TOKENS.PATCH_9_2.DREADFUL.LEGS,
+    },
 }
