@@ -1,5 +1,5 @@
 local LibStub = _G.LibStub
-local LGIST = LibStub:GetLibrary("LibGroupInSpecT-1.1-eq")
+local LGIST = LibStub:GetLibrary("LibGroupInSpecT-1.1")
 local Rollouts = LibStub("AceAddon-3.0"):GetAddon("Rollouts")
 
 local currentRoll = nil
