@@ -1,5 +1,5 @@
 local LibStub = _G.LibStub
-local LGIST = LibStub:GetLibrary("LibGroupInSpecT-1.1")
+local LGIST = LibStub:GetLibrary("LibGroupInSpecT-1.1-eq")
 local Rollouts = LibStub("AceAddon-3.0"):GetAddon("Rollouts")
 Rollouts.chat = {}
 
@@ -27,7 +27,7 @@ function Rollouts:HandleRollMessage(e, message)
             end
 
             local specId = nil
-            local equipped = nil
+            local equipped = {}
             local guid = UnitGUID(name)
             local cachedInfo = LGIST:GetCachedInfo(guid)
             if cachedInfo then
@@ -38,9 +38,10 @@ function Rollouts:HandleRollMessage(e, message)
                         rollSlot = Rollouts.utils.getRollSlotForToken(Rollouts.env.live.itemLink)
                     end
                     local slots = Rollouts.data.slots[rollSlot]
-                    equipped = {}
                     for _,slot in ipairs(slots) do
-                        table.insert(equipped, cachedInfo.equipped[slot])
+                        if cachedInfo.equipped ~= nil and cachedInfo.equipped[slot] ~= nil then
+                            table.insert(equipped, cachedInfo.equipped[slot])
+                        end
                     end
                 end
             else

@@ -71,7 +71,7 @@
 --     Returns an array with the set of unit ids for the current group.
 --]]
 
-local MAJOR, MINOR = "LibGroupInSpecT-1.1", 91
+local MAJOR, MINOR = "LibGroupInSpecT-1.1-eq", 91
 
 if not LibStub then error(MAJOR.." requires LibStub") end
 local lib = LibStub:NewLibrary (MAJOR, MINOR)
@@ -610,6 +610,11 @@ function lib:BuildInfo (unit)
   info.glyphs = info.glyphs or {} -- kept for addons that still refer to this
 
   if is_inspect and not UnitIsVisible (unit) and UnitIsConnected (unit) then info.not_visible = true end
+
+  info.equipped = {}
+  for slotId = 0, 18 do
+    info.equipped[slotId] = GetInventoryItemLink(unit, slotId)
+  end
 
   return info
 end
