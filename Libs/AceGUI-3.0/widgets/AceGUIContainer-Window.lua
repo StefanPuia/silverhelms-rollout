@@ -7,10 +7,6 @@ local pairs, assert, type = pairs, assert, type
 local PlaySound = PlaySound
 local CreateFrame, UIParent = CreateFrame, UIParent
 
--- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
--- List them here for Mikk's FindGlobals script
--- GLOBALS: GameFontNormal
-
 ----------------
 -- Main Frame --
 ----------------
@@ -20,8 +16,8 @@ local CreateFrame, UIParent = CreateFrame, UIParent
 
 ]]
 do
-	local Type = "Rollouts-Window"
-	local Version = 6
+	local Type = "Window"
+	local Version = 8
 
 	local function frameOnShow(this)
 		this.obj:Fire("OnShow")
@@ -30,14 +26,6 @@ do
 	local function frameOnClose(this)
 		this.obj:Fire("OnClose")
 	end
-
-  local function frameOnEnter(this)
-        this.obj:Fire("OnEnter")
-    end
-
-    local function frameOnLeave(this)
-        this.obj:Fire("OnLeave")
-    end
 
 	local function closeOnClick(this)
 		PlaySound(799) -- SOUNDKIT.GS_TITLE_OPTION_EXIT
@@ -192,11 +180,13 @@ do
 		frame:SetFrameStrata("FULLSCREEN_DIALOG")
 		frame:SetScript("OnMouseDown", frameOnMouseDown)
 
-		frame:SetScript("OnShow", frameOnShow)
-		frame:SetScript("OnHide", frameOnClose)
-    frame:SetScript("OnEnter", frameOnEnter)
-    frame:SetScript("OnLeave", frameOnLeave)
-		frame:SetMinResize(240,240)
+		frame:SetScript("OnShow",frameOnShow)
+		frame:SetScript("OnHide",frameOnClose)
+		if frame.SetResizeBounds then -- WoW 10.0
+			frame:SetResizeBounds(240,240)
+		else
+			frame:SetMinResize(240,240)
+		end
 		frame:SetToplevel(true)
 
 		local titlebg = frame:CreateTexture(nil, "BACKGROUND")
@@ -310,7 +300,7 @@ do
 		line2:SetHeight(8)
 		line2:SetPoint("BOTTOMRIGHT", -8, 8)
 		line2:SetTexture(137057) -- Interface\\Tooltips\\UI-Tooltip-Border
-		local x = 0.1 * 8/17
+		x = 0.1 * 8/17
 		line2:SetTexCoord(0.05 - x, 0.5, 0.05, 0.5 + x, 0.05, 0.5 - x, 0.5 + x, 0.5)
 
 		local sizer_s = CreateFrame("Frame",nil,frame)
