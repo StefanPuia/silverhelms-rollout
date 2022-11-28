@@ -1,5 +1,5 @@
-## Interface: 90200
-## X-Min-Interface: 90001
+## Interface: 100002
+## X-Min-Interface: 100002
 ## Title: Silverhelms Rollouts
 ## Author: Steph
 ## Notes: A loot distributing helper addon for <The Silverhelms> guild.

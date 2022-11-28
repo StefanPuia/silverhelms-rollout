@@ -16,7 +16,7 @@ local CreateFrame, UIParent = CreateFrame, UIParent
 
 ]]
 do
-	local Type = "Window"
+    local Type = "Rollouts-Window"
 	local Version = 8
 
 	local function frameOnShow(this)
