@@ -1,5 +1,6 @@
 local LibStub = _G.LibStub
 local Rollouts = LibStub("AceAddon-3.0"):GetAddon("Rollouts")
+Rollouts.options = {}
 
 Rollouts.defaultOptions = {
     global = {
@@ -389,32 +390,36 @@ local settingsTable = {
             func = function()
                 Rollouts.ui.alert("Are you sure you want to reset your settings?",
                 function()
-                    setDBOption(Rollouts.defaultOptions.global.rollTimeLimit, "rollTimeLimit")
-                    setDBOption(Rollouts.defaultOptions.global.rollCountdown, "rollCountdown")
-                    setDBOption(Rollouts.defaultOptions.global.defaultRollType, "defaultRollType")
-                    setDBOption(Rollouts.defaultOptions.global.restartIfNoRolls, "restartIfNoRolls")
-                    setDBOption(Rollouts.defaultOptions.global.lowestRestart, "lowestRestart")
-                    setDBOption(Rollouts.defaultOptions.global.enableWhisperAppend, "enableWhisperAppend")
-                    setDBOption(Rollouts.defaultOptions.global.minIlvlThreshold, "minIlvlThreshold")
-
-                    setDBOption(Rollouts.defaultOptions.global.guildRanking.enabled, "guildRanking", "enabled")
-                    setDBOption({ [1] = { name = "*", ranks = {{"*"}} } }, "guildRanking", "guilds")
-
-                    setDBOption(Rollouts.defaultOptions.global.showMinimapIcon, "showMinimapIcon")
-                    setDBOption(Rollouts.defaultOptions.global.debugMode, "debugMode")
-                    setDBOption(Rollouts.defaultOptions.global.autoRemoveDays, "autoRemoveDays")
-
-                    setDBOption(Rollouts.defaultOptions.global.enableArmorTypeValidation, "enableArmorTypeValidation")
-                    setDBOption(Rollouts.defaultOptions.global.enableWeaponTypeValidation, "enableWeaponTypeValidation")
-                    setDBOption(Rollouts.defaultOptions.global.enableOwnerValidation, "enableOwnerValidation")
-                    setDBOption(Rollouts.defaultOptions.global.enableStatValidation, "enableStatValidation")
-
-                    Rollouts:Print("Settings reset to defaults.")
+                    Rollouts.options.resetOptionsToDefaults()
                 end, false, false, "RESET_DEFAULTS")
             end
         }
     }
 }
+
+Rollouts.options.resetOptionsToDefaults = function()
+    setDBOption(Rollouts.defaultOptions.global.rollTimeLimit, "rollTimeLimit")
+    setDBOption(Rollouts.defaultOptions.global.rollCountdown, "rollCountdown")
+    setDBOption(Rollouts.defaultOptions.global.defaultRollType, "defaultRollType")
+    setDBOption(Rollouts.defaultOptions.global.restartIfNoRolls, "restartIfNoRolls")
+    setDBOption(Rollouts.defaultOptions.global.lowestRestart, "lowestRestart")
+    setDBOption(Rollouts.defaultOptions.global.enableWhisperAppend, "enableWhisperAppend")
+    setDBOption(Rollouts.defaultOptions.global.minIlvlThreshold, "minIlvlThreshold")
+
+    setDBOption(Rollouts.defaultOptions.global.guildRanking.enabled, "guildRanking", "enabled")
+    setDBOption({ [1] = { name = "*", ranks = {{"*"}} } }, "guildRanking", "guilds")
+
+    setDBOption(Rollouts.defaultOptions.global.showMinimapIcon, "showMinimapIcon")
+    setDBOption(Rollouts.defaultOptions.global.debugMode, "debugMode")
+    setDBOption(Rollouts.defaultOptions.global.autoRemoveDays, "autoRemoveDays")
+
+    setDBOption(Rollouts.defaultOptions.global.enableArmorTypeValidation, "enableArmorTypeValidation")
+    setDBOption(Rollouts.defaultOptions.global.enableWeaponTypeValidation, "enableWeaponTypeValidation")
+    setDBOption(Rollouts.defaultOptions.global.enableOwnerValidation, "enableOwnerValidation")
+    setDBOption(Rollouts.defaultOptions.global.enableStatValidation, "enableStatValidation")
+
+    Rollouts:Print("Settings reset to defaults.")
+end
 
 local ACFG = LibStub("AceConfig-3.0")
 ACFG:RegisterOptionsTable("Rollouts", settingsTable)

@@ -1,5 +1,6 @@
 local LibStub = _G.LibStub
 local Rollouts = LibStub("AceAddon-3.0"):GetAddon("Rollouts")
+local setDBOption = Rollouts.utils.setDBOption
 Rollouts.debug = {}
 _G.RolloutsDebug = Rollouts.debug
 
@@ -292,6 +293,27 @@ end
 Rollouts.debug.testCase = function()
     local failed = 0
     local testStats = { failed = 0, completed = 0, breakout = false }
+
+    Rollouts:Print("Setting options for testing...\n")
+    Rollouts.options.resetOptionsToDefaults()
+    setDBOption(15, "minIlvlThreshold")
+    setDBOption({
+        -- allow anyone else to roll
+        [1] = {
+            name = "*",
+            ranks = {
+                [1] = {"*"}
+            }
+        },
+        [2] = {
+            name = "Example Guild",
+            ranks = {
+                [1] = {"Alt", "Social", "Officer Alt"},
+                [2] = {"Trial"},
+                [3] = {"Raider", "Veteran", "Officer"}
+            }
+        }
+    }, "guildRanking", "guilds")
 
     Rollouts:Print("Running test cases...\n")
     for testName, testCase in pairs(testCases) do
